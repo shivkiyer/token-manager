@@ -10,3 +10,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.button-link {
+  text-decoration: none;
+  color: white;
+  text-transform: uppercase;
+}

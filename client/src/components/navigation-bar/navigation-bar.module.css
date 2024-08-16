@@ -1,0 +1,11 @@
+.AppBar {
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+@media (max-width: 768px) {
+  .AppBar {
+    width: 100%;
+  }
+}
