@@ -7,6 +7,7 @@ const User = require('./../../db/models/user');
  * @param {string} username
  * @param {string} password
  * @returns {string} username
+ * @throws Error if username is not a valid email
  * @throws Error if username exists in database
  * @throws Error if password could not be encrypted
  */
