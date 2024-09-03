@@ -2,10 +2,12 @@ const express = require('express');
 const app = express();
 require('dotenv').config();
 
-const routes = require('./../routes/routes');
-const sequelize = require('../db/config/config');
+const sequelize = require('./../db/config/config');
+const setupRoutes = require('./../routes/routes');
 
-app.use('/api/', routes);
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+setupRoutes(app);
 
 // Test connection to database and start server
 sequelize

@@ -1,8 +1,11 @@
-const express = require('express');
-const router = express.Router();
+const authRoutes = require('./auth/authRoutes');
 
-router.get('/', (req, res) => {
-  res.send('Test');
-});
+/**
+ * Merging all the routes in the app
+ * @param {Object} app Express instance created at startup
+ */
+const appRoutes = (app) => {
+  app.use('/api/auth', authRoutes);
+};
 
-module.exports = router;
+module.exports = appRoutes;
