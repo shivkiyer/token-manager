@@ -24,7 +24,7 @@ const signUp = async (req, res) => {
     const newUser = await authService.signUp(username, password);
     return res.status(201).send({ data: newUser });
   } catch (e) {
-    return res.status(400).send(e);
+    return res.status(400).send({ message: e });
   }
 };
 

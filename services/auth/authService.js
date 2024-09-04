@@ -16,12 +16,12 @@ const User = require('./../../db/models/user');
  */
 const signUp = async (username, password) => {
   if (!emailValidator(username)) {
-    throw { message: 'Username not a valid email address' };
+    throw 'Username not a valid email address';
   }
   try {
     const checkUsername = await User.findOne({ where: { username } });
     if (checkUsername !== null) {
-      throw { message: 'Username already exists' };
+      throw 'Username already exists';
     }
     const encryptedPassword = await hashPassword(password);
     await User.create({
@@ -39,14 +39,14 @@ const signUp = async (username, password) => {
  * @param {string} username
  * @param {string} password
  * @returns {string} JWT
- * @throws {400} If username not found
+ * @throws {401} If username not found
  * @throws {401} If username/password do not match
  */
 const login = async (username, password) => {
   try {
     const checkUser = await User.findOne({ where: { username } });
     if (checkUser === null) {
-      throw { message: 'User not found' };
+      throw 'User not found';
     }
     const encryptedPassword = checkUser.password;
     const passwordMatch = await bcrypt.compare(password, encryptedPassword);
@@ -58,7 +58,7 @@ const login = async (username, password) => {
       );
       return jwtToken;
     }
-    throw { message: 'Login failed' };
+    throw 'Login failed';
   } catch (e) {
     throw e;
   }

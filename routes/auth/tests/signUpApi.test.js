@@ -1,26 +1,42 @@
 const request = require('supertest');
 
 const server = require('./../../../server/server');
-const sequelize = require('./../../../db/config/config');
 const User = require('./../../../db/models/user');
 
 describe('/api/auth/signup', () => {
+  let sequelize;
   beforeAll(async () => {
     try {
+      jest.resetModules();
+      sequelize = require('./../../../db/config/config');
       await sequelize.authenticate();
+      await User.sync({ force: true });
     } catch (e) {
-      console.log('Connection to test database failed');
+      console.log('Setting up test database failed');
       console.log(e);
       process.exit(1);
     }
   });
 
   beforeEach(async () => {
-    await User.sync({ force: true });
+    try {
+      await sequelize.authenticate();
+      await User.destroy({ truncate: true });
+    } catch (e) {
+      console.log('Database error');
+      console.log(e);
+      process.exit(1);
+    }
   });
 
-  afterAll(() => {
-    server.close();
+  afterAll(async () => {
+    try {
+      await sequelize.close();
+      await server.close();
+    } catch (e) {
+      console.log('Test cleanup error');
+      console.log(e);
+    }
   });
 
   it('should create user with valid data', async () => {
@@ -33,12 +49,8 @@ describe('/api/auth/signup', () => {
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json');
     expect(response.status).toBe(201);
-    try {
-      const users = await User.findAll();
-      expect(users.length).toBe(1);
-    } catch (e) {
-      console.log(e);
-    }
+    const users = await User.findAll();
+    expect(users.length).toBe(1);
   });
 
   it('should return 400 error if password is missing', async () => {
@@ -78,16 +90,11 @@ describe('/api/auth/signup', () => {
     expect(response.body.message).toBe('Username not a valid email address');
   });
 
-  it('should return 400 error if username is not a valid email', async () => {
-    try {
-      await User.create({
-        username: 'someuser@yahoo.com',
-        password: 'somepassword',
-      });
-    } catch (e) {
-      console.log(e);
-    }
-
+  it('should return 400 error if username already exists', async () => {
+    await User.create({
+      username: 'someuser@yahoo.com',
+      password: 'somepassword',
+    });
     const response = await request(server)
       .post('/api/auth/signup')
       .send({
