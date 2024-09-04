@@ -13,12 +13,12 @@ const User = require('./../../db/models/user');
  */
 const signUp = async (username, password) => {
   if (!emailValidator(username)) {
-    throw 'Username not a valid email address';
+    throw { message: 'Username not a valid email address' };
   }
   try {
     const checkUsername = await User.findOne({ where: { username } });
     if (checkUsername !== null) {
-      throw 'Username already exists';
+      throw { message: 'Username already exists' };
     }
     const encryptedPassword = await hashPassword(password);
     await User.create({

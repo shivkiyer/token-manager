@@ -3,8 +3,8 @@
   "version": "1.0.0",
   "main": "server/server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server/server.js"
+    "test": "jest --runInBand --detectOpenHandles",
+    "start": "NODE_ENV=development node server/server.js"
   },
   "author": "Shivkumar Iyer",
   "license": "ISC",
@@ -16,5 +16,9 @@
     "pg": "^8.12.0",
     "pg-hstore": "^2.3.4",
     "sequelize": "^6.37.3"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
   }
 }
