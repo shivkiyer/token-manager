@@ -1,3 +1,6 @@
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+
 const emailValidator = require('./../../utils/auth/emailValidator');
 const hashPassword = require('./../../utils/auth/hashPassword');
 const User = require('./../../db/models/user');
@@ -31,6 +34,37 @@ const signUp = async (username, password) => {
   }
 };
 
+/**
+ * Verifies a login request
+ * @param {string} username
+ * @param {string} password
+ * @returns {string} JWT
+ * @throws {400} If username not found
+ * @throws {401} If username/password do not match
+ */
+const login = async (username, password) => {
+  try {
+    const checkUser = await User.findOne({ where: { username } });
+    if (checkUser === null) {
+      throw { message: 'User not found' };
+    }
+    const encryptedPassword = checkUser.password;
+    const passwordMatch = await bcrypt.compare(password, encryptedPassword);
+    if (passwordMatch) {
+      const jwtToken = await jwt.sign(
+        { data: username },
+        process.env.JWT_SECRET,
+        { expiresIn: parseInt(process.env.SESSION_EXPIRY) * 60 }
+      );
+      return jwtToken;
+    }
+    throw { message: 'Login failed' };
+  } catch (e) {
+    throw e;
+  }
+};
+
 module.exports = {
   signUp,
+  login,
 };

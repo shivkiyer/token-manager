@@ -3,8 +3,9 @@ const router = express.Router({ mergeParams: true });
 
 const authController = require('./../../controllers/auth/authController');
 
-router.post('/login', (req, res) => {
-  res.send('Testing login');
+router.post('/login', async (req, res) => {
+  const response = await authController.login(req, res);
+  return response;
 });
 
 router.post('/signup', async (req, res) => {
