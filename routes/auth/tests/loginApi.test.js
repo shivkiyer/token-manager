@@ -1,7 +1,6 @@
 const request = require('supertest');
 
 const server = require('./../../../server/server');
-// const sequelize = require('./../../../db/config/config');
 const User = require('./../../../db/models/user');
 const hashPassword = require('./../../../utils/auth/hashPassword');
 
@@ -22,18 +21,30 @@ describe('/api/auth/login', () => {
   });
 
   beforeEach(async () => {
-    await User.destroy({truncate: true});
-    const encrPassword = await hashPassword('xyz');
+    try {
+      await sequelize.authenticate();
+      await User.destroy({ truncate: true });
+      const encrPassword = await hashPassword('xyz');
 
-    testUser = await User.create({
-      username: 'abc@gmail.com',
-      password: encrPassword,
-    });
+      testUser = await User.create({
+        username: 'abc@gmail.com',
+        password: encrPassword,
+      });
+    } catch (e) {
+      console.log('Database error');
+      console.log(e);
+      process.exit(1);
+    }
   });
 
   afterAll(async () => {
-    await server.close();
-    await sequelize.close();
+    try {
+      await sequelize.close();
+      await server.close();
+    } catch (e) {
+      console.log('Test cleanup error');
+      console.log(e);
+    }
   });
 
   it('should login a user with valid credentials', async () => {
@@ -42,7 +53,7 @@ describe('/api/auth/login', () => {
       .send({ username: 'abc@gmail.com', password: 'xyz' })
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json');
-    
+
     expect(response.status).toBe(200);
     expect(response.body.data).not.toBe(null);
   });
@@ -53,7 +64,7 @@ describe('/api/auth/login', () => {
       .send({ username: 'abc@gmail.com' })
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json');
-    
+
     expect(response.status).toBe(400);
     expect(response.body.message).toBe('Password is required');
   });
@@ -64,7 +75,7 @@ describe('/api/auth/login', () => {
       .send({ password: 'xyz' })
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json');
-    
+
     expect(response.status).toBe(400);
     expect(response.body.message).toBe('Username is required');
   });
@@ -75,7 +86,7 @@ describe('/api/auth/login', () => {
       .send({ username: 'abc1@gmail.com', password: 'xyz' })
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json');
-    
+
     expect(response.status).toBe(401);
     expect(response.body.message).toBe('User not found');
   });
@@ -86,7 +97,7 @@ describe('/api/auth/login', () => {
       .send({ username: 'abc@gmail.com', password: 'xyz1' })
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json');
-    
+
     expect(response.status).toBe(401);
     expect(response.body.message).toBe('Login failed');
   });
