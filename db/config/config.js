@@ -1,20 +1,17 @@
 const { Sequelize } = require('sequelize');
 
-
-let dbName, dbUsername, dbPassword, dbHost, dbPort;
+let DB_TYPE;
 if (process.env.NODE_ENV === 'development') {
-  dbName = process.env.DB_DEV_NAME;
-  dbUsername = process.env.DB_DEV_USERNAME;
-  dbPassword = process.env.DB_DEV_PASSWORD;
-  dbHost = process.env.DB_DEV_HOST;
-  dbPort = process.env.DB_DEV_PORT;
+  DB_TYPE = 'DEV';
 } else if (process.env.NODE_ENV === 'test') {
-  dbName = process.env.DB_TEST_NAME;
-  dbUsername = process.env.DB_TEST_USERNAME;
-  dbPassword = process.env.DB_TEST_PASSWORD;
-  dbHost = process.env.DB_TEST_HOST;
-  dbPort = process.env.DB_TEST_PORT;
+  DB_TYPE = 'TEST';
 }
+
+const dbName = process.env[`DB_${DB_TYPE}_NAME`];
+const dbUsername = process.env[`DB_${DB_TYPE}_USERNAME`];
+const dbPassword = process.env[`DB_${DB_TYPE}_PASSWORD`];
+const dbHost = process.env[`DB_${DB_TYPE}_HOST`];
+const dbPort = process.env[`DB_${DB_TYPE}_PORT`];
 
 /**
  * Creates db connection and exports for app-wide use

@@ -9,7 +9,9 @@ describe('/api/auth/signup', () => {
     try {
       await sequelize.authenticate();
     } catch (e) {
+      console.log('Connection to test database failed');
       console.log(e);
+      process.exit(1);
     }
   });
 
