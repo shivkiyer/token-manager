@@ -1,12 +1,16 @@
 const express = require('express');
 const app = express();
 require('dotenv').config();
+const cors = require('cors');
 
 const sequelize = require('./../db/config/config');
 const setupRoutes = require('./../routes/routes');
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
+if (process.env.NODE_ENV === 'development') {
+  app.use(cors());
+}
 setupRoutes(app);
 
 // Test connection to database and start server

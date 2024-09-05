@@ -16,3 +16,8 @@ code {
   color: white;
   text-transform: uppercase;
 }
+
+.error-message {
+  color: red;
+  text-align: center;
+}
