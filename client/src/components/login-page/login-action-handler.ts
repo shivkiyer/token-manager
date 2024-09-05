@@ -4,13 +4,16 @@ const loginActionHandler = async ({ request }: { request: Request }) => {
   const data = await request.formData();
   const username = data.get('username');
   const password = data.get('password');
-  const response = await fetch('http://localhost:8000/api/auth/login', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ username, password }),
-  });
+  const response = await fetch(
+    `${process.env.REACT_APP_BASE_API_URL}/api/auth/login`,
+    {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ username, password }),
+    }
+  );
   if (!response.ok) {
     return response;
   }
@@ -22,7 +25,7 @@ const loginActionHandler = async ({ request }: { request: Request }) => {
     }
   }
 
-  throw { message: 'Unexpected error' };
+  throw Object.assign(new Error('An unexpected error occurred.'));
 };
 
 export default loginActionHandler;

@@ -29,7 +29,7 @@ function LoginPage() {
       setFormError(actionData.message);
       setIsDisabled(false);
     }
-  }, [navigation.state]);
+  }, [navigation.state, actionData]);
 
   const usernameChangeHandler = (
     event: React.ChangeEvent<HTMLInputElement>
