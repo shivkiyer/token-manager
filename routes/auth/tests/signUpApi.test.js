@@ -2,6 +2,7 @@ const request = require('supertest');
 
 const server = require('./../../../server/server');
 const User = require('./../../../db/models/user');
+const hashPassword = require('./../../../utils/auth/hashPassword');
 
 describe('/api/auth/signup', () => {
   let sequelize;
@@ -91,9 +92,10 @@ describe('/api/auth/signup', () => {
   });
 
   it('should return 400 error if username already exists', async () => {
+    const encrPassword = await hashPassword('somepassword');
     await User.create({
       username: 'someuser@yahoo.com',
-      password: 'somepassword',
+      password: encrPassword,
     });
     const response = await request(server)
       .post('/api/auth/signup')
