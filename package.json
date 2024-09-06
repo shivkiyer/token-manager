@@ -6,6 +6,11 @@
     "test": "jest --runInBand --detectOpenHandles",
     "start": "NODE_ENV=development node server/server.js"
   },
+  "jest": {
+    "testPathIgnorePatterns": [
+      "client"
+    ]
+  },
   "author": "Shivkumar Iyer",
   "license": "ISC",
   "description": "An interactive dashboard to manage ERC tokens",

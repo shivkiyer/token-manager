@@ -1,18 +1,16 @@
 import { redirect } from 'react-router-dom';
 
+import apiCall from '../../utils/http/api-call';
+
 const loginActionHandler = async ({ request }: { request: Request }) => {
   const data = await request.formData();
   const username = data.get('username');
   const password = data.get('password');
-  const response = await fetch(
+  const response = await apiCall(
     `${process.env.REACT_APP_BASE_API_URL}/api/auth/login`,
-    {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({ username, password }),
-    }
+    'POST',
+    null,
+    { username, password }
   );
   if (!response.ok) {
     return response;

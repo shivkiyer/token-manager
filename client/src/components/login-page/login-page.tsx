@@ -19,9 +19,9 @@ function LoginPage() {
 
   useEffect(() => {
     if (navigation.state === 'submitting') {
+      setFormError(null);
       setIsDisabled(true);
-    }
-    if (
+    } else if (
       actionData !== null &&
       actionData !== undefined &&
       actionData.message !== null
@@ -52,6 +52,7 @@ function LoginPage() {
     const password = event.target.value;
     if (password.trim().length > 2 && !formError) {
       setIsDisabled(false);
+      setFormError(null);
     }
   };
 
