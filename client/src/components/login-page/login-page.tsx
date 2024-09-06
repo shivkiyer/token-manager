@@ -1,5 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Form, useNavigation, useActionData } from 'react-router-dom';
+import {
+  Form,
+  useNavigation,
+  useActionData,
+  useNavigate,
+} from 'react-router-dom';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -16,6 +21,7 @@ function LoginPage() {
   const [timeoutId, setTimeoutId] = useState<any>(null);
   const navigation = useNavigation();
   const actionData: any = useActionData();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (navigation.state === 'submitting') {
@@ -26,10 +32,13 @@ function LoginPage() {
       actionData !== undefined &&
       actionData.message !== null
     ) {
+      if (actionData.message === null || actionData.message === undefined) {
+        navigate('/dashboard');
+      }
       setFormError(actionData.message);
       setIsDisabled(false);
     }
-  }, [navigation.state, actionData]);
+  }, [navigation.state, actionData, navigate]);
 
   const usernameChangeHandler = (
     event: React.ChangeEvent<HTMLInputElement>

@@ -1,38 +1,42 @@
-import {
-  render,
-  screen,
-  waitFor,
-  act,
-  fireEvent,
-} from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { RouterProvider, createMemoryRouter } from 'react-router-dom';
-
-import Dashboard from '../dashboard/dashboard';
 
 jest.useFakeTimers();
 
 describe('LoginPage', () => {
-  it('should display the login form with username/password and disabled Login button', async () => {
-    const mockResponse = new Response('sometoken', { status: 200 });
-    jest.mock('./../../utils/http/api-call', () =>
-      Promise.resolve(mockResponse)
+  let MockDashboard: any;
+  let router: any;
+  beforeEach(() => {
+    MockDashboard = () => {
+      return <p>Dashboard here</p>;
+    };
+
+    const mockResponse = new Response(JSON.stringify({ data: 'token' }), {
+      status: 200,
+    });
+    jest.mock(
+      './../../utils/http/api-call',
+      () => () => Promise.resolve(mockResponse)
     );
+
     const LoginPage = require('./login-page').default;
     const loginActionHandler = require('./login-action-handler').default;
 
     const routes = [
       { path: '/login', element: <LoginPage />, action: loginActionHandler },
-      { path: '/dashboard', element: <Dashboard /> },
+      { path: '/dashboard', element: <MockDashboard /> },
     ];
 
-    const router = createMemoryRouter(routes, {
+    router = createMemoryRouter(routes, {
       initialEntries: ['/login'],
-      initialIndex: 1,
+      initialIndex: 0,
     });
 
     render(<RouterProvider router={router}></RouterProvider>);
+  });
 
+  it('should display the login form with username/password and disabled Login button', async () => {
     await waitFor(() => {
       expect(screen.getByPlaceholderText('Username')).toBeInTheDocument();
       expect(screen.getByPlaceholderText('Password')).toBeInTheDocument();
@@ -43,36 +47,45 @@ describe('LoginPage', () => {
   });
 
   it('should display an invalid email error for invalid usernames', async () => {
-    const mockResponse = new Response('sometoken', { status: 200 });
-    jest.mock('./../../utils/http/api-call', () =>
-      Promise.resolve(mockResponse)
-    );
-    const LoginPage = require('./login-page').default;
-    const loginActionHandler = require('./login-action-handler').default;
-
-    const routes = [
-      { path: '/login', element: <LoginPage />, action: loginActionHandler },
-      { path: '/dashboard', element: <Dashboard /> },
-    ];
-
-    const router = createMemoryRouter(routes, {
-      initialEntries: ['/login'],
-      initialIndex: 1,
-    });
-
-    render(<RouterProvider router={router}></RouterProvider>);
-
     let usernameField: any;
     await waitFor(() => {
       usernameField = screen.getByPlaceholderText('Username');
-      userEvent.type(usernameField, 'abc');
     });
+
+    userEvent.type(usernameField, 'abc');
 
     jest.runAllTimers();
 
     await waitFor(() => {
       const errMessage = screen.getByText('Not a valid email');
       expect(errMessage).toBeInTheDocument();
+    });
+  });
+
+  it('should redirect to dashboard upon successful login', async () => {
+    await waitFor(() => {});
+    const usernameField = screen.getByPlaceholderText('Username');
+    userEvent.type(usernameField, 'abc@gmail.com');
+    const passwordField = screen.getByPlaceholderText('Password');
+    userEvent.type(passwordField, 'xyz');
+
+    let loginBtn = screen.getByRole('button', { name: 'Login' });
+    await waitFor(() => {
+      expect(loginBtn).not.toHaveAttribute('disabled');
+    });
+
+    userEvent.click(loginBtn);
+
+    jest.runAllTimers();
+
+    await waitFor(() => {
+      expect(router.state.location.pathname).toBe('/dashboard');
+    });
+
+    const dashboard = screen.getByText('Dashboard here');
+
+    await waitFor(() => {
+      expect(dashboard).toBeInTheDocument();
     });
   });
 });
