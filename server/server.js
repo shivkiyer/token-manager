@@ -11,6 +11,10 @@ app.use(express.json());
 if (process.env.NODE_ENV === 'development') {
   app.use(cors());
 }
+
+const logger = require('./logger');
+app.use(logger);
+
 setupRoutes(app);
 
 // Test connection to database and start server

@@ -17,13 +17,16 @@ const signUp = async (req, res) => {
 
   const errMsg = authDataValidator(req.body);
   if (errMsg !== null) {
+    req.log.error(`Error creating new user: ${errMsg}`);
     return res.status(400).send({ message: errMsg });
   }
 
   try {
     const newUser = await authService.signUp(username, password);
+    req.log.info(`Successfully new user ${username}`);
     return res.status(201).send({ data: newUser });
   } catch (e) {
+    req.log.error(`Error creating new user: ${e}`);
     return res.status(400).send({ message: e });
   }
 };
@@ -47,8 +50,10 @@ const login = async (req, res) => {
 
   try {
     const loginStatus = await authService.login(username, password);
+    req.log.info(`Successfully logged in ${username}`);
     res.send({ data: loginStatus });
   } catch (e) {
+    req.log.error(`Error logging in ${username}: ${e}`);
     res.status(401).send({ message: e });
   }
 };
