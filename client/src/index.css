@@ -13,8 +13,15 @@ code {
 
 .button-link {
   text-decoration: none;
-  color: white;
   text-transform: uppercase;
+}
+
+.button-link-white {
+  color: white;
+}
+
+.button-link-black {
+  color: black;
 }
 
 .error-message {

@@ -9,14 +9,14 @@ import classes from './navigation-bar.module.css';
 function NavigationBar() {
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position='static'>
+      <AppBar position='fixed' sx={{ zIndex: 2 }}>
         <Toolbar className={classes.AppBar}>
-          <Typography variant='h6' component='div' sx={{ flexGrow: 1 }}>
-            <Link className='button-link' to='/'>
+          <Typography variant='h6' noWrap component='div' sx={{ flexGrow: 1 }}>
+            <Link className='button-link button-link-white' to='/'>
               Token Manager
             </Link>
           </Typography>
-          <Link className='button-link' to='/login'>
+          <Link className='button-link button-link-white' to='/login'>
             Login
           </Link>
         </Toolbar>
