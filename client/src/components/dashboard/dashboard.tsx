@@ -1,3 +1,4 @@
+import { Outlet } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 
@@ -9,7 +10,7 @@ function Dashboard() {
       <DashboardDrawer />
       <Box component='main' sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
-        <h4>Wallets come here</h4>
+        <Outlet></Outlet>
       </Box>
     </Box>
   );

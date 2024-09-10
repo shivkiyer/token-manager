@@ -1,14 +1,18 @@
-import { Link } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
-import ListItemText from '@mui/material/ListItemText';
 import Divider from '@mui/material/Divider';
 
 function DashboardDrawer() {
+  const isActiveLinkClass = ({ isActive }: { isActive: boolean }) =>
+    isActive
+      ? 'button-link button-link-black button-link-active'
+      : 'button-link button-link-black';
+
   return (
     <Drawer
       variant='permanent'
@@ -27,45 +31,37 @@ function DashboardDrawer() {
       <Toolbar />
       <Box sx={{ overflow: 'auto' }}>
         <List>
-          <ListItem key={'wallets'} disablePadding>
-            <ListItemButton>
-              <ListItemText>
-                <Link to='/' className='button-link button-link-black'>
-                  Wallets
-                </Link>
-              </ListItemText>
-            </ListItemButton>
-          </ListItem>
-          <ListItem key={'tokens'} disablePadding>
-            <ListItemButton>
-              <ListItemText>
-                <Link to='/' className='button-link button-link-black'>
-                  Tokens
-                </Link>
-              </ListItemText>
-            </ListItemButton>
-          </ListItem>
+          <NavLink to='/dashboard' className={isActiveLinkClass} end>
+            <ListItem>
+              <ListItemButton>
+                <span>Wallets</span>
+              </ListItemButton>
+            </ListItem>
+          </NavLink>
+          <NavLink to='/dashboard/tokens' className={isActiveLinkClass} end>
+            <ListItem>
+              <ListItemButton>
+                <span>Tokens</span>
+              </ListItemButton>
+            </ListItem>
+          </NavLink>
         </List>
         <Divider />
         <List>
-          <ListItem key={'account'} disablePadding>
-            <ListItemButton>
-              <ListItemText>
-                <Link to='/' className='button-link button-link-black'>
-                  Account
-                </Link>
-              </ListItemText>
-            </ListItemButton>
-          </ListItem>
-          <ListItem key={'settings'} disablePadding>
-            <ListItemButton>
-              <ListItemText>
-                <Link to='/' className='button-link button-link-black'>
-                  Settings
-                </Link>
-              </ListItemText>
-            </ListItemButton>
-          </ListItem>
+          <NavLink to='/dashboard/account' className={isActiveLinkClass} end>
+            <ListItem>
+              <ListItemButton>
+                <span>Account</span>
+              </ListItemButton>
+            </ListItem>
+          </NavLink>
+          <NavLink to='/dashboard/settings' className={isActiveLinkClass} end>
+            <ListItem>
+              <ListItemButton>
+                <span>Settings</span>
+              </ListItemButton>
+            </ListItem>
+          </NavLink>
         </List>
       </Box>
     </Drawer>
