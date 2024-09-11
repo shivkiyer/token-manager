@@ -1,7 +1,9 @@
+import useTokenAuthentication from '../../../hooks/useTokenAuthentication';
+
 function Wallets() {
-  return (
-      <h4>Wallets come here</h4>
-  );
+  const userToken = useTokenAuthentication();
+
+  return <h4>Wallets come here</h4>;
 }
 
 export default Wallets;

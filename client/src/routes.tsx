@@ -10,12 +10,16 @@ import Account from './components/dashboard/account/account';
 import Settings from './components/dashboard/settings/settings';
 import ErrorPage from './components/ErrorPage/error-page';
 
+import { authToken } from './utils/auth/auth';
+
 import loginActionHandler from './components/login-page/login-action-handler';
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <RootComponent />,
+    id: 'root-app',
+    loader: authToken,
     errorElement: <ErrorPage />,
     children: [
       { index: true, element: <Homepage /> },

@@ -1,5 +1,8 @@
+import useTokenAuthentication from '../../../hooks/useTokenAuthentication';
+
 function Tokens() {
-    return <h4>Tokens come here</h4>
+  const userToken = useTokenAuthentication();
+  return <h4>Tokens come here</h4>;
 }
 
 export default Tokens;
