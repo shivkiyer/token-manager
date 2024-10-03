@@ -5,11 +5,6 @@ pragma solidity ^0.8.20;
 import {Ownable} from "openzeppelin-contracts/contracts/access/Ownable.sol";
 import {AccessControl} from "openzeppelin-contracts/contracts/access/AccessControl.sol";
 
-event Withdrawal(address indexed _from, address indexed _to, uint256 amount);
-
-error SharedWallet__ExceededLimit(uint256 requestedAmount, uint256 limit);
-error SharedWallet__InsufficientBalance(uint256 requestedAmount);
-
 /**
  * @dev Contract for creating a shared wallet for approved withdrawers.
  *
@@ -22,6 +17,15 @@ contract SharedWallet is Ownable, AccessControl {
     bytes32 public constant SPENDER = keccak256("SPENDER");
     mapping(address => uint256) public withdrawLimit;
     uint256 private balance;
+
+    event SharedWallet__Withdrawal(
+        address indexed _from,
+        address indexed _to,
+        uint256 amount
+    );
+
+    error SharedWallet__ExceededLimit(uint256 requestedAmount, uint256 limit);
+    error SharedWallet__InsufficientBalance(uint256 requestedAmount);
 
     constructor() Ownable(_msgSender()) {
         _grantRole(DEFAULT_ADMIN_ROLE, _msgSender());
@@ -49,7 +53,7 @@ contract SharedWallet is Ownable, AccessControl {
         }
         balance -= amount;
         payable(_to).transfer(amount);
-        emit Withdrawal(address(this), _to, amount);
+        emit SharedWallet__Withdrawal(address(this), _to, amount);
     }
 
     function closeWallet() public onlyOwner {

@@ -4,7 +4,6 @@
 
 # Blockchain
 **/cache/
-**/out/
 **/.vscode
 **/.idea
 **/lib
