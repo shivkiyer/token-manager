@@ -3,8 +3,9 @@ const app = express();
 require('dotenv').config();
 const cors = require('cors');
 
+// Connect to the database and sync models/tables
 const sequelize = require('./../db/config/config');
-const setupRoutes = require('./../routes/routes');
+require('./../db/config/initializeModels')();
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
@@ -12,9 +13,12 @@ if (process.env.NODE_ENV === 'development') {
   app.use(cors());
 }
 
+// Register logger
 const logger = require('./logger');
 app.use(logger);
 
+// Register API endpoints
+const setupRoutes = require('./../routes/routes');
 setupRoutes(app);
 
 // Test connection to database and start server
