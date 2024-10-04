@@ -1,4 +1,5 @@
 const authRoutes = require('./auth/authRoutes');
+const ethAccounts = require('./ethAccounts/ethAccountsRoutes');
 
 /**
  * Merging all the routes in the app
@@ -6,6 +7,7 @@ const authRoutes = require('./auth/authRoutes');
  */
 const appRoutes = (app) => {
   app.use('/api/auth', authRoutes);
+  app.use('/api/eth-accounts', ethAccounts);
 };
 
 module.exports = appRoutes;
