@@ -2,6 +2,7 @@ const request = require('supertest');
 
 const server = require('./../../../server/server');
 const User = require('./../../../db/models/user');
+const initializeModels = require('./../../../db/config/initializeModels');
 const hashPassword = require('./../../../utils/auth/hashPassword');
 
 describe('/api/auth/login', () => {
@@ -12,7 +13,7 @@ describe('/api/auth/login', () => {
       jest.resetModules();
       sequelize = require('./../../../db/config/config');
       await sequelize.authenticate();
-      await User.sync({ force: true });
+      initializeModels();
     } catch (e) {
       console.log('Setting up test database failed');
       console.log(e);
@@ -23,7 +24,7 @@ describe('/api/auth/login', () => {
   beforeEach(async () => {
     try {
       await sequelize.authenticate();
-      await User.destroy({ truncate: true });
+      await User.destroy({ truncate: { cascade: true } });
       const encrPassword = await hashPassword('xyz');
 
       testUser = await User.create({

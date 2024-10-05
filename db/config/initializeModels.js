@@ -4,12 +4,17 @@ const Account = require('./../models/account');
 /**
  * Establish relations between models and create/update them
  */
-const initializeModels = () => {
-  User.hasMany(Account);
-  Account.belongsTo(User);
+const initializeModels = async () => {
+  try {
+    User.hasMany(Account);
+    Account.belongsTo(User, { foreignKey: 'UserId' });
 
-  User.sync({ alter: true });
-  Account.sync({ alter: true });
+    await User.sync({ alter: true });
+    await Account.sync({ alter: true });
+  } catch (e) {
+    console.log('Database synchronization error');
+    console.log(e.message);
+  }
 };
 
 module.exports = initializeModels;
