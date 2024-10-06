@@ -2,34 +2,25 @@ const request = require('supertest');
 
 const server = require('./../../../server/server');
 const User = require('./../../../db/models/user');
-const initializeModels = require('./../../../db/config/initializeModels');
-const hashPassword = require('./../../../utils/auth/hashPassword');
+
+const setupTestDb = require('./../../../test-utils/db/setupTestDb');
+const createTestUser = require('./../../../test-utils/db/createTestUser');
 
 describe('/api/auth/login', () => {
   let testUser;
   let sequelize;
   beforeAll(async () => {
-    try {
-      jest.resetModules();
-      sequelize = require('./../../../db/config/config');
-      await sequelize.authenticate();
-      initializeModels();
-    } catch (e) {
-      console.log('Setting up test database failed');
-      console.log(e);
-      process.exit(1);
-    }
+    jest.resetModules();
+    sequelize = await setupTestDb();
   });
 
   beforeEach(async () => {
     try {
       await sequelize.authenticate();
       await User.destroy({ truncate: { cascade: true } });
-      const encrPassword = await hashPassword('xyz');
-
-      testUser = await User.create({
+      testUser = await createTestUser({
         username: 'abc@gmail.com',
-        password: encrPassword,
+        password: 'xyz',
       });
     } catch (e) {
       console.log('Database error');

@@ -2,22 +2,15 @@ const request = require('supertest');
 
 const server = require('./../../../server/server');
 const User = require('./../../../db/models/user');
-const initializeModels = require('./../../../db/config/initializeModels');
-const hashPassword = require('./../../../utils/auth/hashPassword');
+
+const setupTestDb = require('./../../../test-utils/db/setupTestDb');
+const createTestUser = require('./../../../test-utils/db/createTestUser');
 
 describe('/api/auth/signup', () => {
   let sequelize;
   beforeAll(async () => {
-    try {
-      jest.resetModules();
-      sequelize = require('./../../../db/config/config');
-      await sequelize.authenticate();
-      initializeModels();
-    } catch (e) {
-      console.log('Setting up test database failed');
-      console.log(e);
-      process.exit(1);
-    }
+    jest.resetModules();
+    sequelize = await setupTestDb();
   });
 
   beforeEach(async () => {
@@ -93,10 +86,9 @@ describe('/api/auth/signup', () => {
   });
 
   it('should return 400 error if username already exists', async () => {
-    const encrPassword = await hashPassword('somepassword');
-    await User.create({
+    await createTestUser({
       username: 'someuser@yahoo.com',
-      password: encrPassword,
+      password: 'somepassword',
     });
     const response = await request(server)
       .post('/api/auth/signup')
