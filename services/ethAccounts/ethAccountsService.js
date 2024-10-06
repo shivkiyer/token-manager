@@ -1,6 +1,8 @@
 const User = require('./../../db/models/user');
 const Account = require('./../../db/models/account');
 
+const getUserFromEmail = require('./../../utils/auth/getUserFromEmail');
+
 /**
  * Creates new Ethereum account associated with a user
  * @param {string} username Username
@@ -11,13 +13,7 @@ const Account = require('./../../db/models/account');
  * @throws {Error} If the account address already exists in database
  */
 const addAccount = async ({ username, accountName, accountAddress }) => {
-  let user;
-
-  try {
-    user = await User.findOne({ where: { username } });
-  } catch (e) {
-    throw 'User not found';
-  }
+  let user = await getUserFromEmail(username);
   try {
     const checkAccountAddress = await Account.findAll({
       where: { address: accountAddress },

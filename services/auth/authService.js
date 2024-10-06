@@ -1,9 +1,11 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
+const User = require('./../../db/models/user');
+
 const emailValidator = require('./../../utils/auth/emailValidator');
 const hashPassword = require('./../../utils/auth/hashPassword');
-const User = require('./../../db/models/user');
+const getUserFromEmail = require('./../../utils/auth/getUserFromEmail');
 
 /**
  * Creates new user in database
@@ -44,10 +46,7 @@ const signUp = async (username, password) => {
  */
 const login = async (username, password) => {
   try {
-    const checkUser = await User.findOne({ where: { username } });
-    if (checkUser === null) {
-      throw 'User not found';
-    }
+    const checkUser = await getUserFromEmail(username);
     const encryptedPassword = checkUser.password;
     const passwordMatch = await bcrypt.compare(password, encryptedPassword);
     if (passwordMatch) {

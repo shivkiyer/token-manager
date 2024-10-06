@@ -7,7 +7,7 @@ const ethAccountsController = require('./../../controllers/ethAccounts/ethAccoun
 router.use(loginRequired);
 
 router.post('/add', async (req, res) => {
-  const response = ethAccountsController.addAccount(req, res);
+  const response = await ethAccountsController.addAccount(req, res);
   return response;
 });
 
