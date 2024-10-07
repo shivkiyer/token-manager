@@ -19,7 +19,7 @@ const addAccount = async (req, res) => {
     accountAddress === undefined ||
     accountAddress === null
   ) {
-    return res.status(400).send('Account details missing.');
+    return res.status(400).send({ message: 'Account details missing.' });
   }
 
   try {

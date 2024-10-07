@@ -1,6 +1,6 @@
 interface HttpOptions {
   method: string;
-  headers: { string?: string };
+  headers: { [key: string]: string };
   body?: any;
 }
 
@@ -15,10 +15,13 @@ interface HttpOptions {
 function apiCall(
   url: string,
   method: string,
-  headers: { string?: string } | null,
+  headers: { [key: string]: string } | null,
   body: any
 ): Promise<any> {
-  const httpHeaders = { 'Content-Type': 'application/json', ...headers };
+  const httpHeaders: { [key: string]: string } = {
+    'Content-Type': 'application/json',
+    ...headers,
+  };
   const httpOptions: HttpOptions = {
     method,
     headers: httpHeaders,

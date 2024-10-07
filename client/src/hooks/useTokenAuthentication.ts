@@ -6,9 +6,11 @@ import { useRouteLoaderData, useNavigate } from 'react-router-dom';
  * or redirects to homepage if no JWT is found
  * @returns {string} JWT
  */
-function useTokenAuthentication() {
+function useTokenAuthentication(): string | null {
   const navigate = useNavigate();
-  const userToken = useRouteLoaderData('root-app');
+  const userToken: string | null = useRouteLoaderData('root-app') as
+    | string
+    | null;
 
   useEffect(() => {
     if (userToken === null || userToken === undefined) {

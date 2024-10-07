@@ -15,17 +15,17 @@ describe('getUserFromEmail', () => {
     sequelize = await setupTestDb();
 
     try {
-        await sequelize.authenticate();
-        await User.destroy({ truncate: { cascade: true } });
-        testUser = await createTestUser({
-          username: 'abc@gmail.com',
-          password: 'xyz',
-        });
-      } catch (e) {
-        console.log('Database error');
-        console.log(e);
-        process.exit(1);
-      }
+      await sequelize.authenticate();
+      await User.destroy({ truncate: { cascade: true } });
+      testUser = await createTestUser({
+        username: 'abc@gmail.com',
+        password: 'xyz',
+      });
+    } catch (e) {
+      console.log('Database error');
+      console.log(e);
+      process.exit(1);
+    }
   });
 
   afterAll(async () => {

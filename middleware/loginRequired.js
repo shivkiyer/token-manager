@@ -11,7 +11,7 @@ const jwt = require('jsonwebtoken');
 const loginRequired = async (req, res, next) => {
   const authToken = req.headers['authorization'];
   if (authToken === undefined || authToken === null) {
-    return res.status(403).send('Login required for this action.');
+    return res.status(403).send({ message: 'Login required for this action.' });
   }
 
   try {
@@ -27,7 +27,9 @@ const loginRequired = async (req, res, next) => {
       throw 'Error';
     }
   } catch (e) {
-    return res.status(403).send('Authorization failed. Please login again.');
+    return res
+      .status(403)
+      .send({ message: 'Authorization failed. Please login again.' });
   }
 
   next();
