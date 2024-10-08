@@ -19,6 +19,7 @@ const addAccount = async (req, res) => {
     accountAddress === undefined ||
     accountAddress === null
   ) {
+    req.log.error('Empty account add request.');
     return res.status(400).send({ message: 'Account details missing.' });
   }
 
@@ -29,8 +30,10 @@ const addAccount = async (req, res) => {
       accountName,
       accountAddress,
     });
+    req.log.info(`Successfully added account ${name}`);
     res.status(201).send({ data: { name, address } });
   } catch (e) {
+    req.log.error(`Error adding account - ${e}`);
     res.status(400).send({ message: e });
   }
 };
