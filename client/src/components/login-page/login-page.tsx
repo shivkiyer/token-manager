@@ -5,6 +5,8 @@ import {
   useActionData,
   useNavigate,
 } from 'react-router-dom';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
@@ -12,21 +14,25 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 
-import emailValidator from './../../utils/validators/email-validator';
 import classes from './login-page.module.css';
 
 function LoginPage() {
-  const [isDisabled, setIsDisabled] = useState(true);
   const [formError, setFormError] = useState<string | null>(null);
-  const [timeoutId, setTimeoutId] = useState<any>(null);
   const navigation = useNavigation();
   const actionData: any = useActionData();
   const navigate = useNavigate();
 
+  const validateHandler = () => {
+    setFormError(null);
+    return Yup.object({
+      username: Yup.string().email('Invalid email').required('Required'),
+      password: Yup.string().required('Required'),
+    });
+  };
+
   useEffect(() => {
     if (navigation.state === 'submitting') {
       setFormError(null);
-      setIsDisabled(true);
     } else if (
       actionData !== null &&
       actionData !== undefined &&
@@ -36,34 +42,26 @@ function LoginPage() {
         navigate('/dashboard');
       }
       setFormError(actionData.message);
-      setIsDisabled(false);
     }
   }, [navigation.state, actionData, navigate]);
 
-  const usernameChangeHandler = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    clearTimeout(timeoutId);
-    setFormError(null);
-    const timeout = setTimeout(() => {
-      if (!emailValidator(event.target.value)) {
-        setFormError('Not a valid email');
-      } else {
-        setFormError(null);
+  const getDisabledStatus = () => {
+    if (Object.keys(formik.touched).length > 0) {
+      if (Object.keys(formik.errors).length === 0) {
+        return false;
       }
-    }, 1500);
-    setTimeoutId(timeout);
+    }
+    return true;
   };
 
-  const passwordChangeHandler = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const password = event.target.value;
-    if (password.trim().length > 2 && !formError) {
-      setIsDisabled(false);
-      setFormError(null);
-    }
-  };
+  const formik = useFormik({
+    initialValues: {
+      username: '',
+      password: '',
+    },
+    validationSchema: validateHandler,
+    onSubmit: () => {},
+  });
 
   return (
     <Container>
@@ -77,9 +75,15 @@ function LoginPage() {
                 placeholder='Username'
                 required
                 className={classes.LoginFields}
-                onChange={usernameChangeHandler}
+                value={formik.values.username}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               ></TextField>
+              {formik.touched.username && formik.errors.username && (
+                <p className='error-message'>{formik.errors.username}</p>
+              )}
             </Grid>
+
             <Grid item xs={12} marginTop={5}>
               <TextField
                 name='password'
@@ -88,25 +92,32 @@ function LoginPage() {
                 placeholder='Password'
                 required
                 className={classes.LoginFields}
-                onChange={passwordChangeHandler}
+                value={formik.values.password}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
               ></TextField>
+              {formik.touched.password && formik.errors.password && (
+                <p className='error-message'>{formik.errors.password}</p>
+              )}
             </Grid>
+
             <Grid item xs={12} marginTop={3}>
               {formError && <p className='error-message'>{formError}</p>}
             </Grid>
+
             <Grid item xs={12} marginTop={2}>
-              <Button
-                disabled={isDisabled}
-                type='submit'
-                variant='contained'
-                className={classes.LoginFields}
-              >
-                {navigation.state === 'submitting' ? (
-                  <CircularProgress size={26} />
-                ) : (
+              {navigation.state === 'submitting' ? (
+                <CircularProgress size={26} />
+              ) : (
+                <Button
+                  disabled={getDisabledStatus()}
+                  type='submit'
+                  variant='contained'
+                  className={classes.LoginFields}
+                >
                   <span>Login</span>
-                )}
-              </Button>
+                </Button>
+              )}
             </Grid>
           </Grid>
         </Form>

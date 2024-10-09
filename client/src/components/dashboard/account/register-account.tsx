@@ -79,7 +79,7 @@ function RegisterAccount() {
   });
 
   const getDisabledStatus = () => {
-    if (formik.touched !== null && formik.touched !== undefined) {
+    if (Object.keys(formik.touched).length > 0) {
       if (Object.keys(formik.errors).length === 0) {
         return false;
       }

@@ -48,16 +48,19 @@ describe('LoginPage', () => {
 
   it('should display an invalid email error for invalid usernames', async () => {
     let usernameField: any;
+    let passwordField: any;
     await waitFor(() => {
       usernameField = screen.getByPlaceholderText('Username');
+      passwordField = screen.getByPlaceholderText('Password');
     });
 
     userEvent.type(usernameField, 'abc');
+    userEvent.click(passwordField);
 
     jest.runAllTimers();
 
     await waitFor(() => {
-      const errMessage = screen.getByText('Not a valid email');
+      const errMessage = screen.getByText('Invalid email');
       expect(errMessage).toBeInTheDocument();
     });
   });
