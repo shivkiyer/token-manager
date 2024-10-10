@@ -13,6 +13,7 @@ import ErrorPage from './components/ErrorPage/error-page';
 import { authToken } from './utils/auth/auth';
 
 import loginActionHandler from './components/login-page/login-action-handler';
+import accountsListLoader from './components/dashboard/account/accountsListLoader';
 
 export const router = createBrowserRouter([
   {
@@ -31,7 +32,12 @@ export const router = createBrowserRouter([
         children: [
           { index: true, element: <Wallets /> },
           { path: 'tokens', element: <Tokens /> },
-          { path: 'account', element: <Account /> },
+          {
+            path: 'account',
+            children: [
+              { index: true, element: <Account />, loader: accountsListLoader },
+            ],
+          },
           { path: 'settings', element: <Settings /> },
         ],
       },

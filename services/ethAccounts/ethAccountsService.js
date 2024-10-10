@@ -15,6 +15,7 @@ const getAccounts = async (username) => {
     const accounts = await user.getAccounts();
     const accountsInfo = accounts.map((accItem) => {
       return {
+        accountId: accItem.id,
         accountName: accItem.name,
         accountAddress: accItem.address,
       };

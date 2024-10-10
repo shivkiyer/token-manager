@@ -16,7 +16,7 @@ const getAccounts = async (req, res) => {
     const accounts = await ethAccountsService.getAccounts(username);
     res.send({ data: accounts });
   } catch (e) {
-    res.status(400).send({ message: 'Could not fetch accounts.' });
+    res.status(400).send({ message: e });
   }
 };
 
