@@ -4,6 +4,28 @@ const Account = require('./../../db/models/account');
 const getUserFromEmail = require('./../../utils/auth/getUserFromEmail');
 
 /**
+ * Fetches Ethereum accounts associated with a user
+ * @param {string} username User email
+ * @returns {Object} Array of accounts
+ * @throws {Error} If the user could not be found
+ */
+const getAccounts = async (username) => {
+  let user = await getUserFromEmail(username);
+  try {
+    const accounts = await user.getAccounts();
+    const accountsInfo = accounts.map((accItem) => {
+      return {
+        accountName: accItem.name,
+        accountAddress: accItem.address,
+      };
+    });
+    return accountsInfo;
+  } catch (e) {
+    throw e;
+  }
+};
+
+/**
  * Creates new Ethereum account associated with a user
  * @param {string} username Username
  * @param {string} accountName Name of the Ethereum account
@@ -32,5 +54,6 @@ const addAccount = async ({ username, accountName, accountAddress }) => {
 };
 
 module.exports = {
+  getAccounts,
   addAccount,
 };

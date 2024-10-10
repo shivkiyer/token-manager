@@ -3,6 +3,24 @@ const User = require('./../../db/models/user');
 const ethAccountsService = require('./../../services/ethAccounts/ethAccountsService');
 
 /**
+ * Controller for fetching Ethereum accounts for authenticated user
+ * @param {Object} req Request
+ * @param {Object} res Response
+ * @return {Object} Array of accounts
+ * @throws {400} If accounts could not be fetched
+ * @throws {403} If user is not authenticated
+ */
+const getAccounts = async (req, res) => {
+  try {
+    const username = req.username;
+    const accounts = await ethAccountsService.getAccounts(username);
+    res.send({ data: accounts });
+  } catch (e) {
+    res.status(400).send({ message: 'Could not fetch accounts.' });
+  }
+};
+
+/**
  * Controller for adding new Ethereum account to authenticated user
  * @param {Object} req Request
  * @param {Object} res Response
@@ -39,5 +57,6 @@ const addAccount = async (req, res) => {
 };
 
 module.exports = {
+  getAccounts,
   addAccount,
 };
