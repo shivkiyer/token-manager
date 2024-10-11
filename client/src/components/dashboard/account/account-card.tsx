@@ -19,7 +19,7 @@ function AccountCard({
         <Card>
           <CardContent>
             <h4 style={{ marginBottom: '12px' }}>{name}</h4>
-            <p>Address: {address}</p>
+            <p style={{ fontSize: '13px' }}>{address}</p>
           </CardContent>
           <CardActions>
             <Button variant='contained' disabled={true}>

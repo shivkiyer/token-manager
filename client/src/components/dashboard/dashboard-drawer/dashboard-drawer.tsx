@@ -6,12 +6,21 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import Divider from '@mui/material/Divider';
+import CloseIcon from '@mui/icons-material/Close';
 
-function DashboardDrawer() {
+function DashboardDrawer({
+  hideDrawer,
+}: {
+  hideDrawer: (drawerState: false) => void;
+}) {
   const isActiveLinkClass = ({ isActive }: { isActive: boolean }) =>
     isActive
       ? 'button-link button-link-black button-link-active'
       : 'button-link button-link-black';
+
+  const handleClose = () => {
+    hideDrawer(false);
+  };
 
   return (
     <Drawer
@@ -31,6 +40,13 @@ function DashboardDrawer() {
       <Toolbar />
       <Box sx={{ overflow: 'auto' }}>
         <List>
+          <ListItem sx={{ display: 'block', textAlign: 'right' }}>
+            <CloseIcon
+              sx={{ fontSize: '2.5rem', cursor: 'pointer' }}
+              onClick={handleClose}
+            />
+          </ListItem>
+
           <NavLink to='/dashboard' className={isActiveLinkClass} end>
             <ListItem>
               <ListItemButton>
