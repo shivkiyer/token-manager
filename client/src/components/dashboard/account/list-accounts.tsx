@@ -1,24 +1,34 @@
-import { useLoaderData } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import AccountCard from './account-card';
 
 interface AccountData {
   data: any;
   message?: string;
+  ok?: boolean;
 }
 
 function ListAccounts() {
+  const [error, setError] = useState<string | null>(null);
+  const navigate = useNavigate();
   const accounts: AccountData = useLoaderData() as AccountData;
-  let error: string | null = null;
-  if (accounts === null) {
-    error = 'Unable to fetch accounts';
-  }
-  if (accounts.message !== undefined) {
-    error = accounts.message;
-  }
+
+  useEffect(() => {
+    if (accounts === null) {
+      setError('Unable to fetch accounts.');
+    } else if (accounts.message !== undefined) {
+      setError(accounts.message);
+    } else if (
+      (accounts.data === null || accounts.data === undefined) &&
+      !accounts.ok
+    ) {
+      navigate('/login');
+    }
+  }, [accounts, error, navigate]);
 
   return (
     <>
-      {accounts.data !== undefined ? (
+      {accounts !== null && accounts.data !== undefined ? (
         accounts.data.map((item: any) => (
           <AccountCard
             key={item.accountId}

@@ -1,10 +1,12 @@
+import { redirect } from 'react-router-dom';
+
 import apiCall from '../../../utils/http/api-call';
 import { authToken } from '../../../utils/auth/auth';
 
 async function accountsListLoader() {
   const userToken = authToken();
   if (userToken === null) {
-    return null;
+    return redirect('/login');
   }
   try {
     const response = await apiCall(
@@ -13,9 +15,6 @@ async function accountsListLoader() {
       { Authorization: userToken },
       null
     );
-    if (!response.ok) {
-      return response;
-    }
     const responseData = await response.json();
     return responseData;
   } catch (e) {
