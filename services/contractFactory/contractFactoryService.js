@@ -1,5 +1,4 @@
-const path = require('path');
-const fs = require('fs');
+const getContractFactoryTransaction = require('./../../utils/contracts/getContractFactoryTransaction');
 
 /**
  * Fetches the address of the deployed contract factory
@@ -8,25 +7,8 @@ const fs = require('fs');
  */
 const getAddress = async () => {
   try {
-    const rootPath = path.dirname(path.dirname(__dirname));
-    let chainId;
-    if (process.env.NODE_ENV === 'development') {
-      chainId = process.env.DEV_BLOCKCHAIN_ID;
-    }
-    const filePath = path.resolve(
-      rootPath,
-      process.env.BLOCKCHAIN_BASE_DIR,
-      'broadcast',
-      process.env.CONTRACT_FACTORY_NAME,
-      chainId,
-      'run-latest.json'
-    );
-    const broadcastFile = await fs.promises.readFile(filePath, {
-      encoding: 'utf8',
-      flag: 'r',
-    });
-    const broadcastObj = JSON.parse(broadcastFile);
-    const contract = broadcastObj.transactions.filter(
+    const contractJson = await getContractFactoryTransaction();
+    const contract = contractJson.transactions.filter(
       (transaction) =>
         transaction.transactionType.trim().toLowerCase() === 'create' &&
         transaction.contractName === 'TokenManagerFactory'
