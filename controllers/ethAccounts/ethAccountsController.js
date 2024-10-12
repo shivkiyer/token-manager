@@ -1,5 +1,3 @@
-const User = require('./../../db/models/user');
-
 const ethAccountsService = require('./../../services/ethAccounts/ethAccountsService');
 
 /**
