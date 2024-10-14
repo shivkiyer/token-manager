@@ -15,6 +15,22 @@ const getAddress = async (req, res) => {
   }
 };
 
+/**
+ * Returns the compiled contract factory ABI
+ * @param {Object} req Request
+ * @param {Object} res Response
+ * @throws {400} If contract ABI cannot be fetched
+ */
+const getAbi = async (req, res) => {
+  try {
+    const abi = await contractFactoryService.getAbi();
+    res.send({ data: abi });
+  } catch (e) {
+    res.status(400).send({ message: e });
+  }
+};
+
 module.exports = {
   getAddress,
+  getAbi,
 };

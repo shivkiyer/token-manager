@@ -11,4 +11,9 @@ router.get('/get-address', async (req, res) => {
   return response;
 });
 
+router.get('/get-abi', async (req, res) => {
+  const response = await contractFactoryController.getAbi(req, res);
+  return response;
+});
+
 module.exports = router;

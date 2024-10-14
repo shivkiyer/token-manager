@@ -1,4 +1,5 @@
 const getContractFactoryTransaction = require('./../../utils/contracts/getContractFactoryTransaction');
+const getContractFactoryAbi = require('./../../utils/contracts/getContractFactoryAbi');
 
 /**
  * Fetches the address of the deployed contract factory
@@ -23,6 +24,20 @@ const getAddress = async () => {
   }
 };
 
+/**
+ * Service method for returning compiled contract factory ABI
+ * @returns {Object} Contract factory ABI
+ */
+const getAbi = async () => {
+  try {
+    const abi = await getContractFactoryAbi();
+    return abi;
+  } catch(e) {
+    throw 'Contract JSON interface could not be fetched';
+  }
+};
+
 module.exports = {
   getAddress,
+  getAbi,
 };

@@ -16,7 +16,7 @@ const getContractFactoryTransaction = async () => {
     rootPath,
     process.env.BLOCKCHAIN_BASE_DIR,
     'broadcast',
-    process.env.CONTRACT_FACTORY_NAME,
+    `${process.env.CONTRACT_FACTORY_NAME}.s.sol`,
     chainId,
     'run-latest.json'
   );
