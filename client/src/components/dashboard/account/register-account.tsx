@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Grid from '@mui/material/Grid';
@@ -7,15 +7,16 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import apiCall from '../../../utils/http/api-call';
-import useEthereum from '../../../hooks/useEthereum';
+import verifyWeb3 from '../../../utils/web3/verifyWeb3';
+import { AppContext } from '../../../app/context/app-context-provider';
 import useTokenAuthentication from '../../../hooks/useTokenAuthentication';
 
 function RegisterAccount() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
-  const web3 = useEthereum();
   const userToken: string | null = useTokenAuthentication();
+  const { web3 } = useContext(AppContext);
 
   const validateHandler = () => {
     setSuccess(null);
@@ -30,41 +31,51 @@ function RegisterAccount() {
 
   const submitHandler = async (name: string, address: string) => {
     setLoading(true);
+
+    const web3AccountErr: string | null = await verifyWeb3(web3);
+    if (web3AccountErr !== null) {
+      setError(web3AccountErr);
+      setSuccess(null);
+      setLoading(false);
+      return;
+    }
     const accounts = await web3.eth.getAccounts();
     if (!accounts.includes(address)) {
       setError('Account is not linked in Metamask.');
       setSuccess(null);
-    } else {
-      try {
-        const authHeader = { Authorization: userToken || '' };
-        const response = await apiCall(
-          `${process.env.REACT_APP_BASE_API_URL}/api/eth-accounts/add`,
-          'POST',
-          authHeader,
-          { accountName: name.trim(), accountAddress: address.trim() }
-        );
-        const responseData = await response.json();
-        if (!response.ok) {
-          if (
-            responseData.message !== null ||
-            responseData.message !== undefined
-          ) {
-            setError(responseData.message);
-          } else {
-            throw '';
-          }
+      setLoading(false);
+      return;
+    }
+
+    try {
+      const authHeader = { Authorization: userToken || '' };
+      const response = await apiCall(
+        `${process.env.REACT_APP_BASE_API_URL}/api/eth-accounts/add`,
+        'POST',
+        authHeader,
+        { accountName: name.trim(), accountAddress: address.trim() }
+      );
+      const responseData = await response.json();
+      if (!response.ok) {
+        if (
+          responseData.message !== null ||
+          responseData.message !== undefined
+        ) {
+          setError(responseData.message);
         } else {
-          setSuccess(
-            'Account successfully added! Go to the LIST tab to view accounts.'
-          );
-          formik.values.name = '';
-          formik.values.address = '';
+          Object.assign(new Error());
         }
-      } catch (e) {
-        setError(
-          'Account could not be added. Please try again later or contact the admin.'
+      } else {
+        setSuccess(
+          'Account successfully added! Go to the LIST tab to view accounts.'
         );
+        formik.values.name = '';
+        formik.values.address = '';
       }
+    } catch (e) {
+      setError(
+        'Account could not be added. Please try again later or contact the admin.'
+      );
     }
     setLoading(false);
   };

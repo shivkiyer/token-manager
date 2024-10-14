@@ -7,6 +7,8 @@ import Dashboard from './components/dashboard/dashboard';
 import Wallets from './components/dashboard/wallets/wallets';
 import Tokens from './components/dashboard/tokens/tokens';
 import Account from './components/dashboard/account/account';
+import ListAccounts from './components/dashboard/account/list-accounts';
+import RegisterAccount from './components/dashboard/account/register-account';
 import Settings from './components/dashboard/settings/settings';
 import ErrorPage from './components/ErrorPage/error-page';
 
@@ -34,8 +36,14 @@ export const router = createBrowserRouter([
           { path: 'tokens', element: <Tokens /> },
           {
             path: 'account',
+            element: <Account />,
             children: [
-              { index: true, element: <Account />, loader: accountsListLoader },
+              {
+                path: 'list',
+                element: <ListAccounts />,
+                loader: accountsListLoader,
+              },
+              { path: 'create', element: <RegisterAccount /> },
             ],
           },
           { path: 'settings', element: <Settings /> },

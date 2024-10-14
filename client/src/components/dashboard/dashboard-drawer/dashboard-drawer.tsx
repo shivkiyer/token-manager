@@ -64,7 +64,7 @@ function DashboardDrawer({
         </List>
         <Divider />
         <List>
-          <NavLink to='/dashboard/account' className={isActiveLinkClass} end>
+          <NavLink to='/dashboard/account/list' className={isActiveLinkClass} end>
             <ListItem>
               <ListItemButton>
                 <span>Account</span>

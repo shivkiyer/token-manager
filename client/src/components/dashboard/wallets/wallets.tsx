@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 
+import { AppContext } from '../../../app/context/app-context-provider';
 import useTokenAuthentication from '../../../hooks/useTokenAuthentication';
-import useEthereum from '../../../hooks/useEthereum';
 
 function Wallets() {
   const userToken = useTokenAuthentication();
-  const web3 = useEthereum();
   const [web3Error, setWeb3Error] = useState<string | null>(null);
+  const { web3 } = useContext(AppContext);
 
   useEffect(() => {
     if (web3 === null) {
