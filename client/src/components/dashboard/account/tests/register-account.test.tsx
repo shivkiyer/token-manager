@@ -3,25 +3,42 @@ import userEvent from '@testing-library/user-event';
 
 describe('RegisterAccount', () => {
   let RegisterAccount: any;
+  let AppContext: any;
+  let testContextValue: any;
 
   beforeEach(async () => {
     jest.mock('./../../../../hooks/useTokenAuthentication', () => {
       return jest.fn().mockReturnValue('token123');
     });
-    const mockEthereum = jest.spyOn(
-      require('./../../../../hooks/useEthereum'),
+    const mockGetWeb3 = jest.spyOn(
+      require('./../../../../utils/web3/web3'),
       'default'
     );
-    mockEthereum.mockReturnValue({
-      eth: {
-        getAccounts: () => Promise.resolve(['test']),
-      },
+    mockGetWeb3.mockReturnValue(() => {
+      return {
+        eth: {
+          getAccounts: () => Promise.resolve(['test']),
+        },
+      };
     });
+    AppContext =
+      require('./../../../../app/context/app-context-provider').AppContext;
+    testContextValue = {
+      web3: {
+        eth: {
+          getAccounts: () => Promise.resolve(['test']),
+        },
+      },
+    };
   });
 
   it('should display empty account addition form with disabled Add button', async () => {
     RegisterAccount = require('./../register-account').default;
-    render(<RegisterAccount />);
+    render(
+      <AppContext.Provider value={testContextValue}>
+        <RegisterAccount />
+      </AppContext.Provider>
+    );
 
     await waitFor(() => {
       expect(screen.getByPlaceholderText('Name')).toBeInTheDocument();
@@ -34,7 +51,11 @@ describe('RegisterAccount', () => {
 
   it('should enable the Add button when name and address fields are filled', async () => {
     RegisterAccount = require('./../register-account').default;
-    render(<RegisterAccount />);
+    render(
+      <AppContext.Provider value={testContextValue}>
+        <RegisterAccount />
+      </AppContext.Provider>
+    );
 
     await waitFor(() => {
       expect(screen.getByPlaceholderText('Name')).toBeInTheDocument();
@@ -53,18 +74,20 @@ describe('RegisterAccount', () => {
   });
 
   it('should display an error if entered address is different from addresses linked from Metamask', async () => {
-    const mockEthereum = jest.spyOn(
-      require('./../../../../hooks/useEthereum'),
-      'default'
-    );
-    mockEthereum.mockReturnValue({
-      eth: {
-        getAccounts: () => Promise.resolve(['acc']),
+    testContextValue = {
+      web3: {
+        eth: {
+          getAccounts: () => Promise.resolve(['acc']),
+        },
       },
-    });
+    };
 
     RegisterAccount = require('./../register-account').default;
-    render(<RegisterAccount />);
+    render(
+      <AppContext.Provider value={testContextValue}>
+        <RegisterAccount />
+      </AppContext.Provider>
+    );
 
     await waitFor(() => {
       expect(screen.getByPlaceholderText('Name')).toBeInTheDocument();
@@ -102,7 +125,11 @@ describe('RegisterAccount', () => {
     mockApiCall.mockReturnValue(Promise.resolve(mockResponse));
 
     RegisterAccount = require('./../register-account').default;
-    render(<RegisterAccount />);
+    render(
+      <AppContext.Provider value={testContextValue}>
+        <RegisterAccount />
+      </AppContext.Provider>
+    );
 
     await waitFor(() => {
       expect(screen.getByPlaceholderText('Name')).toBeInTheDocument();
@@ -138,7 +165,11 @@ describe('RegisterAccount', () => {
     mockApiCall.mockReturnValue(Promise.resolve(mockResponse));
 
     RegisterAccount = require('./../register-account').default;
-    render(<RegisterAccount />);
+    render(
+      <AppContext.Provider value={testContextValue}>
+        <RegisterAccount />
+      </AppContext.Provider>
+    );
 
     await waitFor(() => {
       expect(screen.getByPlaceholderText('Name')).toBeInTheDocument();
