@@ -8,6 +8,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 import apiCall from '../../../utils/http/api-call';
 import verifyWeb3 from '../../../utils/web3/verifyWeb3';
+import isErrorInForm from '../../../utils/forms/isErrorInForm';
 import { AppContext } from '../../../app/context/app-context-provider';
 import useTokenAuthentication from '../../../hooks/useTokenAuthentication';
 
@@ -90,12 +91,7 @@ function RegisterAccount() {
   });
 
   const getDisabledStatus = () => {
-    if (Object.keys(formik.touched).length > 0) {
-      if (Object.keys(formik.errors).length === 0) {
-        return false;
-      }
-    }
-    return true;
+    return isErrorInForm(formik);
   };
 
   return (

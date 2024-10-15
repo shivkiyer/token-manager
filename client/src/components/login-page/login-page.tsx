@@ -14,6 +14,8 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 
+import isErrorInForm from '../../utils/forms/isErrorInForm';
+
 import classes from './login-page.module.css';
 
 function LoginPage() {
@@ -46,12 +48,7 @@ function LoginPage() {
   }, [navigation.state, actionData, navigate]);
 
   const getDisabledStatus = () => {
-    if (Object.keys(formik.touched).length > 0) {
-      if (Object.keys(formik.errors).length === 0) {
-        return false;
-      }
-    }
-    return true;
+    return isErrorInForm(formik);
   };
 
   const formik = useFormik({
