@@ -3,11 +3,11 @@ import { useState, useEffect } from 'react';
 
 import getWeb3 from '../../utils/web3/web3';
 
-export const AppContext = createContext<any>({
+export const Web3Context = createContext<any>({
   web3: null,
 });
 
-const AppContextProvider = (props: any) => {
+const Web3ContextProvider = (props: any) => {
   const [web3, setWeb3] = useState<any>(null);
 
   useEffect(() => {
@@ -25,10 +25,10 @@ const AppContextProvider = (props: any) => {
   }, [web3]);
 
   return (
-    <AppContext.Provider value={{ web3: web3 }}>
+    <Web3Context.Provider value={{ web3: web3 }}>
       {props.children}
-    </AppContext.Provider>
+    </Web3Context.Provider>
   );
 };
 
-export default AppContextProvider;
+export default Web3ContextProvider;

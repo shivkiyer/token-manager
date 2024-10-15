@@ -9,7 +9,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 import apiCall from '../../../utils/http/api-call';
 import verifyWeb3 from '../../../utils/web3/verifyWeb3';
 import isErrorInForm from '../../../utils/forms/isErrorInForm';
-import { AppContext } from '../../../app/context/app-context-provider';
+import { Web3Context } from '../../../app/context/web3-context-provider';
 import useTokenAuthentication from '../../../hooks/useTokenAuthentication';
 
 function RegisterAccount() {
@@ -17,7 +17,7 @@ function RegisterAccount() {
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
   const userToken: string | null = useTokenAuthentication();
-  const { web3 } = useContext(AppContext);
+  const { web3 } = useContext(Web3Context);
 
   const validateHandler = () => {
     setSuccess(null);
