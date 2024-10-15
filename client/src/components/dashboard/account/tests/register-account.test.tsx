@@ -3,7 +3,7 @@ import userEvent from '@testing-library/user-event';
 
 describe('RegisterAccount', () => {
   let RegisterAccount: any;
-  let AppContext: any;
+  let Web3Context: any;
   let testContextValue: any;
 
   beforeEach(async () => {
@@ -21,8 +21,8 @@ describe('RegisterAccount', () => {
         },
       };
     });
-    AppContext =
-      require('./../../../../app/context/app-context-provider').AppContext;
+    Web3Context =
+      require('./../../../../app/context/web3-context-provider').Web3Context;
     testContextValue = {
       web3: {
         eth: {
@@ -35,9 +35,9 @@ describe('RegisterAccount', () => {
   it('should display empty account addition form with disabled Add button', async () => {
     RegisterAccount = require('./../register-account').default;
     render(
-      <AppContext.Provider value={testContextValue}>
+      <Web3Context.Provider value={testContextValue}>
         <RegisterAccount />
-      </AppContext.Provider>
+      </Web3Context.Provider>
     );
 
     await waitFor(() => {
@@ -52,9 +52,9 @@ describe('RegisterAccount', () => {
   it('should enable the Add button when name and address fields are filled', async () => {
     RegisterAccount = require('./../register-account').default;
     render(
-      <AppContext.Provider value={testContextValue}>
+      <Web3Context.Provider value={testContextValue}>
         <RegisterAccount />
-      </AppContext.Provider>
+      </Web3Context.Provider>
     );
 
     await waitFor(() => {
@@ -84,9 +84,9 @@ describe('RegisterAccount', () => {
 
     RegisterAccount = require('./../register-account').default;
     render(
-      <AppContext.Provider value={testContextValue}>
+      <Web3Context.Provider value={testContextValue}>
         <RegisterAccount />
-      </AppContext.Provider>
+      </Web3Context.Provider>
     );
 
     await waitFor(() => {
@@ -126,9 +126,9 @@ describe('RegisterAccount', () => {
 
     RegisterAccount = require('./../register-account').default;
     render(
-      <AppContext.Provider value={testContextValue}>
+      <Web3Context.Provider value={testContextValue}>
         <RegisterAccount />
-      </AppContext.Provider>
+      </Web3Context.Provider>
     );
 
     await waitFor(() => {
@@ -166,9 +166,9 @@ describe('RegisterAccount', () => {
 
     RegisterAccount = require('./../register-account').default;
     render(
-      <AppContext.Provider value={testContextValue}>
+      <Web3Context.Provider value={testContextValue}>
         <RegisterAccount />
-      </AppContext.Provider>
+      </Web3Context.Provider>
     );
 
     await waitFor(() => {
