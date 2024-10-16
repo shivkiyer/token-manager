@@ -65,7 +65,32 @@ const login = async (req, res) => {
   }
 };
 
+/**
+ * Controller for searching users
+ * @param {Object} req Request
+ * @param {Object} res Response
+ * @returns {Object} List of users
+ * @throws {400} If no user found
+ */
+const searchUser = async (req, res) => {
+  let searchString = req.query.user;
+  if (searchString === null || searchString === undefined) {
+    return res.status(400).send({ message: 'Missing search query' });
+  }
+  searchString = searchString.trim();
+  if (searchString.length === 0) {
+    return res.status(400).send({ message: 'Empty search query' });
+  }
+  try {
+    const users = await authService.searchUser(searchString);
+    res.send({ data: users });
+  } catch (e) {
+    res.status(400).send({ message: e });
+  }
+};
+
 module.exports = {
   signUp,
   login,
+  searchUser,
 };

@@ -1,5 +1,6 @@
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
+const { Op } = require('sequelize');
 
 const User = require('./../../db/models/user');
 
@@ -65,7 +66,41 @@ const login = async (username, password) => {
   }
 };
 
+/**
+ * Searching for users using email, name or designation
+ * @param {string} searchString
+ * @returns {Object} List of users
+ * @throws {Error} If no user found
+ */
+const searchUser = async (searchString) => {
+  try {
+    const users = await User.findAll({
+      where: {
+        [Op.or]: {
+          username: { [Op.like]: '%' + searchString + '%' },
+          name: { [Op.like]: '%' + searchString + '%' },
+          designation: { [Op.like]: '%' + searchString + '%' },
+        },
+      },
+    });
+    if (users.length === 0) {
+      throw '';
+    }
+    const usersData = users.map((user) => {
+      return {
+        username: user.username,
+        name: user.name,
+        designation: user.designation,
+      };
+    });
+    return usersData;
+  } catch (e) {
+    throw 'No user found';
+  }
+};
+
 module.exports = {
   signUp,
   login,
+  searchUser,
 };
