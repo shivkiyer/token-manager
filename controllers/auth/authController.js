@@ -14,6 +14,8 @@ const authDataValidator = require('./../../utils/auth/authDataValidator');
 const signUp = async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
+  const name = req.body.name;
+  const designation = req.body.designation;
 
   const errMsg = authDataValidator(req.body);
   if (errMsg !== null) {
@@ -22,7 +24,12 @@ const signUp = async (req, res) => {
   }
 
   try {
-    const newUser = await authService.signUp(username, password);
+    const newUser = await authService.signUp({
+      username,
+      password,
+      name,
+      designation,
+    });
     req.log.info(`Successfully new user ${username}`);
     return res.status(201).send({ data: newUser });
   } catch (e) {

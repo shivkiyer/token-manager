@@ -16,7 +16,7 @@ const getUserFromEmail = require('./../../utils/auth/getUserFromEmail');
  * @throws Error if username exists in database
  * @throws Error if password could not be encrypted
  */
-const signUp = async (username, password) => {
+const signUp = async ({ username, password, name, designation }) => {
   if (!emailValidator(username)) {
     throw 'Username not a valid email address';
   }
@@ -29,6 +29,8 @@ const signUp = async (username, password) => {
     await User.create({
       username,
       password: encryptedPassword,
+      name,
+      designation,
     });
     return username;
   } catch (e) {

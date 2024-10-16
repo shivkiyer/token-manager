@@ -6,6 +6,14 @@ class User extends Model {}
 
 User.init(
   {
+    name: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    designation: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     username: {
       type: DataTypes.STRING,
       allowNull: false,
