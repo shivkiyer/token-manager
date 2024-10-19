@@ -8,6 +8,7 @@ const initializeModels = require('./../../db/config/initializeModels');
 const setupTestDb = async () => {
   try {
     await sequelize.authenticate();
+    await sequelize. dropAllSchemas();
     await initializeModels();
     return sequelize;
   } catch (e) {

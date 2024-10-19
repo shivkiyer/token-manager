@@ -27,7 +27,7 @@ describe('/api/eth-accounts', () => {
     try {
       await sequelize.authenticate();
       await User.destroy({ truncate: { cascade: true } });
-      await Account.destroy({ truncate: true });
+      await Account.destroy({ truncate: { cascade: true } });
 
       testUser = await createTestUser({
         username: 'abc@gmail.com',
