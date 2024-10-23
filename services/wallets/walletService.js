@@ -1,6 +1,7 @@
-const Account = require('./../../db/models/account');
 const Wallet = require('./../../db/models/wallet');
-const isUserWalletOwner = require('../../utils/wallets/isUserWalletOwner');
+const getAccountByAddress = require('./../../utils/accounts/getAccountByAddress');
+const isUserWalletOwner = require('./../../utils/wallets/isUserWalletOwner');
+const getWalletByAddress = require('./../../utils/wallets/getWalletByAddress');
 
 /**
  * Creates a new wallet with an ETH account as owner
@@ -18,12 +19,7 @@ const createWallet = async ({
   maxLimit,
   owner,
 }) => {
-  let accountOwner;
-  try {
-    accountOwner = await Account.findOne({ where: { address: owner } });
-  } catch (e) {
-    throw 'Owner not found';
-  }
+  const accountOwner = await getAccountByAddress(owner);
 
   const checkWallet = await Wallet.findAll({
     where: { name, ownerId: accountOwner.userId },
@@ -57,19 +53,8 @@ const createWallet = async ({
  * @throws {Error} If account is already a wallet user
  */
 const addUser = async (username, accountAddress, walletAddress) => {
-  let account;
-  let wallet;
-  try {
-    account = await Account.findOne({ where: { address: accountAddress } });
-  } catch (e) {
-    throw 'User ETH account could not be found';
-  }
-
-  try {
-    wallet = await Wallet.findOne({ where: { address: walletAddress } });
-  } catch (e) {
-    throw 'Wallet could not be found';
-  }
+  const account = await getAccountByAddress(accountAddress);
+  const wallet = await getWalletByAddress(walletAddress);
 
   const userWalletOwnerCheck = await isUserWalletOwner(username, wallet);
   if (!userWalletOwnerCheck) {
