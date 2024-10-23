@@ -34,13 +34,13 @@ const createWallet = async (req, res) => {
  */
 const addUser = async (req, res) => {
   const { username } = req;
-  const { account } = req.body;
+  const { accounts } = req.body;
   const { address: walletAddress } = req.params;
 
   try {
     const result = await walletService.addUser(
       username,
-      account,
+      accounts,
       walletAddress
     );
     res.send({ data: result });

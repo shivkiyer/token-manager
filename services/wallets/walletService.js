@@ -1,7 +1,9 @@
 const Wallet = require('./../../db/models/wallet');
 const getAccountByAddress = require('./../../utils/accounts/getAccountByAddress');
+const getAccountsByAddresses = require('./../../utils/accounts/getAccountsByAddresses');
 const isUserWalletOwner = require('./../../utils/wallets/isUserWalletOwner');
 const getWalletByAddress = require('./../../utils/wallets/getWalletByAddress');
+const areAccountUsersInWallet = require('./../../utils/wallets/areAccountUsersInWallet');
 
 /**
  * Creates a new wallet with an ETH account as owner
@@ -45,15 +47,14 @@ const createWallet = async ({
 /**
  * Adds an account as a wallet user
  * @param {string} username User email
- * @param {string} accountAddress Account ETH address
+ * @param {string[]} accountAddresses Array of account ETH addresses
  * @param {string} walletAddress Wallet ETH address
- * @returns {Object} Account and wallet address
- * @throws {Error} If account or wallet cannot be found
+ * @returns {Object} Wallet address
+ * @throws {Error} If accounts or wallet cannot be found
  * @throws {Error} If logged-in user is not the owner of the wallet
- * @throws {Error} If account is already a wallet user
  */
-const addUser = async (username, accountAddress, walletAddress) => {
-  const account = await getAccountByAddress(accountAddress);
+const addUser = async (username, accountAddresses, walletAddress) => {
+  const accounts = await getAccountsByAddresses(accountAddresses);
   const wallet = await getWalletByAddress(walletAddress);
 
   const userWalletOwnerCheck = await isUserWalletOwner(username, wallet);
@@ -61,19 +62,18 @@ const addUser = async (username, accountAddress, walletAddress) => {
     throw 'Only wallet owner can add users';
   }
 
-  const checkAccountInWallet = await wallet.hasUser(account);
-  if (checkAccountInWallet) {
-    throw 'Account already added to wallet';
+  const checkAccountsInWallet = await areAccountUsersInWallet(accounts, wallet);
+  if (checkAccountsInWallet) {
+    throw 'One or more accounts already added to wallet';
   }
 
   try {
-    await wallet.addUser(account);
+    await wallet.addUser(accounts);
   } catch (e) {
     throw 'Account could not be added to wallet';
   }
 
   return {
-    accountAddress: account.address,
     walletAddress: wallet.address,
   };
 };
