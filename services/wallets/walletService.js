@@ -1,5 +1,6 @@
 const Account = require('./../../db/models/account');
 const Wallet = require('./../../db/models/wallet');
+const isUserWalletOwner = require('../../utils/wallets/isUserWalletOwner');
 
 /**
  * Creates a new wallet with an ETH account as owner
@@ -45,6 +46,54 @@ const createWallet = async ({
   }
 };
 
+/**
+ * Adds an account as a wallet user
+ * @param {string} username User email
+ * @param {string} accountAddress Account ETH address
+ * @param {string} walletAddress Wallet ETH address
+ * @returns {Object} Account and wallet address
+ * @throws {Error} If account or wallet cannot be found
+ * @throws {Error} If logged-in user is not the owner of the wallet
+ * @throws {Error} If account is already a wallet user
+ */
+const addUser = async (username, accountAddress, walletAddress) => {
+  let account;
+  let wallet;
+  try {
+    account = await Account.findOne({ where: { address: accountAddress } });
+  } catch (e) {
+    throw 'User ETH account could not be found';
+  }
+
+  try {
+    wallet = await Wallet.findOne({ where: { address: walletAddress } });
+  } catch (e) {
+    throw 'Wallet could not be found';
+  }
+
+  const userWalletOwnerCheck = await isUserWalletOwner(username, wallet);
+  if (!userWalletOwnerCheck) {
+    throw 'Only wallet owner can add users';
+  }
+
+  const checkAccountInWallet = await wallet.hasUser(account);
+  if (checkAccountInWallet) {
+    throw 'Account already added to wallet';
+  }
+
+  try {
+    await wallet.addUser(account);
+  } catch (e) {
+    throw 'Account could not be added to wallet';
+  }
+
+  return {
+    accountAddress: account.address,
+    walletAddress: wallet.address,
+  };
+};
+
 module.exports = {
   createWallet,
+  addUser,
 };

@@ -9,7 +9,6 @@ Wallet.init(
     name: {
       type: DataTypes.STRING,
       allowNull: false,
-      unique: true,
     },
     description: {
       type: DataTypes.STRING(600),
@@ -18,6 +17,7 @@ Wallet.init(
     address: {
       type: DataTypes.STRING,
       allowNull: false,
+      unique: true,
     },
     maxLimit: {
       type: DataTypes.DOUBLE,

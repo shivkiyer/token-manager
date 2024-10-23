@@ -24,6 +24,32 @@ const createWallet = async (req, res) => {
   }
 };
 
+/**
+ * Controller for adding an account as a wallet user/withdrawer
+ * @param {Object} req Request
+ * @param {Object} res Response
+ * @throws {400} If account or wallet cannot be found
+ * @throws {400} If logged in user is not owner of wallet
+ * @throws {400} If account has already been added as a wallet user
+ */
+const addUser = async (req, res) => {
+  const { username } = req;
+  const { account } = req.body;
+  const { address: walletAddress } = req.params;
+
+  try {
+    const result = await walletService.addUser(
+      username,
+      account,
+      walletAddress
+    );
+    res.send({ data: result });
+  } catch (e) {
+    res.status(400).send({ message: e });
+  }
+};
+
 module.exports = {
   createWallet,
+  addUser,
 };
