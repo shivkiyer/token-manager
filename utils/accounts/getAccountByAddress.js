@@ -8,8 +8,8 @@ const Account = require('./../../db/models/account');
  */
 const getAccountByAddress = async (address) => {
   try {
-    const accountOwner = await Account.findOne({ where: { address } });
-    return accountOwner;
+    const account = await Account.findOne({ where: { address } });
+    return account;
   } catch (e) {
     throw 'Account not found';
   }
