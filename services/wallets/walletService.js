@@ -24,7 +24,7 @@ const createWallet = async ({
   const accountOwner = await getAccountByAddress(owner);
 
   const checkWallet = await Wallet.findAll({
-    where: { name, ownerId: accountOwner.userId },
+    where: { name, ownerId: accountOwner.id },
   });
   if (checkWallet.length > 0) {
     throw 'Wallet with the same name exists';
