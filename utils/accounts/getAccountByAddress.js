@@ -9,6 +9,9 @@ const Account = require('./../../db/models/account');
 const getAccountByAddress = async (address) => {
   try {
     const account = await Account.findOne({ where: { address } });
+    if (account === null || account === undefined) {
+      throw '';
+    }
     return account;
   } catch (e) {
     throw 'Account not found';
