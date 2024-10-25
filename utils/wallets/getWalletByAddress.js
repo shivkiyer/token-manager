@@ -9,6 +9,9 @@ const Wallet = require('./../../db/models/wallet');
 const getWalletByAddress = async (address) => {
   try {
     const wallet = await Wallet.findOne({ where: { address: address } });
+    if (wallet === null || wallet === 'undefined') {
+      throw '';
+    }
     return wallet;
   } catch (e) {
     throw 'Wallet could not be found';

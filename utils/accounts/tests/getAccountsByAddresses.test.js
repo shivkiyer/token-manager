@@ -64,7 +64,7 @@ describe('getAccountsByAddresses', () => {
 
     try {
       const result = await getAccountsByAddresses(['addr3']);
-    } catch(e) {
+    } catch (e) {
       expect(e).toBe('One or more accounts could not be found');
     }
   });
@@ -74,7 +74,7 @@ describe('getAccountsByAddresses', () => {
 
     try {
       const result = await getAccountsByAddresses(['addr1', 'addr2', 'addr3']);
-    } catch(e) {
+    } catch (e) {
       expect(e).toBe('One or more accounts could not be found');
     }
   });
