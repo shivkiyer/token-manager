@@ -1,3 +1,5 @@
+const User = require('./../../db/models/user');
+const Account = require('./../../db/models/account');
 const Wallet = require('./../../db/models/wallet');
 const getAccountByAddress = require('./../../utils/accounts/getAccountByAddress');
 const getAccountsByAddresses = require('./../../utils/accounts/getAccountsByAddresses');
@@ -23,9 +25,32 @@ const createWallet = async ({
 }) => {
   const accountOwner = await getAccountByAddress(owner);
 
-  const checkWallet = await Wallet.findAll({
-    where: { name, ownerId: accountOwner.id },
-  });
+  // const checkWallet = await Wallet.findAll({
+  //   where: { name, ownerId: accountOwner.id },
+  // });
+  let checkWallet;
+  try {
+    checkWallet = await Wallet.findAll({
+      where: { name },
+      include: [
+        {
+          model: Account,
+          as: 'owner',
+          required: true,
+          include: [
+            {
+              model: User,
+              required: true,
+              where: { id: accountOwner.userId },
+            },
+          ],
+        },
+      ],
+    });
+  } catch (e) {
+    throw 'Could not create wallet';
+  }
+
   if (checkWallet.length > 0) {
     throw 'Wallet with the same name exists';
   }

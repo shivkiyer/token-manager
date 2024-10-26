@@ -1,4 +1,5 @@
 const walletService = require('./../../services/wallets/walletService');
+const requestDataValidator = require('./../../utils/http/requestDataValidator');
 
 /**
  * Controller to creatina new wallet
@@ -9,6 +10,16 @@ const walletService = require('./../../services/wallets/walletService');
  */
 const createWallet = async (req, res) => {
   const { name, description, address, maxLimit, owner } = req.body;
+
+  const requestBodyCheck = requestDataValidator(req, [
+    'name',
+    'address',
+    'maxLimit',
+    'owner',
+  ]);
+  if (requestBodyCheck !== null) {
+    return res.status(400).send({ message: requestBodyCheck });
+  }
 
   try {
     const result = await walletService.createWallet({
