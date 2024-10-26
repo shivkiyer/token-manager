@@ -1,5 +1,5 @@
 const authService = require('./../../services/auth/authService');
-const authDataValidator = require('./../../utils/auth/authDataValidator');
+const requestDataValidator = require('./../../utils/http/requestDataValidator');
 
 /**
  * Controller for registering new user
@@ -17,7 +17,7 @@ const signUp = async (req, res) => {
   const name = req.body.name;
   const designation = req.body.designation;
 
-  const errMsg = authDataValidator(req.body);
+  const errMsg = requestDataValidator(req, ['username', 'password']);
   if (errMsg !== null) {
     req.log.error(`Error creating new user: ${errMsg}`);
     return res.status(400).send({ message: errMsg });
@@ -50,7 +50,7 @@ const login = async (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  const errMsg = authDataValidator(req.body);
+  const errMsg = requestDataValidator(req, ['username', 'password']);
   if (errMsg !== null) {
     return res.status(400).send({ message: errMsg });
   }

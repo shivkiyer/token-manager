@@ -57,7 +57,7 @@ describe('/api/auth/signup', () => {
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json');
     expect(response.status).toBe(400);
-    expect(response.body.message).toBe('Password is required');
+    expect(response.body.message).toBe('password is required');
   });
 
   it('should return 400 error if username is missing', async () => {
@@ -69,7 +69,7 @@ describe('/api/auth/signup', () => {
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json');
     expect(response.status).toBe(400);
-    expect(response.body.message).toBe('Username is required');
+    expect(response.body.message).toBe('username is required');
   });
 
   it('should return 400 error if username is not a valid email', async () => {

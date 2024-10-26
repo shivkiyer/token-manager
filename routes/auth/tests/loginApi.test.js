@@ -58,7 +58,7 @@ describe('/api/auth/login', () => {
       .set('Accept', 'application/json');
 
     expect(response.status).toBe(400);
-    expect(response.body.message).toBe('Password is required');
+    expect(response.body.message).toBe('password is required');
   });
 
   it('should return a 400 status if username is missing', async () => {
@@ -69,7 +69,7 @@ describe('/api/auth/login', () => {
       .set('Accept', 'application/json');
 
     expect(response.status).toBe(400);
-    expect(response.body.message).toBe('Username is required');
+    expect(response.body.message).toBe('username is required');
   });
 
   it('should return 401 status if user is not found', async () => {
