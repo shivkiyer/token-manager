@@ -9,6 +9,7 @@ const requestDataValidator = require('./../../utils/http/requestDataValidator');
  * @throws {400} If wallet could not be created if owner not found or same name exists
  */
 const createWallet = async (req, res) => {
+  const { username } = req;
   const { name, description, address, maxLimit, owner } = req.body;
 
   const requestBodyCheck = requestDataValidator(req, [
@@ -23,6 +24,7 @@ const createWallet = async (req, res) => {
 
   try {
     const result = await walletService.createWallet({
+      username,
       name,
       description,
       address,

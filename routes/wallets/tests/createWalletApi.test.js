@@ -166,6 +166,8 @@ describe('createWallet API', () => {
   it('should not allow a single user to create multiple wallets with the same name', async () => {
     const testJwt = await createTestJwt('abc@gmail.com');
     let response;
+
+    // Wallet created by testAccount - user abc@gmail.com
     response = await request(server)
       .post('/api/wallets/create')
       .send({
@@ -181,6 +183,7 @@ describe('createWallet API', () => {
 
     expect(response.status).toBe(201);
 
+    // FAIL - Wallet with same name by testAccount - user abc@gmail.com
     response = await request(server)
       .post('/api/wallets/create')
       .send({
@@ -197,6 +200,7 @@ describe('createWallet API', () => {
     expect(response.status).toBe(400);
     expect(response.body.message).toBe('Wallet with the same name exists');
 
+    // Create new user and account with this user
     const newTestUser = await createTestUser({
       username: 'def@gmail.com',
       password: 'xyz',
@@ -205,8 +209,9 @@ describe('createWallet API', () => {
       name: 'Acc 2',
       address: 'Acc addr 2',
     });
-
     const newTestJwt = await createTestJwt('def@gmail.com');
+
+    // Create wallet with same name by new account from new user
     response = await request(server)
       .post('/api/wallets/create')
       .send({
@@ -222,11 +227,13 @@ describe('createWallet API', () => {
 
     expect(response.status).toBe(201);
 
-    const anotherTestAccount = await testUser.createAccount({
+    // Create another account with this new user - def@gmail.com
+    const anotherTestAccount = await newTestUser.createAccount({
       name: 'Acc 3',
       address: 'Acc addr 3',
     });
 
+    // FAIL - Create wallet with same name with new account with def@gmail.com
     response = await request(server)
       .post('/api/wallets/create')
       .send({
@@ -241,5 +248,68 @@ describe('createWallet API', () => {
       .set('Authorization', newTestJwt);
 
     expect(response.status).toBe(400);
+
+    // Wallet with different name created by new user account
+    response = await request(server)
+      .post('/api/wallets/create')
+      .send({
+        name: 'Wallet 2',
+        description: 'Wallet descr 1',
+        address: 'Wallet addr4',
+        maxLimit: 0.1,
+        owner: anotherTestAccount.address,
+      })
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json')
+      .set('Authorization', newTestJwt);
+
+    expect(response.status).toBe(201);
+  });
+
+  it('should check if authenticated user is the owner of the account', async () => {
+    const newTestAccount = await createTestUser({
+      username: 'def@gmail.com',
+      password: 'xyz',
+    });
+    const testJwt = await createTestJwt('def@gmail.com');
+    let response;
+
+    // Wallet created by def@gmail.com but through testAccount/abc@gmail.com
+    response = await request(server)
+      .post('/api/wallets/create')
+      .send({
+        name: 'Wallet 1',
+        description: 'Wallet descr 1',
+        address: 'Wallet addr1',
+        maxLimit: 0.1,
+        owner: testAccount.address,
+      })
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json')
+      .set('Authorization', testJwt);
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe(
+      'Only the account owner can use the account to create a wallet'
+    );
+
+    const newTestJwt = await createTestJwt('ghi@gmail.com');
+
+    // Trying to create a wallet from an unknown user
+    response = await request(server)
+      .post('/api/wallets/create')
+      .send({
+        name: 'Wallet 1',
+        description: 'Wallet descr 1',
+        address: 'Wallet addr1',
+        maxLimit: 0.1,
+        owner: testAccount.address,
+      })
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json')
+      .set('Authorization', newTestJwt);
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe('User not found');
   });
 });
