@@ -100,6 +100,10 @@ describe('isUserWalletOwner', () => {
     }
   });
 
+  afterAll(async () => {
+    await sequelize.close();
+  });
+
   it('should correctly identify the users through owner accounts', async () => {
     const result1 = await isUserWalletOwner('abc1@gmail.com', testWallets[0]);
     expect(result1).toBe(true);

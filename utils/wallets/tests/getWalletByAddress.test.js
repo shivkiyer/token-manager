@@ -43,6 +43,10 @@ describe('getWalletByAddress', () => {
     }
   });
 
+  afterAll(async () => {
+    await sequelize.close();
+  });
+
   it('should return a wallet if address is present in db', async () => {
     const getWalletByAddress = require('./../getWalletByAddress');
 
