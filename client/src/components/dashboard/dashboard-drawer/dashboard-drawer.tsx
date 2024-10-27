@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
@@ -13,10 +13,14 @@ function DashboardDrawer({
 }: {
   hideDrawer: (drawerState: false) => void;
 }) {
-  const isActiveLinkClass = ({ isActive }: { isActive: boolean }) =>
-    isActive
-      ? 'button-link button-link-black button-link-active'
-      : 'button-link button-link-black';
+  const {pathname: currentUrl} = useLocation();
+
+  const isActiveLinkClass = (path: string) => {
+    if (currentUrl.includes(path)) {
+      return 'button-link button-link-black button-link-active';
+    }
+    return 'button-link button-link-black';
+  };
 
   const handleClose = () => {
     hideDrawer(false);
@@ -47,14 +51,21 @@ function DashboardDrawer({
             />
           </ListItem>
 
-          <NavLink to='/dashboard' className={isActiveLinkClass} end>
+          <NavLink
+            to='/dashboard/wallet/list'
+            className={() => isActiveLinkClass('/dashboard/wallet')}
+            end
+          >
             <ListItem>
               <ListItemButton>
                 <span>Wallets</span>
               </ListItemButton>
             </ListItem>
           </NavLink>
-          <NavLink to='/dashboard/tokens' className={isActiveLinkClass} end>
+          <NavLink to='/dashboard/tokens'
+          className={() => isActiveLinkClass('/dashboard/tokens')}
+          end
+          >
             <ListItem>
               <ListItemButton>
                 <span>Tokens</span>
@@ -64,14 +75,21 @@ function DashboardDrawer({
         </List>
         <Divider />
         <List>
-          <NavLink to='/dashboard/account/list' className={isActiveLinkClass} end>
+          <NavLink
+            to='/dashboard/account/list'
+            className={() => isActiveLinkClass('/dashboard/account')}
+            end
+          >
             <ListItem>
               <ListItemButton>
                 <span>Account</span>
               </ListItemButton>
             </ListItem>
           </NavLink>
-          <NavLink to='/dashboard/settings' className={isActiveLinkClass} end>
+          <NavLink to='/dashboard/settings'
+          className={() => isActiveLinkClass('/dashboard/settings')}
+          end
+          >
             <ListItem>
               <ListItemButton>
                 <span>Settings</span>

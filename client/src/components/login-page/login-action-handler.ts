@@ -19,7 +19,7 @@ const loginActionHandler = async ({ request }: { request: Request }) => {
   if (response.ok) {
     if (responseData.data !== null) {
       localStorage.setItem('token', responseData.data);
-      return redirect('/dashboard');
+      return redirect('/dashboard/wallet');
     }
   }
 

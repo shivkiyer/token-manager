@@ -1,22 +1,52 @@
-import { useContext, useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
+import { Outlet, useNavigate, useLocation } from 'react-router-dom';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import Box from '@mui/material/Box';
 
-import { Web3Context } from '../../../app/context/web3-context-provider';
 import useTokenAuthentication from '../../../hooks/useTokenAuthentication';
 
 function Wallets() {
+  const { pathname } = useLocation();
   const userToken = useTokenAuthentication();
-  const [web3Error, setWeb3Error] = useState<string | null>(null);
-  const { web3 } = useContext(Web3Context);
+
+  const [registerWallet, setRegisterWallet] = useState<number>(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    if (web3 === null) {
-      setWeb3Error('Please ensure Metamask wallet is unlocked and connected.');
+    if (pathname.includes('create')) {
+      setRegisterWallet(1);
+      navigate('/dashboard/wallet/create');
     } else {
-      setWeb3Error(null);
+      setRegisterWallet(0);
+      navigate('/dashboard/wallet/list');
     }
-  }, [web3]);
+  }, [pathname, navigate, setRegisterWallet]);
 
-  return web3Error ? <h4>{web3Error}</h4> : <h4>Wallets come here</h4>;
+  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
+    setRegisterWallet(newValue);
+    if (newValue) {
+      navigate('/dashboard/wallet/create');
+    } else {
+      navigate('/dashboard/wallet/list');
+    }
+  };
+
+  return (
+    <>
+      <Tabs
+        value={registerWallet}
+        onChange={handleChange}
+        aria-label='basic tabs example'
+      >
+        <Tab label='LIST' />
+        <Tab label='CREATE' />
+      </Tabs>
+      <Box sx={{ mt: 5 }}>
+        <Outlet></Outlet>
+      </Box>
+    </>
+  );
 }
 
 export default Wallets;

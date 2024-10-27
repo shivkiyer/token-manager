@@ -9,6 +9,8 @@ import Tokens from './components/dashboard/tokens/tokens';
 import Account from './components/dashboard/account/account';
 import ListAccounts from './components/dashboard/account/list-accounts';
 import RegisterAccount from './components/dashboard/account/register-account';
+import ListWallets from './components/dashboard/wallets/list-wallets';
+import RegisterWallet from './components/dashboard/wallets/register-wallet';
 import Settings from './components/dashboard/settings/settings';
 import ErrorPage from './components/ErrorPage/error-page';
 
@@ -32,7 +34,17 @@ export const router = createBrowserRouter([
         element: <Dashboard />,
         errorElement: <ErrorPage />,
         children: [
-          { index: true, element: <Wallets /> },
+          {
+            path: 'wallet',
+            element: <Wallets />,
+            children: [
+              {
+                path: 'list',
+                element: <ListWallets />,
+              },
+              { path: 'create', element: <RegisterWallet /> },
+            ],
+          },
           { path: 'tokens', element: <Tokens /> },
           {
             path: 'account',
