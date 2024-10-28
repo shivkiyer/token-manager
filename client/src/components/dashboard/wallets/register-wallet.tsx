@@ -1,16 +1,21 @@
 import { useState, useContext, useEffect, useCallback } from 'react';
+import { useFormik } from 'formik';
+import * as Yup from 'yup';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import RefreshIcon from '@mui/icons-material/Refresh';
+import CircularProgress from '@mui/material/CircularProgress';
 
 import { Web3Context } from './../../../app/context/web3-context-provider';
 import formatEthAddress from '../../../utils/web3/formatEthAddress';
+import isErrorInForm from '../../../utils/forms/isErrorInForm';
 
 function RegisterWallet() {
   const [web3Error, setWeb3Error] = useState<string | null>(null);
   const [ownerAccount, setOwnerAccount] = useState<string | null>(null);
-  const { web3 } = useContext(Web3Context);
+  const [loading, setLoading] = useState<boolean>(false);
+  const { web3, contractFactoryAddress, contractFactoryAbi } = useContext(Web3Context);
 
   const getEthAccounts = useCallback(async () => {
     if (web3 !== null && web3 !== undefined) {
@@ -36,12 +41,47 @@ function RegisterWallet() {
     }
   }, [web3, getEthAccounts]);
 
+  const validateHandler = () => {
+    return Yup.object({
+      name: Yup.string()
+        .min(2, 'Must be at least two characters')
+        .required('Required'),
+      description: Yup.string().max(6000, 'Must be less than 6000 characters'),
+      maxLimit: Yup.number()
+        .required('Required')
+        .positive('Max withdrawal limit must be positive')
+        .typeError('Max withdrawal limit must be a number'),
+    });
+  };
+
+  const submitHandler = (values: {
+    name: string;
+    description: string;
+    maxLimit: string;
+  }) => {
+    console.log(values);
+  };
+
+  const formik = useFormik({
+    initialValues: {
+      name: '',
+      description: '',
+      maxLimit: '',
+    },
+    validationSchema: validateHandler,
+    onSubmit: (values) => submitHandler(values),
+  });
+
+  const getDisabledStatus = () => {
+    return isErrorInForm(formik);
+  };
+
   return (
     <>
       {web3Error !== null ? (
         <h3>{web3Error}</h3>
       ) : (
-        <>
+        <form onSubmit={formik.handleSubmit}>
           <Grid
             container
             alignContent='center'
@@ -53,8 +93,14 @@ function RegisterWallet() {
                 name='name'
                 variant='standard'
                 placeholder='Wallet name'
+                value={formik.values.name}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 fullWidth
               ></TextField>
+              {formik.touched.name && formik.errors.name && (
+                <p className='error-message'>{formik.errors.name}</p>
+              )}
             </Grid>
           </Grid>
 
@@ -69,10 +115,16 @@ function RegisterWallet() {
                 name='description'
                 variant='standard'
                 placeholder='Wallet description'
+                value={formik.values.description}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 fullWidth
                 multiline
                 maxRows={4}
               ></TextField>
+              {formik.touched.description && formik.errors.description && (
+                <p className='error-message'>{formik.errors.description}</p>
+              )}
             </Grid>
           </Grid>
 
@@ -87,8 +139,14 @@ function RegisterWallet() {
                 name='maxLimit'
                 variant='standard'
                 placeholder='Maximum withdrawal limit (in ether)'
+                value={formik.values.maxLimit}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
                 fullWidth
               ></TextField>
+              {formik.touched.maxLimit && formik.errors.maxLimit && (
+                <p className='error-message'>{formik.errors.maxLimit}</p>
+              )}
             </Grid>
           </Grid>
 
@@ -133,27 +191,20 @@ function RegisterWallet() {
             marginTop={5}
           >
             <Grid item xs={10} md={6} sx={{ textAlign: 'center' }}>
-              <Button
-                variant='contained'
-                type='submit'
-                //disabled={getDisabledStatus()}
-              >
-                Create Wallet
-              </Button>
-              {/* {loading ? (
-              <CircularProgress size={26} />
-            ) : (
-              <Button
-                variant='contained'
-                type='submit'
-                disabled={getDisabledStatus()}
-              >
-                Add
-              </Button>
-            )} */}
+              {loading ? (
+                <CircularProgress size={26} />
+              ) : (
+                <Button
+                  variant='contained'
+                  type='submit'
+                  disabled={getDisabledStatus()}
+                >
+                  Create Wallet
+                </Button>
+              )}
             </Grid>
           </Grid>
-        </>
+        </form>
       )}
     </>
   );
