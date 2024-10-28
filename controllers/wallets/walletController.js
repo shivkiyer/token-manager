@@ -1,6 +1,13 @@
 const walletService = require('./../../services/wallets/walletService');
 const requestDataValidator = require('./../../utils/http/requestDataValidator');
 
+/**
+ * Controller for checking wallet info before creating
+ * @param {Object} req Request
+ * @param {Object} res Response
+ * @returns
+ * @throws {400} If wallet name is duplicate or user is not owner of wallet
+ */
 const verifyWallet = async (req, res) => {
   const { username } = req;
   const { name, owner } = req.body;
@@ -11,7 +18,7 @@ const verifyWallet = async (req, res) => {
   }
 
   try {
-    const result = await walletService.verifyWallet({username, owner, name});
+    const result = await walletService.verifyWallet({ username, owner, name });
     return res.send();
   } catch (e) {
     return res.status(400).send({ message: e });

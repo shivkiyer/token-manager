@@ -7,9 +7,19 @@ const isUserWalletOwner = require('./../../utils/wallets/isUserWalletOwner');
 const getWalletByAddress = require('./../../utils/wallets/getWalletByAddress');
 const areAccountUsersInWallet = require('./../../utils/wallets/areAccountUsersInWallet');
 const getUserFromEmail = require('./../../utils/auth/getUserFromEmail');
+const getWalletsByUser = require('./../../utils/wallets/getWalletsByUser');
 
-
-const verifyWallet = async ({username, owner, name}) => {
+/**
+ * Checks if user is owner of account creating the wallet
+ * and that a wallet of the same name does not exist
+ * @param {string} username User email
+ * @param {string} owner ETH address of account
+ * @param {string} name Name of the wallet
+ * @returns null
+ * @throws {Error} If the username is not the owner of the ETH account
+ * @throws {Error} If the wallet name is a duplicate for the owner
+ */
+const verifyWallet = async ({ username, owner, name }) => {
   const accountOwner = await getAccountByAddress(owner);
   const user = await getUserFromEmail(username);
 
@@ -19,31 +29,15 @@ const verifyWallet = async ({username, owner, name}) => {
 
   let checkWallet;
   try {
-    checkWallet = await Wallet.findAll({
-      where: { name },
-      include: [
-        {
-          model: Account,
-          as: 'owner',
-          required: true,
-          include: [
-            {
-              model: User,
-              required: true,
-              where: { id: accountOwner.userId },
-            },
-          ],
-        },
-      ],
-    });
+    checkWallet = await getWalletsByUser({ name, user });
   } catch (e) {
-    throw 'Could not create wallet';
+    throw 'Could not fetch wallets of the user';
   }
 
   if (checkWallet.length > 0) {
     throw 'Wallet with the same name exists';
   }
-}
+};
 
 /**
  * Creates a new wallet with an ETH account as owner
@@ -65,29 +59,14 @@ const createWallet = async ({
 }) => {
   const accountOwner = await getAccountByAddress(owner);
   const user = await getUserFromEmail(username);
+
   if (accountOwner.userId !== user.id) {
     throw 'Only the account owner can use the account to create a wallet';
   }
 
   let checkWallet;
   try {
-    checkWallet = await Wallet.findAll({
-      where: { name },
-      include: [
-        {
-          model: Account,
-          as: 'owner',
-          required: true,
-          include: [
-            {
-              model: User,
-              required: true,
-              where: { id: accountOwner.userId },
-            },
-          ],
-        },
-      ],
-    });
+    checkWallet = await getWalletsByUser({ name, user });
   } catch (e) {
     throw 'Could not create wallet';
   }
