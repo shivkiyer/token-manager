@@ -6,6 +6,11 @@ const walletController = require('./../../controllers/wallets/walletController')
 
 router.use(loginRequired);
 
+router.post('/verify-wallet', async (req, res) => {
+  const response = await walletController.verifyWallet(req, res);
+  return response;
+});
+
 router.post('/create', async (req, res) => {
   const response = await walletController.createWallet(req, res);
   return response;

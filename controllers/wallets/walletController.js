@@ -1,6 +1,23 @@
 const walletService = require('./../../services/wallets/walletService');
 const requestDataValidator = require('./../../utils/http/requestDataValidator');
 
+const verifyWallet = async (req, res) => {
+  const { username } = req;
+  const { name, owner } = req.body;
+
+  const requestBodyCheck = requestDataValidator(req, ['name', 'owner']);
+  if (requestBodyCheck !== null) {
+    return res.status(400).send({ message: requestBodyCheck });
+  }
+
+  try {
+    const result = await walletService.verifyWallet({username, owner, name});
+    return res.send();
+  } catch (e) {
+    return res.status(400).send({ message: e });
+  }
+};
+
 /**
  * Controller to creatina new wallet
  * @param {Object} req Request
@@ -63,6 +80,7 @@ const addUser = async (req, res) => {
 };
 
 module.exports = {
+  verifyWallet,
   createWallet,
   addUser,
 };

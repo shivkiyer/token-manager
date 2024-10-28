@@ -30,7 +30,7 @@ const Web3ContextProvider = (props: any) => {
     };
 
     const getContractFactoryAddress = async () => {
-      if (contractFactoryAddress !== null) {
+      if (contractFactoryAddress === null) {
         const address = await getContractFactoryData('get-address');
         setContractFactoryAddress(address);
       }

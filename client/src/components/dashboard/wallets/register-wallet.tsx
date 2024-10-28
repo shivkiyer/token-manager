@@ -10,12 +10,18 @@ import CircularProgress from '@mui/material/CircularProgress';
 import { Web3Context } from './../../../app/context/web3-context-provider';
 import formatEthAddress from '../../../utils/web3/formatEthAddress';
 import isErrorInForm from '../../../utils/forms/isErrorInForm';
+import apiCall from '../../../utils/http/api-call';
+import useTokenAuthentication from '../../../hooks/useTokenAuthentication';
 
 function RegisterWallet() {
   const [web3Error, setWeb3Error] = useState<string | null>(null);
   const [ownerAccount, setOwnerAccount] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const { web3, contractFactoryAddress, contractFactoryAbi } = useContext(Web3Context);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
+  const { web3, contractFactoryAddress, contractFactoryAbi } =
+    useContext(Web3Context);
+  const userToken: string | null = useTokenAuthentication();
 
   const getEthAccounts = useCallback(async () => {
     if (web3 !== null && web3 !== undefined) {
@@ -54,12 +60,99 @@ function RegisterWallet() {
     });
   };
 
-  const submitHandler = (values: {
+  const submitHandler = async (values: {
     name: string;
     description: string;
     maxLimit: string;
   }) => {
-    console.log(values);
+    setLoading(true);
+    try {
+      const authHeader = { Authorization: userToken || '' };
+      const verificationResponse = await apiCall(
+        `${process.env.REACT_APP_BASE_API_URL}/api/wallets/verify-wallet`,
+        'POST',
+        authHeader,
+        { name: values.name.trim(), owner: ownerAccount }
+      );
+
+      if (!verificationResponse.ok) {
+        const verificationResponseData = await verificationResponse.json();
+        setError(verificationResponseData.message);
+        setLoading(false);
+        return;
+      }
+
+      const contractFactory = new web3.eth.Contract(
+        contractFactoryAbi,
+        contractFactoryAddress
+      );
+
+      const contractFactoryEvents =
+        contractFactory.events.SharedWalletCreated();
+
+      contractFactoryEvents.on('data', async function (event: any) {
+        const writeWalletResponse = await apiCall(
+          `${process.env.REACT_APP_BASE_API_URL}/api/wallets/create`,
+          'POST',
+          authHeader,
+          {
+            name: values.name.trim(),
+            description: values.description.trim(),
+            maxLimit: Number(values.maxLimit),
+            address: event.returnValues.wallet,
+            owner: ownerAccount,
+          }
+        );
+
+        if (!writeWalletResponse.ok) {
+          const errorMessage = await writeWalletResponse.json();
+          if (
+            errorMessage.message !== null &&
+            errorMessage.message !== undefined
+          ) {
+            setError(errorMessage.message);
+          } else {
+            setError('Wallet not written to database.');
+          }
+          setSuccess(null);
+          setLoading(false);
+          return;
+        }
+        formik.values.name = '';
+        formik.values.description = '';
+        formik.values.maxLimit = '';
+        setError(null);
+        setSuccess(
+          'Wallet created successfully. Go to the LIST tab to view wallets.'
+        );
+        setLoading(false);
+      });
+
+      contractFactoryEvents.on('error', function (error: any, event: any) {
+        setError('Wallet could not be created');
+        setLoading(false);
+      });
+
+      const functionData = await web3.eth.abi.encodeFunctionSignature({
+        name: 'createSharedWallet',
+        type: 'function',
+        inputs: [],
+      });
+      const estimateGas = await web3.eth.estimateGas({
+        to: contractFactoryAddress,
+        data: functionData,
+      });
+      const actualGas = (estimateGas * BigInt(2)).toString();
+
+      await contractFactory.methods.createSharedWallet().send({
+        from: ownerAccount,
+        gas: actualGas,
+      });
+    } catch (e) {
+      setSuccess(null);
+      setError('Wallet could not be created.');
+      setLoading(false);
+    }
   };
 
   const formik = useFormik({
@@ -184,6 +277,19 @@ function RegisterWallet() {
             </Grid>
           </Grid>
 
+          {error && (
+            <Grid
+              container
+              alignContent='center'
+              justifyContent='center'
+              marginTop={5}
+            >
+              <Grid item xs={10} md={6} sx={{ textAlign: 'center' }}>
+                <p className='error-message'>{error}</p>
+              </Grid>
+            </Grid>
+          )}
+
           <Grid
             container
             alignContent='center'
@@ -204,6 +310,19 @@ function RegisterWallet() {
               )}
             </Grid>
           </Grid>
+
+          {success && (
+            <Grid
+              container
+              alignContent='center'
+              justifyContent='center'
+              marginTop={5}
+            >
+              <Grid item xs={10} md={6} sx={{ textAlign: 'center' }}>
+                <h4>{success}</h4>
+              </Grid>
+            </Grid>
+          )}
         </form>
       )}
     </>

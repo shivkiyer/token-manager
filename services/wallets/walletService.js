@@ -8,6 +8,43 @@ const getWalletByAddress = require('./../../utils/wallets/getWalletByAddress');
 const areAccountUsersInWallet = require('./../../utils/wallets/areAccountUsersInWallet');
 const getUserFromEmail = require('./../../utils/auth/getUserFromEmail');
 
+
+const verifyWallet = async ({username, owner, name}) => {
+  const accountOwner = await getAccountByAddress(owner);
+  const user = await getUserFromEmail(username);
+
+  if (accountOwner.userId !== user.id) {
+    throw 'Only the account owner can use the account to create a wallet';
+  }
+
+  let checkWallet;
+  try {
+    checkWallet = await Wallet.findAll({
+      where: { name },
+      include: [
+        {
+          model: Account,
+          as: 'owner',
+          required: true,
+          include: [
+            {
+              model: User,
+              required: true,
+              where: { id: accountOwner.userId },
+            },
+          ],
+        },
+      ],
+    });
+  } catch (e) {
+    throw 'Could not create wallet';
+  }
+
+  if (checkWallet.length > 0) {
+    throw 'Wallet with the same name exists';
+  }
+}
+
 /**
  * Creates a new wallet with an ETH account as owner
  * @param {string} username Email of user owning the account
@@ -108,6 +145,7 @@ const addUser = async (username, accountAddresses, walletAddress) => {
 };
 
 module.exports = {
+  verifyWallet,
   createWallet,
   addUser,
 };
