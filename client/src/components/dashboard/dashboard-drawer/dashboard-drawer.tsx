@@ -13,7 +13,7 @@ function DashboardDrawer({
 }: {
   hideDrawer: (drawerState: false) => void;
 }) {
-  const {pathname: currentUrl} = useLocation();
+  const { pathname: currentUrl } = useLocation();
 
   const isActiveLinkClass = (path: string) => {
     if (currentUrl.includes(path)) {
@@ -62,9 +62,10 @@ function DashboardDrawer({
               </ListItemButton>
             </ListItem>
           </NavLink>
-          <NavLink to='/dashboard/tokens'
-          className={() => isActiveLinkClass('/dashboard/tokens')}
-          end
+          <NavLink
+            to='/dashboard/tokens'
+            className={() => isActiveLinkClass('/dashboard/tokens')}
+            end
           >
             <ListItem>
               <ListItemButton>
@@ -86,9 +87,10 @@ function DashboardDrawer({
               </ListItemButton>
             </ListItem>
           </NavLink>
-          <NavLink to='/dashboard/settings'
-          className={() => isActiveLinkClass('/dashboard/settings')}
-          end
+          <NavLink
+            to='/dashboard/settings'
+            className={() => isActiveLinkClass('/dashboard/settings')}
+            end
           >
             <ListItem>
               <ListItemButton>
