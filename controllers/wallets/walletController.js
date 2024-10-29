@@ -62,6 +62,23 @@ const createWallet = async (req, res) => {
 };
 
 /**
+ * Controller for retrieving wallets by user
+ * @param {Object} req Request
+ * @param {Object} res Response
+ * @returns {Object} Array of wallets
+ */
+const retrieveWallets = async (req, res) => {
+  const { username } = req;
+
+  try {
+    const wallets = await walletService.retrieveWallets(username);
+    res.send({ data: wallets });
+  } catch (e) {
+    res.status(400).send({ message: e });
+  }
+};
+
+/**
  * Controller for adding an account as a wallet user/withdrawer
  * @param {Object} req Request
  * @param {Object} res Response
@@ -89,5 +106,6 @@ const addUser = async (req, res) => {
 module.exports = {
   verifyWallet,
   createWallet,
+  retrieveWallets,
   addUser,
 };

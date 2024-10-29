@@ -16,6 +16,11 @@ router.post('/create', async (req, res) => {
   return response;
 });
 
+router.get('', async (req, res) => {
+  const response = await walletController.retrieveWallets(req, res);
+  return response;
+});
+
 router.post('/:address/add-user', async (req, res) => {
   const response = await walletController.addUser(req, res);
   return response;

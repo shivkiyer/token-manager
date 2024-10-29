@@ -90,6 +90,30 @@ const createWallet = async ({
 };
 
 /**
+ * Returns wallets by user association
+ * @param {string} username User email
+ * @returns {Object} Array of wallets
+ */
+const retrieveWallets = async (username) => {
+  const user = await getUserFromEmail(username);
+
+  try {
+    const wallets = await getWalletsByUser({ user });
+    const reducedWallets = wallets.map((item) => {
+      const wallet = item.toJSON();
+      if (wallet['owner']['userId'] === wallet['owner']['User']['id']) {
+        wallet['isOwner'] = true;
+      }
+      delete wallet['owner']['User'];
+      return wallet;
+    });
+    return reducedWallets;
+  } catch (e) {
+    throw 'Could not fetch wallets';
+  }
+};
+
+/**
  * Adds an account as a wallet user
  * @param {string} username User email
  * @param {string[]} accountAddresses Array of account ETH addresses
@@ -126,5 +150,6 @@ const addUser = async (username, accountAddresses, walletAddress) => {
 module.exports = {
   verifyWallet,
   createWallet,
+  retrieveWallets,
   addUser,
 };
