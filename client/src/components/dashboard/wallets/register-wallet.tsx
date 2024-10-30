@@ -60,11 +60,14 @@ function RegisterWallet() {
     });
   };
 
-  const submitHandler = async (values: {
-    name: string;
-    description: string;
-    maxLimit: string;
-  }) => {
+  const submitHandler = async (
+    values: {
+      name: string;
+      description: string;
+      maxLimit: string;
+    },
+    resetForm: any
+  ) => {
     setLoading(true);
     try {
       const authHeader = { Authorization: userToken || '' };
@@ -87,52 +90,6 @@ function RegisterWallet() {
         contractFactoryAddress
       );
 
-      const contractFactoryEvents =
-        contractFactory.events.SharedWalletCreated();
-
-      contractFactoryEvents.on('data', async function (event: any) {
-        const writeWalletResponse = await apiCall(
-          `${process.env.REACT_APP_BASE_API_URL}/api/wallets/create`,
-          'POST',
-          authHeader,
-          {
-            name: values.name.trim(),
-            description: values.description.trim(),
-            maxLimit: Number(values.maxLimit),
-            address: event.returnValues.wallet,
-            owner: ownerAccount,
-          }
-        );
-
-        if (!writeWalletResponse.ok) {
-          const errorMessage = await writeWalletResponse.json();
-          if (
-            errorMessage.message !== null &&
-            errorMessage.message !== undefined
-          ) {
-            setError(errorMessage.message);
-          } else {
-            setError('Wallet not written to database.');
-          }
-          setSuccess(null);
-          setLoading(false);
-          return;
-        }
-        formik.values.name = '';
-        formik.values.description = '';
-        formik.values.maxLimit = '';
-        setError(null);
-        setSuccess(
-          'Wallet created successfully. Go to the LIST tab to view wallets.'
-        );
-        setLoading(false);
-      });
-
-      contractFactoryEvents.on('error', function (error: any, event: any) {
-        setError('Wallet could not be created');
-        setLoading(false);
-      });
-
       const functionData = await web3.eth.abi.encodeFunctionSignature({
         name: 'createSharedWallet',
         type: 'function',
@@ -144,10 +101,50 @@ function RegisterWallet() {
       });
       const actualGas = (estimateGas * BigInt(2)).toString();
 
-      await contractFactory.methods.createSharedWallet().send({
-        from: ownerAccount,
-        gas: actualGas,
-      });
+      const contractFactoryResponse = await contractFactory.methods
+        .createSharedWallet()
+        .send({
+          from: ownerAccount,
+          gas: actualGas,
+        });
+      const newWalletAddress =
+        contractFactoryResponse.events.SharedWalletCreated.returnValues.wallet;
+
+      const writeWalletResponse = await apiCall(
+        `${process.env.REACT_APP_BASE_API_URL}/api/wallets/create`,
+        'POST',
+        authHeader,
+        {
+          name: values.name.trim(),
+          description: values.description.trim(),
+          maxLimit: Number(values.maxLimit),
+          address: newWalletAddress,
+          owner: ownerAccount,
+        }
+      );
+
+      if (!writeWalletResponse.ok) {
+        const errorMessage = await writeWalletResponse.json();
+        if (
+          errorMessage.message !== null &&
+          errorMessage.message !== undefined
+        ) {
+          console.log(errorMessage);
+          setError(errorMessage.message);
+        } else {
+          setError('Wallet not written to database.');
+        }
+        setSuccess(null);
+        setLoading(false);
+        return;
+      } else {
+        resetForm();
+        setError(null);
+        setSuccess(
+          'Wallet created successfully. Go to the LIST tab to view wallets.'
+        );
+        setLoading(false);
+      }
     } catch (e) {
       setSuccess(null);
       setError('Wallet could not be created.');
@@ -162,7 +159,7 @@ function RegisterWallet() {
       maxLimit: '',
     },
     validationSchema: validateHandler,
-    onSubmit: (values) => submitHandler(values),
+    onSubmit: (values, { resetForm }) => submitHandler(values, resetForm),
   });
 
   const getDisabledStatus = () => {

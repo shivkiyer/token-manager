@@ -17,7 +17,7 @@ const getWalletsByUser = async ({ name, user }) => {
 
     const wallets = await Wallet.findAll({
       where: searchByName,
-      attributes: ['id', 'name', 'address', 'description'],
+      attributes: ['id', 'name', 'address', 'description', 'maxLimit'],
       include: [
         {
           model: Account,
