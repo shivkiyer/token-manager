@@ -4,6 +4,8 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 
+import formatEthAddress from '../../../utils/web3/formatEthAddress';
+
 function AccountCard({
   id,
   name,
@@ -19,7 +21,7 @@ function AccountCard({
         <Card>
           <CardContent>
             <h4 style={{ marginBottom: '12px' }}>{name}</h4>
-            <p style={{ fontSize: '13px' }}>{address}</p>
+            <p>{formatEthAddress(address)}</p>
           </CardContent>
           <CardActions>
             <Button variant='contained' disabled={true}>
