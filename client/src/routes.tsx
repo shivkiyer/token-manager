@@ -11,6 +11,7 @@ import ListAccounts from './components/dashboard/account/list-accounts';
 import RegisterAccount from './components/dashboard/account/register-account';
 import ListWallets from './components/dashboard/wallets/list-wallets';
 import RegisterWallet from './components/dashboard/wallets/register-wallet';
+import walletListLoader from './components/dashboard/wallets/walletsListLoader';
 import Settings from './components/dashboard/settings/settings';
 import ErrorPage from './components/ErrorPage/error-page';
 
@@ -41,6 +42,7 @@ export const router = createBrowserRouter([
               {
                 path: 'list',
                 element: <ListWallets />,
+                loader: walletListLoader,
               },
               { path: 'create', element: <RegisterWallet /> },
             ],
