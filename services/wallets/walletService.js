@@ -1,5 +1,3 @@
-const User = require('./../../db/models/user');
-const Account = require('./../../db/models/account');
 const Wallet = require('./../../db/models/wallet');
 const getAccountByAddress = require('./../../utils/accounts/getAccountByAddress');
 const getAccountsByAddresses = require('./../../utils/accounts/getAccountsByAddresses');
