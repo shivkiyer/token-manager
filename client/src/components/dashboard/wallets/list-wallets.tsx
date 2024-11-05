@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useLoaderData } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 
 import WalletCard from './wallet-card';
 
 function ListWallets() {
   const walletData: any = useLoaderData();
+  const navigate = useNavigate();
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
@@ -17,12 +18,12 @@ function ListWallets() {
         (walletData.data === null || walletData.data === undefined) &&
         !walletData.ok
       ) {
-        Object.assign(new Error());
+        navigate('/login');
       }
     } catch (e) {
       setError('Unable to fetch wallets');
     }
-  }, [walletData]);
+  }, [walletData, navigate]);
 
   return (
     <>
