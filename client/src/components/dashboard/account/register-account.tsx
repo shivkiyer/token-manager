@@ -1,5 +1,6 @@
 import { useState, useContext } from 'react';
 import { useFormik } from 'formik';
+import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
@@ -11,8 +12,10 @@ import verifyWeb3 from '../../../utils/web3/verifyWeb3';
 import isErrorInForm from '../../../utils/forms/isErrorInForm';
 import { Web3Context } from '../../../app/context/web3-context-provider';
 import useTokenAuthentication from '../../../hooks/useTokenAuthentication';
+import { clearToken } from '../../../utils/auth/auth';
 
 function RegisterAccount() {
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [success, setSuccess] = useState<string | null>(null);
@@ -62,6 +65,10 @@ function RegisterAccount() {
           responseData.message !== null ||
           responseData.message !== undefined
         ) {
+          if (responseData.message.includes('Authorization failed')) {
+            clearToken();
+            navigate('/login');
+          }
           setError(responseData.message);
         } else {
           Object.assign(new Error());

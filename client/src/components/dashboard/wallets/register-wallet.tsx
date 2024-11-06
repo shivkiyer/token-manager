@@ -1,5 +1,6 @@
 import { useState, useContext, useEffect, useCallback } from 'react';
 import { useFormik } from 'formik';
+import { useNavigate } from 'react-router-dom';
 import * as Yup from 'yup';
 import Grid from '@mui/material/Grid';
 import TextField from '@mui/material/TextField';
@@ -12,8 +13,10 @@ import formatEthAddress from '../../../utils/web3/formatEthAddress';
 import isErrorInForm from '../../../utils/forms/isErrorInForm';
 import apiCall from '../../../utils/http/api-call';
 import useTokenAuthentication from '../../../hooks/useTokenAuthentication';
+import { clearToken } from '../../../utils/auth/auth';
 
 function RegisterWallet() {
+  const navigate = useNavigate();
   const [web3Error, setWeb3Error] = useState<string | null>(null);
   const [ownerAccount, setOwnerAccount] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
@@ -80,7 +83,18 @@ function RegisterWallet() {
 
       if (!verificationResponse.ok) {
         const verificationResponseData = await verificationResponse.json();
-        setError(verificationResponseData.message);
+        if (
+          verificationResponseData.message !== undefined &&
+          verificationResponseData.message !== null
+        ) {
+          if (
+            verificationResponseData.message.includes('Authorization failed')
+          ) {
+            clearToken();
+            navigate('/login');
+          }
+          setError(verificationResponseData.message);
+        }
         setLoading(false);
         return;
       }
