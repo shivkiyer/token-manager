@@ -1,6 +1,6 @@
 import { redirect } from 'react-router-dom';
 
-import { authToken } from '../../../utils/auth/auth';
+import { authToken, clearToken } from '../../../utils/auth/auth';
 import apiCall from '../../../utils/http/api-call';
 
 const walletListLoader = async () => {
@@ -22,6 +22,7 @@ const walletListLoader = async () => {
       responseData.message !== undefined &&
       responseData.message.includes('Authorization failed')
     ) {
+      clearToken();
       return redirect('/login');
     }
     return responseData;

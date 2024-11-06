@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 
+import { clearToken } from '../../../utils/auth/auth';
 import WalletCard from './wallet-card';
 
 function ListWallets() {
@@ -18,6 +19,7 @@ function ListWallets() {
         (walletData.data === null || walletData.data === undefined) &&
         !walletData.ok
       ) {
+        clearToken();
         navigate('/login');
       }
     } catch (e) {

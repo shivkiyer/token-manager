@@ -8,3 +8,10 @@ export function authToken(): string | null {
   }
   return null;
 }
+
+/**
+ * Removes JWT token from browser storage
+ */
+export function clearToken() {
+  localStorage.removeItem('token');
+}
