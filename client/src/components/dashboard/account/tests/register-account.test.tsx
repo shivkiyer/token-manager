@@ -1,10 +1,12 @@
 import { screen, render, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import { createMemoryRouter, RouterProvider } from 'react-router-dom';
 
 describe('RegisterAccount', () => {
   let RegisterAccount: any;
   let Web3Context: any;
   let testContextValue: any;
+  let MockLoginComponent: any;
 
   beforeEach(async () => {
     jest.mock('./../../../../hooks/useTokenAuthentication', () => {
@@ -30,13 +32,30 @@ describe('RegisterAccount', () => {
         },
       },
     };
+
+    MockLoginComponent = () => {
+      return (
+        <p>Mock login</p>
+      )
+    }
   });
 
   it('should display empty account addition form with disabled Add button', async () => {
     RegisterAccount = require('./../register-account').default;
+
+    const routes = [
+      {path: '/login', element: <MockLoginComponent />},
+      {path: '/dashboard/account/create', element: <RegisterAccount />}
+    ];
+
+    const router = createMemoryRouter(routes, {
+      initialEntries: ['/dashboard/account/create'],
+      initialIndex: 0
+    })
+
     render(
       <Web3Context.Provider value={testContextValue}>
-        <RegisterAccount />
+        <RouterProvider router={router}></RouterProvider>
       </Web3Context.Provider>
     );
 
@@ -51,9 +70,20 @@ describe('RegisterAccount', () => {
 
   it('should enable the Add button when name and address fields are filled', async () => {
     RegisterAccount = require('./../register-account').default;
+
+    const routes = [
+      {path: '/login', element: <MockLoginComponent />},
+      {path: '/dashboard/account/create', element: <RegisterAccount />}
+    ];
+
+    const router = createMemoryRouter(routes, {
+      initialEntries: ['/dashboard/account/create'],
+      initialIndex: 0
+    })
+
     render(
       <Web3Context.Provider value={testContextValue}>
-        <RegisterAccount />
+        <RouterProvider router={router}></RouterProvider>
       </Web3Context.Provider>
     );
 
@@ -83,9 +113,20 @@ describe('RegisterAccount', () => {
     };
 
     RegisterAccount = require('./../register-account').default;
+
+    const routes = [
+      {path: '/login', element: <MockLoginComponent />},
+      {path: '/dashboard/account/create', element: <RegisterAccount />}
+    ];
+
+    const router = createMemoryRouter(routes, {
+      initialEntries: ['/dashboard/account/create'],
+      initialIndex: 0
+    })
+
     render(
       <Web3Context.Provider value={testContextValue}>
-        <RegisterAccount />
+        <RouterProvider router={router}></RouterProvider>
       </Web3Context.Provider>
     );
 
@@ -125,9 +166,20 @@ describe('RegisterAccount', () => {
     mockApiCall.mockReturnValue(Promise.resolve(mockResponse));
 
     RegisterAccount = require('./../register-account').default;
+
+    const routes = [
+      {path: '/login', element: <MockLoginComponent />},
+      {path: '/dashboard/account/create', element: <RegisterAccount />}
+    ];
+
+    const router = createMemoryRouter(routes, {
+      initialEntries: ['/dashboard/account/create'],
+      initialIndex: 0
+    })
+
     render(
       <Web3Context.Provider value={testContextValue}>
-        <RegisterAccount />
+        <RouterProvider router={router}></RouterProvider>
       </Web3Context.Provider>
     );
 
@@ -165,9 +217,20 @@ describe('RegisterAccount', () => {
     mockApiCall.mockReturnValue(Promise.resolve(mockResponse));
 
     RegisterAccount = require('./../register-account').default;
+
+    const routes = [
+      {path: '/login', element: <MockLoginComponent />},
+      {path: '/dashboard/account/create', element: <RegisterAccount />}
+    ];
+
+    const router = createMemoryRouter(routes, {
+      initialEntries: ['/dashboard/account/create'],
+      initialIndex: 0
+    })
+
     render(
       <Web3Context.Provider value={testContextValue}>
-        <RegisterAccount />
+        <RouterProvider router={router}></RouterProvider>
       </Web3Context.Provider>
     );
 
