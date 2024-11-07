@@ -79,6 +79,28 @@ const retrieveWallets = async (req, res) => {
 };
 
 /**
+ * Controller for retrieving the details of a wallet
+ * @param {Object} req Request
+ * @param {Object} res Response
+ * @returns {Object} Wallet model instance
+ */
+const retrieveWalletDetails = async (req, res) => {
+  const { username } = req;
+  const { id } = req.params;
+
+  if (id === null || id === undefined) {
+    return res.status(400).send({ message: 'Wallet Id not provided' });
+  }
+
+  try {
+    const wallet = await walletService.retrieveWalletDetails(id, username);
+    res.send({ data: wallet });
+  } catch (e) {
+    res.status(400).send({ message: e });
+  }
+};
+
+/**
  * Controller for adding an account as a wallet user/withdrawer
  * @param {Object} req Request
  * @param {Object} res Response
@@ -107,5 +129,6 @@ module.exports = {
   verifyWallet,
   createWallet,
   retrieveWallets,
+  retrieveWalletDetails,
   addUser,
 };

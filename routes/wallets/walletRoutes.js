@@ -21,6 +21,11 @@ router.get('', async (req, res) => {
   return response;
 });
 
+router.get('/:id', async (req, res) => {
+  const response = await walletController.retrieveWalletDetails(req, res);
+  return response;
+});
+
 router.post('/:address/add-user', async (req, res) => {
   const response = await walletController.addUser(req, res);
   return response;

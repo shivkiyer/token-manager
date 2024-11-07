@@ -112,6 +112,33 @@ const retrieveWallets = async (username) => {
 };
 
 /**
+ * Retrieves the details of a wallet
+ * @param {number} id Wallet Id in database
+ * @param {string} username Requesting user
+ * @returns {Object} Wallet model instance
+ * @throws {Error} If wallet could not be found
+ * @throws {Error} If user is not owner of wallet
+ */
+const retrieveWalletDetails = async (id, username) => {
+  let wallet;
+  try {
+    wallet = await Wallet.findOne({
+      where: { id },
+      attributes: ['id', 'name', 'description', 'maxLimit', 'ownerId'],
+    });
+  } catch (e) {
+    throw 'Wallet could not be found';
+  }
+
+  const checkWalletOwner = await isUserWalletOwner(username, wallet);
+  if (!checkWalletOwner) {
+    throw 'Only wallet owner can view wallet details';
+  }
+
+  return wallet;
+};
+
+/**
  * Adds an account as a wallet user
  * @param {string} username User email
  * @param {string[]} accountAddresses Array of account ETH addresses
@@ -149,5 +176,6 @@ module.exports = {
   verifyWallet,
   createWallet,
   retrieveWallets,
+  retrieveWalletDetails,
   addUser,
 };
