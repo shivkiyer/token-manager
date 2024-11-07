@@ -9,8 +9,8 @@ contract TokenManagerFactory {
 
     constructor() {}
 
-    function createSharedWallet() public {
-        SharedWallet sharedWallet = new SharedWallet();
+    function createSharedWallet(uint256 _withdrawalLimit) public {
+        SharedWallet sharedWallet = new SharedWallet(_withdrawalLimit);
         emit SharedWalletCreated(address(sharedWallet));
     }
 }

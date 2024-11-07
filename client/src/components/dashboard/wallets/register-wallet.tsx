@@ -104,19 +104,18 @@ function RegisterWallet() {
         contractFactoryAddress
       );
 
-      const functionData = await web3.eth.abi.encodeFunctionSignature({
-        name: 'createSharedWallet',
-        type: 'function',
-        inputs: [],
-      });
-      const estimateGas = await web3.eth.estimateGas({
-        to: contractFactoryAddress,
-        data: functionData,
-      });
+      const maxLimitWei = web3.utils.toWei(
+        formik.values.maxLimit.trim(),
+        'ether'
+      );
+
+      const estimateGas = await contractFactory.methods
+        .createSharedWallet(maxLimitWei)
+        .estimateGas({ from: ownerAccount });
       const actualGas = (estimateGas * BigInt(2)).toString();
 
       const contractFactoryResponse = await contractFactory.methods
-        .createSharedWallet()
+        .createSharedWallet(maxLimitWei)
         .send({
           from: ownerAccount,
           gas: actualGas,

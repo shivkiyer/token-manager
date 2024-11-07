@@ -11,9 +11,9 @@ contract SharedWalletScript is Script {
 
     function setUp() public {}
 
-    function run() public returns(SharedWallet) {
+    function run(uint256 _withdrawalLimit) public returns(SharedWallet) {
         vm.startBroadcast();
-        sharedWallet = new SharedWallet();
+        sharedWallet = new SharedWallet(_withdrawalLimit);
         vm.stopBroadcast();
         return sharedWallet;
     }
