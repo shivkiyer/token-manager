@@ -4,11 +4,8 @@ import Tabs from '@mui/material/Tabs';
 import Tab from '@mui/material/Tab';
 import Box from '@mui/material/Box';
 
-import useTokenAuthentication from '../../../hooks/useTokenAuthentication';
-
 function Wallets() {
   const { pathname } = useLocation();
-  const userToken = useTokenAuthentication();
 
   const [registerWallet, setRegisterWallet] = useState<number>(0);
   const navigate = useNavigate();
@@ -17,7 +14,7 @@ function Wallets() {
     if (pathname.includes('create')) {
       setRegisterWallet(1);
       navigate('/dashboard/wallet/create');
-    } else {
+    } else if (pathname.includes('list')) {
       setRegisterWallet(0);
       navigate('/dashboard/wallet/list');
     }

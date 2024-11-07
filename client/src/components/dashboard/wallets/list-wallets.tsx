@@ -38,6 +38,7 @@ function ListWallets() {
             description={wallet.description}
             maxLimit={wallet.maxLimit}
             address={wallet.address}
+            isOwner={wallet.isOwner}
           ></WalletCard>
         ))
       ) : (

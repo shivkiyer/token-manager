@@ -12,6 +12,8 @@ import RegisterAccount from './components/dashboard/account/register-account';
 import ListWallets from './components/dashboard/wallets/list-wallets';
 import RegisterWallet from './components/dashboard/wallets/register-wallet';
 import walletListLoader from './components/dashboard/wallets/walletsListLoader';
+import ManageWallet from './components/dashboard/wallets/manage-wallet/manage-wallet';
+import AccessWallet from './components/dashboard/wallets/access-wallet';
 import Settings from './components/dashboard/settings/settings';
 import ErrorPage from './components/ErrorPage/error-page';
 
@@ -45,6 +47,8 @@ export const router = createBrowserRouter([
                 loader: walletListLoader,
               },
               { path: 'create', element: <RegisterWallet /> },
+              { path: 'manage/:id', element: <ManageWallet /> },
+              { path: 'access/:id', element: <AccessWallet /> },
             ],
           },
           { path: 'tokens', element: <Tokens /> },

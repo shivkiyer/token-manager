@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -12,9 +13,17 @@ interface WalletData {
   description: string;
   address: string;
   maxLimit: number;
+  isOwner: boolean;
 }
 
-function WalletCard({ id, name, description, address, maxLimit }: WalletData) {
+function WalletCard({
+  id,
+  name,
+  description,
+  address,
+  maxLimit,
+  isOwner,
+}: WalletData) {
   return (
     <Grid container marginTop={3} key={id}>
       <Grid item xs={12} md={6}>
@@ -32,9 +41,15 @@ function WalletCard({ id, name, description, address, maxLimit }: WalletData) {
             </p>
           </CardContent>
           <CardActions>
-            <Button variant='contained' disabled={true}>
-              Details
-            </Button>
+            {isOwner ? (
+              <Link to={`/dashboard/wallet/manage/${id}`}>
+                <Button variant='contained'>Manage</Button>
+              </Link>
+            ) : (
+              <Link to={`/dashboard/wallet/access/${id}`}>
+                <Button variant='contained'>Access</Button>
+              </Link>
+            )}
           </CardActions>
         </Card>
       </Grid>

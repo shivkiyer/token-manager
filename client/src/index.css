@@ -33,3 +33,16 @@ code {
   color: red;
   text-align: center;
 }
+
+.standard-box-display {
+  width: 60%;
+  margin-left: 10%;
+  line-height: 1.5;
+}
+
+@media (max-width: 768px) {
+  .standard-box-display {
+    width: 90%;
+    margin-left: 0px;
+  }
+}
