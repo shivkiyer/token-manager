@@ -2,17 +2,18 @@ const path = require('path');
 const fs = require('fs');
 
 /**
- * Returns the ABI of the compiled contract factory
+ * Returns the ABI of a compiled smart contract
+ * @param {string} contractName Name of the smart contract
  * @returns {Object} Contract ABI
  */
-const getContractFactoryAbi = async () => {
+const getSmartContractAbi = async (contractName) => {
   const rootPath = path.dirname(path.dirname(__dirname));
   const abiPath = path.resolve(
     rootPath,
     'blockchain',
     'out',
-    `${process.env.CONTRACT_FACTORY_NAME}.sol`,
-    `${process.env.CONTRACT_FACTORY_NAME}.json`
+    `${contractName}.sol`,
+    `${contractName}.json`
   );
 
   const abiString = await fs.promises.readFile(abiPath, {
@@ -23,4 +24,4 @@ const getContractFactoryAbi = async () => {
   return abi;
 };
 
-module.exports = getContractFactoryAbi;
+module.exports = getSmartContractAbi;

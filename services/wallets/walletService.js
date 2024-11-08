@@ -6,6 +6,7 @@ const getWalletByAddress = require('./../../utils/wallets/getWalletByAddress');
 const areAccountUsersInWallet = require('./../../utils/wallets/areAccountUsersInWallet');
 const getUserFromEmail = require('./../../utils/auth/getUserFromEmail');
 const getWalletsByUser = require('./../../utils/wallets/getWalletsByUser');
+const getSmartContractAbi = require('./../../utils/contracts/getSmartContractAbi');
 
 /**
  * Checks if user is owner of account creating the wallet
@@ -124,7 +125,14 @@ const retrieveWalletDetails = async (id, username) => {
   try {
     wallet = await Wallet.findOne({
       where: { id },
-      attributes: ['id', 'name', 'description', 'maxLimit', 'ownerId'],
+      attributes: [
+        'id',
+        'name',
+        'description',
+        'maxLimit',
+        'ownerId',
+        'address',
+      ],
     });
   } catch (e) {
     throw 'Wallet could not be found';
@@ -172,10 +180,26 @@ const addUser = async (username, accountAddresses, walletAddress) => {
   };
 };
 
+/**
+ * Returns the ABI of the Shared Wallet
+ * @returns {Object} Shared Wallet Contract ABI
+ */
+const getAbi = async () => {
+  try {
+    const abi = await getSmartContractAbi(
+      process.env.SHARED_WALLET_CONTRACT_NAME
+    );
+    return abi;
+  } catch (e) {
+    throw 'Wallet JSON interface could not be fetched';
+  }
+};
+
 module.exports = {
   verifyWallet,
   createWallet,
   retrieveWallets,
   retrieveWalletDetails,
   addUser,
+  getAbi,
 };

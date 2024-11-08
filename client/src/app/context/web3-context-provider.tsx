@@ -3,11 +3,13 @@ import { useState, useEffect } from 'react';
 
 import getWeb3 from '../../utils/web3/web3';
 import getContractFactoryData from '../../utils/web3/getContractFactoryData';
+import getSharedWalletData from '../../utils/web3/getSharedWalletData';
 
 export const Web3Context = createContext<any>({
   web3: null,
   contractFactoryAddress: null,
   contractFactoryAbi: null,
+  sharedWalletAbi: null,
 });
 
 const Web3ContextProvider = (props: any) => {
@@ -16,6 +18,7 @@ const Web3ContextProvider = (props: any) => {
     string | null
   >(null);
   const [contractFactoryAbi, setContractFactoryAbi] = useState<any>(null);
+  const [sharedWalletAbi, setSharedWalletAbi] = useState<any>(null);
 
   useEffect(() => {
     const connectEthereum = async () => {
@@ -43,14 +46,27 @@ const Web3ContextProvider = (props: any) => {
       }
     };
 
+    const getSharedWalletAbi = async () => {
+      if (sharedWalletAbi === null) {
+        const abi = await getSharedWalletData('get-abi');
+        setSharedWalletAbi(abi);
+      }
+    };
+
     connectEthereum();
     getContractFactoryAddress();
     getContractFactoryAbi();
-  }, [web3, contractFactoryAddress, contractFactoryAbi]);
+    getSharedWalletAbi();
+  }, [web3, contractFactoryAddress, contractFactoryAbi, sharedWalletAbi]);
 
   return (
     <Web3Context.Provider
-      value={{ web3, contractFactoryAddress, contractFactoryAbi }}
+      value={{
+        web3,
+        contractFactoryAddress,
+        contractFactoryAbi,
+        sharedWalletAbi,
+      }}
     >
       {props.children}
     </Web3Context.Provider>

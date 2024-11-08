@@ -125,10 +125,25 @@ const addUser = async (req, res) => {
   }
 };
 
+/**
+ * Fetch the ABI of the deployed Shared Wallet smart contract
+ * @param {Object} req Request
+ * @param {Object} res Response
+ */
+const getAbi = async (req, res) => {
+  try {
+    const abi = await walletService.getAbi();
+    res.send({ data: abi });
+  } catch (e) {
+    res.status(400).send({ message: e });
+  }
+};
+
 module.exports = {
   verifyWallet,
   createWallet,
   retrieveWallets,
   retrieveWalletDetails,
   addUser,
+  getAbi,
 };

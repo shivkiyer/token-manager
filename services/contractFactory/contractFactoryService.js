@@ -1,5 +1,5 @@
 const getContractFactoryTransaction = require('./../../utils/contracts/getContractFactoryTransaction');
-const getContractFactoryAbi = require('./../../utils/contracts/getContractFactoryAbi');
+const getSmartContractAbi = require('./../../utils/contracts/getSmartContractAbi');
 
 /**
  * Fetches the address of the deployed contract factory
@@ -30,9 +30,9 @@ const getAddress = async () => {
  */
 const getAbi = async () => {
   try {
-    const abi = await getContractFactoryAbi();
+    const abi = await getSmartContractAbi(process.env.CONTRACT_FACTORY_NAME);
     return abi;
-  } catch(e) {
+  } catch (e) {
     throw 'Contract JSON interface could not be fetched';
   }
 };
