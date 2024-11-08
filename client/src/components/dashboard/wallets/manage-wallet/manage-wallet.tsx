@@ -1,55 +1,58 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import Button from '@mui/material/Button';
 
+import { clearToken } from '../../../../utils/auth/auth';
 import DepositEther from './deposit-ether';
 
 function ManageWallet() {
-  const [displayDepositEther, setDisplayDepositEther] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const walletData: any = useLoaderData();
+  const navigate = useNavigate();
 
-  const showDisplayDepositEther = () => {
-    setDisplayDepositEther(true);
-  };
-
-  const hideDisplayDepositEther = () => {
-    setDisplayDepositEther(false);
-  };
+  useEffect(() => {
+    try {
+      if (walletData === null || walletData === undefined) {
+        Object.assign(new Error());
+      } else if (walletData.message !== undefined) {
+        setError(walletData.message);
+      } else if (
+        (walletData.data === null || walletData.data === undefined) &&
+        !walletData.ok
+      ) {
+        clearToken();
+        navigate('/login');
+      }
+    } catch (e) {
+      setError('Unable to fetch wallet');
+    }
+  }, [walletData, navigate]);
 
   return (
-    <Box className='standard-box-display'>
-      <Grid container>
-        <Grid item xs={12}>
-          <h2>Wallet name</h2>
-        </Grid>
+    <>
+      {error !== null ? (
+        <h3>{error}</h3>
+      ) : (
+        <Box className='standard-box-display'>
+          <Grid container>
+            <Grid item xs={12}>
+              <h2>{walletData.data.name}</h2>
+            </Grid>
 
-        <Grid item xs={12} marginTop={3}>
-          <p>
-            Lorem ipsum dolor sit amet, consectetur adipisicing elit. Temporibus
-            praesentium, a laudantium, asperiores blanditiis impedit soluta
-            veritatis nisi ad in iste culpa! Magnam eum exercitationem incidunt
-            quasi, eius officiis debitis?
-          </p>
-        </Grid>
+            <Grid item xs={12} marginTop={3}>
+              <p>
+                {walletData.data.description !== null
+                  ? walletData.data.description
+                  : 'Not provided'}
+              </p>
+            </Grid>
 
-        <Grid item xs={12} marginTop={3}>
-          <h4 style={{ display: 'inline-block' }}>
-            Current balance: 6.5 Ether
-          </h4>
-          <Button
-            variant='contained'
-            sx={{ marginLeft: '16px' }}
-            onClick={showDisplayDepositEther}
-          >
-            Deposit Ether
-          </Button>
-        </Grid>
-
-        {displayDepositEther && (
-          <DepositEther hideDisplayDepositEther={hideDisplayDepositEther} />
-        )}
-      </Grid>
-    </Box>
+            <DepositEther />
+          </Grid>
+        </Box>
+      )}
+    </>
   );
 }
 
