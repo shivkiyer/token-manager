@@ -44,6 +44,9 @@ describe('RegisterWallet', () => {
           methods: {
             createSharedWallet: () => {
               return {
+                estimateGas: () => {
+                  return BigInt(10);
+                },
                 send: () =>
                   Promise.resolve({
                     events: {
@@ -61,18 +64,19 @@ describe('RegisterWallet', () => {
       }
     }
 
-    mockGetWeb3.mockReturnValue(
-      Promise.resolve({
-        eth: {
-          getAccounts: () => Promise.resolve(['Account123']),
-          abi: {
-            encodeFunctionSignature: () => Promise.resolve(''),
-          },
-          estimateGas: () => Promise.resolve(BigInt(1)),
-          Contract: MockContract,
+    mockGetWeb3.mockReturnValue({
+      eth: {
+        getAccounts: () => Promise.resolve(['Account123']),
+        abi: {
+          encodeFunctionSignature: () => Promise.resolve(''),
         },
-      })
-    );
+        estimateGas: () => Promise.resolve(BigInt(1)),
+        Contract: MockContract,
+      },
+      utils: {
+        toWei: (value: string | number) => value,
+      },
+    });
 
     mockGetContractFactoryData = jest.spyOn(
       require('./../../../../utils/web3/getContractFactoryData'),
@@ -330,11 +334,10 @@ describe('RegisterWallet', () => {
       'default'
     );
     mockApiCall.mockReturnValue(
-      Promise.resolve(
-        new Response(JSON.stringify({ message: 'Verification failed' }), {
-          status: 400,
-        })
-      )
+      Promise.resolve({
+        ok: false,
+        json: () => Promise.resolve({ message: 'Verification failed' }),
+      })
     );
 
     const Web3ContextProvider =
@@ -398,6 +401,9 @@ describe('RegisterWallet', () => {
           methods: {
             createSharedWallet: () => {
               return {
+                estimateGas: () => {
+                  return BigInt(10);
+                },
                 send: () =>
                   Promise.resolve({
                     events: {},
@@ -418,6 +424,9 @@ describe('RegisterWallet', () => {
           },
           estimateGas: () => Promise.resolve(BigInt(1)),
           Contract: MockContract,
+        },
+        utils: {
+          toWei: (value: string | number) => value,
         },
       })
     );
