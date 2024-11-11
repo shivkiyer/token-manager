@@ -40,11 +40,14 @@ function ManageWallet() {
 
     if (
       walletData.data.address === null ||
-      walletData.data.address === undefined
+      walletData.data.address === undefined ||
+      sharedWalletAbi === null ||
+      sharedWalletAbi === undefined
     ) {
       setError('Wallet could not be fetched');
       return;
     }
+    walletData.data.abi = sharedWalletAbi;
   }, [web3, walletData, sharedWalletAbi]);
 
   return (
@@ -66,7 +69,7 @@ function ManageWallet() {
               </p>
             </Grid>
 
-            <DepositEther />
+            <DepositEther web3={web3} wallet={walletData.data} />
           </Grid>
         </Box>
       )}

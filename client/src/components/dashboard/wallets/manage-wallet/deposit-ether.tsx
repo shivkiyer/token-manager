@@ -1,12 +1,55 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 
-function DepositEther() {
+function DepositEther({ web3, wallet }: { web3: any; wallet: any }) {
   const [displayForm, setDisplayForm] = useState(false);
+  const [balance, setBalance] = useState<BigInt>(BigInt(0));
+  const [error, setError] = useState<string | null>(null);
+
+  const getWalletBalance = useCallback(async () => {
+    try {
+      const walletBalance = await web3.eth.getBalance(wallet.address);
+      const etherBalance = await web3.utils.fromWei(walletBalance, 'ether');
+      setBalance(etherBalance);
+    } catch (e) {}
+  }, [web3, wallet]);
+
+  const submitHandler = async (
+    values: { etherValue: string },
+    resetForm: any
+  ) => {
+    try {
+      const depositValue = web3.utils.toWei(values.etherValue, 'ether');
+      const linkedAccounts = await web3.eth.getAccounts();
+      const ownerAccount = linkedAccounts[0];
+
+      const gasEstimate = await web3.eth.estimateGas({
+        from: ownerAccount,
+        to: wallet.address,
+      });
+      const gas = (gasEstimate * BigInt(2)).toString();
+      await web3.eth.sendTransaction({
+        from: ownerAccount,
+        to: wallet.address,
+        value: depositValue,
+        gas,
+      });
+      resetForm();
+      await getWalletBalance();
+      setDisplayForm(false);
+      setError(null);
+    } catch (e) {
+      setError('Could not deposit funds in wallet.');
+    }
+  };
+
+  useEffect(() => {
+    getWalletBalance();
+  }, [getWalletBalance]);
 
   const validateHandler = () => {
     return Yup.object({
@@ -22,9 +65,7 @@ function DepositEther() {
       etherValue: '',
     },
     validationSchema: validateHandler,
-    onSubmit: (values) => {
-      console.log(values);
-    },
+    onSubmit: (values, { resetForm }) => submitHandler(values, resetForm),
   });
 
   const showForm = () => {
@@ -33,12 +74,15 @@ function DepositEther() {
 
   const hideForm = () => {
     setDisplayForm(false);
+    setError(null);
   };
 
   return (
     <>
       <Grid item xs={12} marginTop={3}>
-        <h4 style={{ display: 'inline-block' }}>Current balance: 6.5 Ether</h4>
+        <h4 style={{ display: 'inline-block' }}>
+          Current balance: {balance.toString()} Ether
+        </h4>
         <Button
           variant='contained'
           sx={{ marginLeft: '16px' }}
@@ -81,6 +125,14 @@ function DepositEther() {
                 </p>
               )}
           </form>
+          {error && (
+            <p
+              className='error-message'
+              style={{ textAlign: 'left', marginTop: '10px' }}
+            >
+              {error}
+            </p>
+          )}
         </Grid>
       )}
     </>
