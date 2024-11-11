@@ -1,7 +1,8 @@
 import { useState, useEffect, useContext } from 'react';
-import { useLoaderData, useNavigate } from 'react-router-dom';
+import { useLoaderData, useNavigate, Link } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import { Web3Context } from './../../../../app/context/web3-context-provider';
 import { clearToken } from '../../../../utils/auth/auth';
@@ -52,10 +53,18 @@ function ManageWallet() {
 
   return (
     <>
+      <Link
+        to='/dashboard/wallet/list'
+        className='button-link button-link-black'
+        style={{ fontSize: '18px' }}
+      >
+        <ArrowBackIcon sx={{ paddingTop: '8px' }} />
+        Back to wallets
+      </Link>
       {error !== null ? (
         <h3>{error}</h3>
       ) : (
-        <Box className='standard-box-display'>
+        <Box className='standard-box-display' marginTop={4}>
           <Grid container>
             <Grid item xs={12}>
               <h2>{walletData.data.name}</h2>
