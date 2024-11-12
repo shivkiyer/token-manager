@@ -1,5 +1,6 @@
 const Account = require('./../../db/models/account');
 const Wallet = require('./../../db/models/wallet');
+const WalletUser = require('./../../db/models/walletUser');
 const getAccountByAddress = require('./../../utils/accounts/getAccountByAddress');
 const getAccountsByAddresses = require('./../../utils/accounts/getAccountsByAddresses');
 const isUserWalletOwner = require('./../../utils/wallets/isUserWalletOwner');
@@ -156,6 +157,31 @@ const retrieveWalletDetails = async (id, username) => {
 };
 
 /**
+ * Returns the accounts added to a wallet as Users
+ * @param {string} walletAddress ETH address of the wallet
+ * @returns {Array} List of wallet users
+ */
+const getUsers = async (walletAddress) => {
+  try {
+    const query = await Wallet.findOne({
+      where: { address: walletAddress },
+      include: [
+        {
+          model: Account,
+          as: 'user',
+          attributes: ['id', 'name', 'address'],
+          through: { attributes: [] },
+        },
+      ],
+    });
+    const walletUsers = query.user;
+    return walletUsers;
+  } catch (e) {
+    throw 'Wallet users could not be fetched';
+  }
+};
+
+/**
  * Adds an account as a wallet user
  * @param {string} username User email
  * @param {string[]} accountAddresses Array of account ETH addresses
@@ -209,6 +235,7 @@ module.exports = {
   createWallet,
   retrieveWallets,
   retrieveWalletDetails,
+  getUsers,
   addUser,
   getAbi,
 };

@@ -101,6 +101,23 @@ const retrieveWalletDetails = async (req, res) => {
 };
 
 /**
+ * Controller for getting WalletUsers of a Wallet
+ * @param {Object} req Request
+ * @param {Object} res Response
+ * @throws {400} If wallet cannot be found
+ */
+const getUsers = async (req, res) => {
+  const { address: walletAddress } = req.params;
+
+  try {
+    const response = await walletService.getUsers(walletAddress);
+    res.send({ data: response });
+  } catch (e) {
+    res.status(400).send({ message: e });
+  }
+};
+
+/**
  * Controller for adding an account as a wallet user/withdrawer
  * @param {Object} req Request
  * @param {Object} res Response
@@ -144,6 +161,7 @@ module.exports = {
   createWallet,
   retrieveWallets,
   retrieveWalletDetails,
+  getUsers,
   addUser,
   getAbi,
 };

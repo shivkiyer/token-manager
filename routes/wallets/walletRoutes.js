@@ -21,6 +21,11 @@ router.get('/get-abi', async (req, res) => {
   return response;
 });
 
+router.get('/:address/get-users', async (req, res) => {
+  const response = await walletController.getUsers(req, res);
+  return response;
+});
+
 router.post('/:address/add-user', async (req, res) => {
   const response = await walletController.addUser(req, res);
   return response;

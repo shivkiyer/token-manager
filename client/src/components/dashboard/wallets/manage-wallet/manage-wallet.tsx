@@ -7,6 +7,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Web3Context } from './../../../../app/context/web3-context-provider';
 import { clearToken } from '../../../../utils/auth/auth';
 import DepositEther from './deposit-ether';
+import WalletUsers from './wallet-users';
 import formatEthAddress from '../../../../utils/web3/formatEthAddress';
 
 function ManageWallet() {
@@ -87,6 +88,7 @@ function ManageWallet() {
             </Grid>
 
             <DepositEther web3={web3} wallet={walletData.data} />
+            <WalletUsers />
           </Grid>
         </Box>
       )}
