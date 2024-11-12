@@ -63,7 +63,7 @@ function ManageWallet() {
         Back to wallets
       </Link>
       {error !== null ? (
-        <h3>{error}</h3>
+        <h3 style={{ marginTop: '20px' }}>{error}</h3>
       ) : (
         <Box className='standard-box-display' marginTop={4}>
           <Grid container>
