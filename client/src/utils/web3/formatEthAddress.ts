@@ -1,11 +1,12 @@
 /**
  * Truncate ETH address on mobile devices
  * @param {string} address ETH address
- * @returns {string} Truncated ETH address if on mobile device
+ * @param {boolean} always (optional) If ETH address should always be trunctated
+ * @returns {string} Truncated ETH address if on mobile device or if always is true
  */
-const formatEthAddress = (address: string) => {
+const formatEthAddress = (address: string, always = false) => {
   let account = address;
-  if (window.innerWidth < 475) {
+  if (window.innerWidth < 475 || always) {
     account =
       address.substring(0, 7) +
       '...' +

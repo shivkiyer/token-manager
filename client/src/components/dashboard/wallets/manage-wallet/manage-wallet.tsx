@@ -88,7 +88,7 @@ function ManageWallet() {
             </Grid>
 
             <DepositEther web3={web3} wallet={walletData.data} />
-            <WalletUsers />
+            <WalletUsers wallet={walletData.data} />
           </Grid>
         </Box>
       )}
