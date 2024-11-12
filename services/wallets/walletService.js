@@ -1,6 +1,6 @@
 const Account = require('./../../db/models/account');
 const Wallet = require('./../../db/models/wallet');
-const WalletUser = require('./../../db/models/walletUser');
+const User = require('./../../db/models/user');
 const getAccountByAddress = require('./../../utils/accounts/getAccountByAddress');
 const getAccountsByAddresses = require('./../../utils/accounts/getAccountsByAddresses');
 const isUserWalletOwner = require('./../../utils/wallets/isUserWalletOwner');
@@ -171,6 +171,12 @@ const getUsers = async (walletAddress) => {
           as: 'user',
           attributes: ['id', 'name', 'address'],
           through: { attributes: [] },
+          include: [
+            {
+              model: User,
+              attributes: ['id', 'username']
+            }
+          ]
         },
       ],
     });
