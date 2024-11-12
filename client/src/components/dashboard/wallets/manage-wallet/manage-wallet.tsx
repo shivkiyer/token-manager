@@ -7,6 +7,7 @@ import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import { Web3Context } from './../../../../app/context/web3-context-provider';
 import { clearToken } from '../../../../utils/auth/auth';
 import DepositEther from './deposit-ether';
+import formatEthAddress from '../../../../utils/web3/formatEthAddress';
 
 function ManageWallet() {
   const [error, setError] = useState<string | null>(null);
@@ -68,6 +69,13 @@ function ManageWallet() {
           <Grid container>
             <Grid item xs={12}>
               <h2>{walletData.data.name}</h2>
+            </Grid>
+
+            <Grid item xs={12} marginTop={2}>
+              <p>
+                <strong>Account owner: </strong>
+                {formatEthAddress(walletData.data.owner.address)}
+              </p>
             </Grid>
 
             <Grid item xs={12} marginTop={3}>

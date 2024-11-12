@@ -22,10 +22,16 @@ function DepositEther({ web3, wallet }: { web3: any; wallet: any }) {
     values: { etherValue: string },
     resetForm: any
   ) => {
+    setError(null);
     try {
       const depositValue = web3.utils.toWei(values.etherValue, 'ether');
       const linkedAccounts = await web3.eth.getAccounts();
       const ownerAccount = linkedAccounts[0];
+
+      if (wallet.owner.address !== ownerAccount) {
+        setError('Linked Metamask account is not the wallet owner');
+        return;
+      }
 
       const gasEstimate = await web3.eth.estimateGas({
         from: ownerAccount,
@@ -48,8 +54,10 @@ function DepositEther({ web3, wallet }: { web3: any; wallet: any }) {
   };
 
   useEffect(() => {
-    getWalletBalance();
-  }, [getWalletBalance]);
+    if (web3 !== null && web3 !== undefined) {
+      getWalletBalance();
+    }
+  }, [web3, getWalletBalance]);
 
   const validateHandler = () => {
     return Yup.object({

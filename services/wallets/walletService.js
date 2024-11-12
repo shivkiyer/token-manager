@@ -1,3 +1,4 @@
+const Account = require('./../../db/models/account');
 const Wallet = require('./../../db/models/wallet');
 const getAccountByAddress = require('./../../utils/accounts/getAccountByAddress');
 const getAccountsByAddresses = require('./../../utils/accounts/getAccountsByAddresses');
@@ -132,6 +133,14 @@ const retrieveWalletDetails = async (id, username) => {
         'maxLimit',
         'ownerId',
         'address',
+      ],
+      include: [
+        {
+          model: Account,
+          attributes: ['id', 'name', 'address'],
+          as: 'owner',
+          required: true,
+        },
       ],
     });
   } catch (e) {
