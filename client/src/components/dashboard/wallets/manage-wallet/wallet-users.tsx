@@ -15,6 +15,7 @@ function WalletUsers({ wallet }: { wallet: any }) {
   const [searchData, setSearchData] = useState<any>(null);
   const [initError, setInitError] = useState<string | null>(null);
   const [searchError, setSearchError] = useState<string | null>(null);
+  const [addUserError, setAddUserError] = useState<string | null>(null);
   const [displayForm, setDisplayForm] = useState(false);
   const userToken = authToken();
 
@@ -99,6 +100,51 @@ function WalletUsers({ wallet }: { wallet: any }) {
     onSubmit: (values) => handleUsersSearch(values),
   });
 
+  const addUserToWalletHandler = async (values: any) => {
+    try {
+      const accAddresses = values.checked.map((item: string) => {
+        for (let i = 0; i < searchData.length; i++) {
+          if (searchData[i].id === Number(item)) {
+            return searchData[i].address;
+          }
+        }
+      });
+
+      const authHeader = { Authorization: userToken || '' };
+      const response = await apiCall(
+        `${process.env.REACT_APP_BASE_API_URL}/api/wallets/${wallet.address}/add-user`,
+        'POST',
+        authHeader,
+        { accounts: accAddresses }
+      );
+      const responseData = await response.json();
+
+      if (
+        response.ok &&
+        responseData.data !== null &&
+        responseData.data !== undefined
+      ) {
+        fetchWalletUsers();
+      } else if (
+        !response.ok &&
+        responseData.message !== null &&
+        responseData.message !== undefined
+      ) {
+        setAddUserError(responseData.message);
+      }
+      hideAddUserHandler();
+    } catch (e) {
+      setAddUserError('Accounts could not be added to the wallet');
+    }
+  };
+
+  const searchResultsForm = useFormik({
+    initialValues: {
+      checked: [],
+    },
+    onSubmit: (values) => addUserToWalletHandler(values),
+  });
+
   let content: any;
 
   if (initError !== null) {
@@ -107,7 +153,7 @@ function WalletUsers({ wallet }: { wallet: any }) {
     if (userData.length === 0) {
       content = <p>This wallet has no users.</p>;
     } else {
-      content = <UsersTable users={userData} />;
+      content = <UsersTable users={userData} form={searchForm} />;
     }
   }
 
@@ -178,7 +224,27 @@ function WalletUsers({ wallet }: { wallet: any }) {
             {searchError !== null ? (
               <h4>{searchError}</h4>
             ) : (
-              <UsersTable users={searchData} />
+              <form
+                method='POST'
+                onSubmit={searchResultsForm.handleSubmit}
+                style={{ display: 'block', width: '100%' }}
+              >
+                <UsersTable users={searchData} form={searchResultsForm} />
+
+                <Grid item xs={12} marginTop={2}>
+                  <Button variant='contained' type='submit'>
+                    Add
+                  </Button>
+                </Grid>
+              </form>
+            )}
+
+            {addUserError && (
+              <Grid item xs={12} marginTop={1}>
+                <p className='error-message' style={{ textAlign: 'left' }}>
+                  {addUserError}
+                </p>
+              </Grid>
             )}
           </Grid>
         )}

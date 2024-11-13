@@ -8,7 +8,7 @@ import Paper from '@mui/material/Paper';
 
 import formatEthAddress from '../../../../utils/web3/formatEthAddress';
 
-function UsersTable({ users }: { users: any }) {
+function UsersTable({ users, form }: { users: any; form: any }) {
   return (
     <TableContainer component={Paper}>
       <Table>
@@ -27,7 +27,12 @@ function UsersTable({ users }: { users: any }) {
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
               <TableCell>
-                <input type='checkbox' />
+                <input
+                  type='checkbox'
+                  name='checked'
+                  value={row.id}
+                  onChange={form.handleChange}
+                />
               </TableCell>
               <TableCell>{row.User.username}</TableCell>
               <TableCell>{row.name}</TableCell>
