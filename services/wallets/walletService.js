@@ -1,3 +1,5 @@
+const sequelize = require('sequelize');
+const { Op } = require('sequelize');
 const Account = require('./../../db/models/account');
 const Wallet = require('./../../db/models/wallet');
 const User = require('./../../db/models/user');
@@ -174,9 +176,9 @@ const getUsers = async (walletAddress) => {
           include: [
             {
               model: User,
-              attributes: ['id', 'username']
-            }
-          ]
+              attributes: ['id', 'username'],
+            },
+          ],
         },
       ],
     });
@@ -184,6 +186,52 @@ const getUsers = async (walletAddress) => {
     return walletUsers;
   } catch (e) {
     throw 'Wallet users could not be fetched';
+  }
+};
+
+/**
+ * Searching for accounts based on account and user fields
+ * @param {string} searchString Search query string
+ * @returns {Array} List of accounts
+ */
+const searchUsers = async (searchString) => {
+  try {
+    const result1 = await Account.findAll({
+      where: {
+        [Op.or]: {
+          name: { [Op.iLike]: '%' + searchString + '%' },
+          address: { [Op.iLike]: '%' + searchString + '%' },
+        },
+      },
+      attributes: ['id', 'name', 'address'],
+      include: [
+        {
+          model: User,
+          attributes: ['id', 'username'],
+        },
+      ],
+    });
+
+    const result2 = await Account.findAll({
+      attributes: ['id', 'name', 'address'],
+      include: [
+        {
+          model: User,
+          where: {
+            [Op.or]: {
+              username: { [Op.iLike]: '%' + searchString + '%' },
+              name: { [Op.iLike]: '%' + searchString + '%' },
+              designation: { [Op.iLike]: '%' + searchString + '%' },
+            },
+          },
+          attributes: ['id', 'username'],
+        },
+      ],
+    });
+    const result = [...result1, ...result2];
+    return result;
+  } catch (e) {
+    throw 'Accounts could not be fetched';
   }
 };
 
@@ -242,6 +290,7 @@ module.exports = {
   retrieveWallets,
   retrieveWalletDetails,
   getUsers,
+  searchUsers,
   addUser,
   getAbi,
 };

@@ -118,6 +118,30 @@ const getUsers = async (req, res) => {
 };
 
 /**
+ * Controller for searching users (accounts)
+ * @param {Object} req Request
+ * @param {Object} res Response
+ */
+const searchUsers = async (req, res) => {
+  let searchString = req.query.search;
+
+  if (
+    searchString === null ||
+    searchString === undefined ||
+    searchString.trim().length === 0
+  ) {
+    res.status(400).send({ message: 'Empty search string' });
+  }
+
+  try {
+    const response = await walletService.searchUsers(searchString);
+    res.send({ data: response });
+  } catch (e) {
+    res.status(400).send({ message: e });
+  }
+};
+
+/**
  * Controller for adding an account as a wallet user/withdrawer
  * @param {Object} req Request
  * @param {Object} res Response
@@ -162,6 +186,7 @@ module.exports = {
   retrieveWallets,
   retrieveWalletDetails,
   getUsers,
+  searchUsers,
   addUser,
   getAbi,
 };
