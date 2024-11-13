@@ -102,6 +102,7 @@ function WalletUsers({ wallet }: { wallet: any }) {
 
   const addUserToWalletHandler = async (values: any) => {
     try {
+      setAddUserError(null);
       const accAddresses = values.checked.map((item: string) => {
         for (let i = 0; i < searchData.length; i++) {
           if (searchData[i].id === Number(item)) {
@@ -110,6 +111,9 @@ function WalletUsers({ wallet }: { wallet: any }) {
         }
       });
 
+      if (accAddresses.length === 0) {
+        return setAddUserError('No account selected');
+      }
       const authHeader = { Authorization: userToken || '' };
       const response = await apiCall(
         `${process.env.REACT_APP_BASE_API_URL}/api/wallets/${wallet.address}/add-user`,
