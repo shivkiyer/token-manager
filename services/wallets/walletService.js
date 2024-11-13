@@ -192,9 +192,10 @@ const getUsers = async (walletAddress) => {
 /**
  * Searching for accounts based on account and user fields
  * @param {string} searchString Search query string
+ * @param {string} walletAddress (optional) Address of wallet in case of managing users
  * @returns {Array} List of accounts
  */
-const searchUsers = async (searchString) => {
+const searchUsers = async ({ searchString, walletAddress }) => {
   try {
     const result1 = await Account.findAll({
       where: {
@@ -229,6 +230,33 @@ const searchUsers = async (searchString) => {
       ],
     });
     const result = [...result1, ...result2];
+
+    if (walletAddress !== undefined && walletAddress !== null) {
+      const wallet = await Wallet.findOne({
+        where: {
+          address: walletAddress,
+        },
+        attributes: [],
+        include: [
+          {
+            model: Account,
+            as: 'user',
+            attributes: ['id'],
+            through: { attributes: [] },
+          },
+        ],
+      });
+      const existingAccountIds = wallet.user.map((item) => {
+        return item.id;
+      });
+
+      for (let i = result.length - 1; i > -1; i--) {
+        const itemIndex = existingAccountIds.indexOf(result[i].id);
+        if (itemIndex > -1) {
+          result.splice(i, 1);
+        }
+      }
+    }
     return result;
   } catch (e) {
     throw 'Accounts could not be fetched';

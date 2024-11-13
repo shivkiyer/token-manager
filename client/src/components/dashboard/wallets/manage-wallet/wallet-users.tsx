@@ -68,6 +68,7 @@ function WalletUsers({ wallet }: { wallet: any }) {
         `${process.env.REACT_APP_BASE_API_URL}/api/wallets/search-users?` +
           new URLSearchParams({
             search: values.search,
+            wallet: wallet.address,
           }),
         'GET',
         authHeader,

@@ -124,6 +124,7 @@ const getUsers = async (req, res) => {
  */
 const searchUsers = async (req, res) => {
   let searchString = req.query.search;
+  let walletAddress = req.query.wallet;
 
   if (
     searchString === null ||
@@ -134,7 +135,10 @@ const searchUsers = async (req, res) => {
   }
 
   try {
-    const response = await walletService.searchUsers(searchString);
+    const response = await walletService.searchUsers({
+      searchString,
+      walletAddress,
+    });
     res.send({ data: response });
   } catch (e) {
     res.status(400).send({ message: e });
