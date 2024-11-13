@@ -130,7 +130,7 @@ const searchUsers = async (req, res) => {
     searchString === undefined ||
     searchString.trim().length === 0
   ) {
-    res.status(400).send({ message: 'Empty search string' });
+    return res.status(400).send({ message: 'Empty search string' });
   }
 
   try {

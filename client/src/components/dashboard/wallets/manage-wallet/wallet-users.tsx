@@ -1,27 +1,20 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useFormik } from 'formik';
 import Grid from '@mui/material/Grid';
-import Table from '@mui/material/Table';
-import TableBody from '@mui/material/TableBody';
-import TableCell from '@mui/material/TableCell';
-import TableContainer from '@mui/material/TableContainer';
-import TableHead from '@mui/material/TableHead';
-import TableRow from '@mui/material/TableRow';
-import Paper from '@mui/material/Paper';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
-import CheckBox from '@mui/icons-material/CheckBox';
-import FormControlLabel from '@mui/material/FormControlLabel';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 
+import UsersTable from './users-table';
 import { authToken } from '../../../../utils/auth/auth';
 import apiCall from '../../../../utils/http/api-call';
-import formatEthAddress from '../../../../utils/web3/formatEthAddress';
 
 function WalletUsers({ wallet }: { wallet: any }) {
   const [userData, setUserData] = useState<any>(null);
+  const [searchData, setSearchData] = useState<any>(null);
   const [initError, setInitError] = useState<string | null>(null);
+  const [searchError, setSearchError] = useState<string | null>(null);
   const [displayForm, setDisplayForm] = useState(false);
   const userToken = authToken();
 
@@ -63,16 +56,47 @@ function WalletUsers({ wallet }: { wallet: any }) {
 
   const hideAddUserHandler = () => {
     searchForm.values.search = '';
+    setSearchData(null);
     setDisplayForm(false);
+  };
+
+  const handleUsersSearch = async (values: any) => {
+    try {
+      const authHeader = { Authorization: userToken || '' };
+      const response = await apiCall(
+        `${process.env.REACT_APP_BASE_API_URL}/api/wallets/search-users?` +
+          new URLSearchParams({
+            search: values.search,
+          }),
+        'GET',
+        authHeader,
+        null
+      );
+
+      const responseData = await response.json();
+      if (
+        response.ok &&
+        responseData.data !== null &&
+        responseData.data !== undefined
+      ) {
+        setSearchData(responseData.data);
+      } else if (
+        !response.ok &&
+        responseData.message !== null &&
+        responseData.message !== undefined
+      ) {
+        setSearchError(responseData.message);
+      }
+    } catch (e) {
+      setSearchError('Could not find any accounts');
+    }
   };
 
   const searchForm = useFormik({
     initialValues: {
       search: '',
     },
-    onSubmit: (values, { resetForm }) => {
-      console.log(values);
-    },
+    onSubmit: (values) => handleUsersSearch(values),
   });
 
   let content: any;
@@ -83,37 +107,7 @@ function WalletUsers({ wallet }: { wallet: any }) {
     if (userData.length === 0) {
       content = <p>This wallet has no users.</p>;
     } else {
-      content = (
-        <form>
-          <TableContainer component={Paper}>
-            <Table>
-              <TableHead>
-                <TableRow>
-                  <TableCell></TableCell>
-                  <TableCell>Username</TableCell>
-                  <TableCell>A/c Name</TableCell>
-                  <TableCell>A/c address</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {userData.map((row: any) => (
-                  <TableRow
-                    key={row.name}
-                    sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-                  >
-                    <TableCell>
-                      <input type='checkbox' />
-                    </TableCell>
-                    <TableCell>{row.User.username}</TableCell>
-                    <TableCell>{row.name}</TableCell>
-                    <TableCell>{formatEthAddress(row.address, true)}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </form>
-      );
+      content = <UsersTable users={userData} />;
     }
   }
 
@@ -129,7 +123,7 @@ function WalletUsers({ wallet }: { wallet: any }) {
         </Grid>
 
         <Grid item xs={12} marginTop={1}>
-          <Button variant='contained' type='submit' onClick={addUserHandler}>
+          <Button variant='contained' onClick={addUserHandler}>
             Add Users
           </Button>
           <Button
@@ -176,6 +170,17 @@ function WalletUsers({ wallet }: { wallet: any }) {
               </Grid>
             </Grid>
           </form>
+        )}
+
+        {searchData && (
+          <Grid container marginTop={4}>
+            <h3>Search results:</h3>
+            {searchError !== null ? (
+              <h4>{searchError}</h4>
+            ) : (
+              <UsersTable users={searchData} />
+            )}
+          </Grid>
         )}
       </Grid>
     </>
