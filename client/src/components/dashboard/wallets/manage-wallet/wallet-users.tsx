@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useFormik } from 'formik';
+import { useNavigate } from 'react-router-dom';
 import Grid from '@mui/material/Grid';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
@@ -7,16 +8,17 @@ import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 
 import UsersTable from './users-table';
-import { authToken } from '../../../../utils/auth/auth';
+import { authToken, clearToken } from '../../../../utils/auth/auth';
 import apiCall from '../../../../utils/http/api-call';
 
-function WalletUsers({ wallet }: { wallet: any }) {
+function WalletUsers({ web3, wallet }: { web3: any; wallet: any }) {
   const [userData, setUserData] = useState<any>(null);
   const [searchData, setSearchData] = useState<any>(null);
   const [initError, setInitError] = useState<string | null>(null);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [addUserError, setAddUserError] = useState<string | null>(null);
   const [displayForm, setDisplayForm] = useState(false);
+  const navigate = useNavigate();
   const userToken = authToken();
 
   const fetchWalletUsers = useCallback(async () => {
@@ -40,16 +42,23 @@ function WalletUsers({ wallet }: { wallet: any }) {
         responseData.message !== null &&
         responseData.message !== undefined
       ) {
+        if (responseData.message.includes('Authorization failed')) {
+          clearToken();
+          navigate('/login');
+        }
         setInitError(responseData.message);
       }
     } catch (e) {
       console.log(e);
     }
-  }, [userToken, wallet]);
+  }, [userToken, wallet, navigate]);
 
   useEffect(() => {
+    if (web3 === null || web3 === undefined) {
+      setInitError('Metamask needs to be unlocked');
+    }
     fetchWalletUsers();
-  }, [fetchWalletUsers]);
+  }, [fetchWalletUsers, web3]);
 
   const addUserHandler = () => {
     setDisplayForm(true);
@@ -87,6 +96,10 @@ function WalletUsers({ wallet }: { wallet: any }) {
         responseData.message !== null &&
         responseData.message !== undefined
       ) {
+        if (responseData.message.includes('Authorization failed')) {
+          clearToken();
+          navigate('/login');
+        }
         setSearchError(responseData.message);
       }
     } catch (e) {
@@ -115,6 +128,23 @@ function WalletUsers({ wallet }: { wallet: any }) {
       if (accAddresses.length === 0) {
         return setAddUserError('No account selected');
       }
+
+      if (web3 !== null && web3 !== undefined) {
+        const web3Accounts = await web3.eth.getAccounts();
+        const web3Account = web3Accounts[0];
+        const walletContract = new web3.eth.Contract(
+          wallet.abi,
+          wallet.address
+        );
+        const gasEstimate = await walletContract.methods
+          .setWithdrawer(accAddresses[0])
+          .estimateGas({ from: web3Account });
+        const actualGas = gasEstimate * BigInt(2);
+        const web3Response = await walletContract.methods
+          .setWithdrawer(accAddresses[0])
+          .send({ from: web3Account, gas: actualGas.toString() });
+      }
+
       const authHeader = { Authorization: userToken || '' };
       const response = await apiCall(
         `${process.env.REACT_APP_BASE_API_URL}/api/wallets/${wallet.address}/add-user`,
