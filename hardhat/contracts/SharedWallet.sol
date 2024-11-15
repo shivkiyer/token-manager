@@ -15,7 +15,7 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
  */
 contract SharedWallet is Ownable, AccessControl {
     bytes32 public constant SPENDER = keccak256("SPENDER");
-    uint256 public withdrawLimit;
+    uint256 private withdrawLimit;
     uint256 private balance;
 
     event SharedWallet__Withdrawal(
@@ -23,6 +23,7 @@ contract SharedWallet is Ownable, AccessControl {
         address indexed _to,
         uint256 amount
     );
+    event SharedWallet__UpdateLimit(address indexed _from, uint256 limit);
 
     error SharedWallet__ExceededLimit(uint256 requestedAmount, uint256 limit);
     error SharedWallet__InsufficientBalance(uint256 requestedAmount);
@@ -39,8 +40,24 @@ contract SharedWallet is Ownable, AccessControl {
         balance += msg.value;
     }
 
-    function setWithdrawer(address withdrawer) public onlyOwner {
-        grantRole(SPENDER, withdrawer);
+    function getWithdrawalLimit() public view returns (uint256) {
+        return withdrawLimit;
+    }
+
+    function updateWithdrawalLimit(uint256 _newLimit) public onlyOwner {
+        emit SharedWallet__UpdateLimit(address(this), _newLimit);
+        withdrawLimit = _newLimit;
+    }
+
+    function setWithdrawers(address[] memory _withdrawers) public onlyOwner {
+        uint256 noOfWithdrawers = _withdrawers.length;
+        for (uint256 i = 0; i < noOfWithdrawers; i++) {
+            grantRole(SPENDER, _withdrawers[i]);
+        }
+    }
+
+    function isWithdrawer(address _account) public view returns (bool) {
+        return hasRole(SPENDER, _account);
     }
 
     function withdraw(address _to, uint256 amount) public {
