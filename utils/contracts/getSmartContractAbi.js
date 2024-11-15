@@ -10,8 +10,9 @@ const getSmartContractAbi = async (contractName) => {
   const rootPath = path.dirname(path.dirname(__dirname));
   const abiPath = path.resolve(
     rootPath,
-    'blockchain',
-    'out',
+    'hardhat',
+    'artifacts',
+    'contracts',
     `${contractName}.sol`,
     `${contractName}.json`
   );

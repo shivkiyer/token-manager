@@ -9,3 +9,5 @@
 **/lib
 **/out
 **/broadcast
+**/artifacts
+**/ignition/deployments

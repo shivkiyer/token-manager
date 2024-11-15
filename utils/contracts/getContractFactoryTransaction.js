@@ -15,10 +15,10 @@ const getContractFactoryTransaction = async () => {
   const filePath = path.resolve(
     rootPath,
     process.env.BLOCKCHAIN_BASE_DIR,
-    'broadcast',
-    `${process.env.CONTRACT_FACTORY_NAME}.s.sol`,
-    chainId,
-    'run-latest.json'
+    'ignition',
+    'deployments',
+    `chain-${chainId}`,
+    'deployed_addresses.json'
   );
   const broadcastFile = await fs.promises.readFile(filePath, {
     encoding: 'utf8',

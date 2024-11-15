@@ -9,15 +9,11 @@ const getSmartContractAbi = require('./../../utils/contracts/getSmartContractAbi
 const getAddress = async () => {
   try {
     const contractJson = await getContractFactoryTransaction();
-    const contract = contractJson.transactions.filter(
-      (transaction) =>
-        transaction.transactionType.trim().toLowerCase() === 'create' &&
-        transaction.contractName === 'TokenManagerFactory'
+    const compiledContractKeys = Object.keys(contractJson);
+    const tokenManagerKey = compiledContractKeys.find((item) =>
+      item.includes(process.env.CONTRACT_FACTORY_NAME)
     );
-    if (contract.length === 0 || contract.length > 1) {
-      throw 'Error';
-    }
-    const contractAddress = contract[0].contractAddress;
+    const contractAddress = contractJson[tokenManagerKey];
     return contractAddress;
   } catch (e) {
     throw 'Contract Factory address could not be fetched';
