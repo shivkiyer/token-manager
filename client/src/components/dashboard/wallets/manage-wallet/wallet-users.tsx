@@ -137,11 +137,11 @@ function WalletUsers({ web3, wallet }: { web3: any; wallet: any }) {
           wallet.address
         );
         const gasEstimate = await walletContract.methods
-          .setWithdrawer(accAddresses[0])
+          .setWithdrawers(accAddresses)
           .estimateGas({ from: web3Account });
         const actualGas = gasEstimate * BigInt(2);
         const web3Response = await walletContract.methods
-          .setWithdrawer(accAddresses[0])
+          .setWithdrawers(accAddresses)
           .send({ from: web3Account, gas: actualGas.toString() });
       }
 
