@@ -125,9 +125,8 @@ const retrieveWallets = async (username) => {
  * @throws {Error} If user is not owner of wallet
  */
 const retrieveWalletDetails = async (id, username) => {
-  let wallet;
   try {
-    wallet = await Wallet.findOne({
+    const result = await Wallet.findOne({
       where: { id },
       attributes: [
         'id',
@@ -140,22 +139,30 @@ const retrieveWalletDetails = async (id, username) => {
       include: [
         {
           model: Account,
-          attributes: ['id', 'name', 'address'],
+          attributes: ['id', 'name', 'address', 'userId'],
           as: 'owner',
           required: true,
+          include: [
+            {
+              model: User,
+              attributes: ['id', 'username'],
+            }
+          ]
         },
       ],
     });
+
+    let wallet = result.toJSON();
+    if (wallet['owner']['userId'] === wallet['owner']['User']['id']) {
+      wallet['isOwner'] = true;
+    } else {
+      wallet['isOwner'] = false;
+    }
+    delete wallet['owner']['User'];
+    return wallet;
   } catch (e) {
     throw 'Wallet could not be found';
   }
-
-  const checkWalletOwner = await isUserWalletOwner(username, wallet);
-  if (!checkWalletOwner) {
-    throw 'Only wallet owner can view wallet details';
-  }
-
-  return wallet;
 };
 
 /**
