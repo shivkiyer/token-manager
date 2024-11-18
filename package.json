@@ -9,7 +9,8 @@
   "jest": {
     "testPathIgnorePatterns": [
       "client",
-      "blockchain"
+      "blockchain",
+      "hardhat"
     ]
   },
   "author": "Shivkumar Iyer",
