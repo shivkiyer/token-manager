@@ -6,17 +6,19 @@ A full-stack web application for the purpose of simplifying the creation and man
 - React Typescript with React Material UI
 - Node JS with Sequelize ORM and JWT for authentication
 - PostgreSQL database
-- Smart contracts written with Solidity, managed and tested with Foundry
-- Unit and integration tests using Jest, React Testing Library and Forge
+- Smart contracts written with Solidity, managed and tested with Hardhat
+- Unit and integration tests using Jest, React Testing Library and Hardhat
 
 ### Installation
 
 - To setup the Node JS backend, in the root directory:  
   npm install
 - To setup the React TS frontend, in the client directory:  
+  cd client
   npm install
-- To setup Foundry, in the blockchain directory:  
-  Follow the process [here](https://book.getfoundry.sh/getting-started/installation)
+- To setup Hardhat:  
+  cd hardhat
+  npm install
 
 ### Configuration
 
