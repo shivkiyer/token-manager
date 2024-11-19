@@ -6,7 +6,7 @@ const Account = require('./../../../db/models/account');
 const Wallet = require('./../../../db/models/wallet');
 const setupTestDb = require('./../../../test-utils/db/setupTestDb');
 const server = require('./../../../server/server');
-const createTestUser = require('./../../../test-utils/db/createTestUser')
+const createTestUser = require('./../../../test-utils/db/createTestUser');
 const createTestJwt = require('./../../../test-utils/auth/createTestJwt');
 
 describe('Retrieve Wallet Details', () => {
@@ -84,7 +84,7 @@ describe('Retrieve Wallet Details', () => {
     const testJwt = await createTestJwt(testUser.username);
 
     const response = await request(server)
-      .get(`/api/wallets/${testWallet.id+1}`)
+      .get(`/api/wallets/${testWallet.id + 1}`)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json')
       .set('Authorization', testJwt);
@@ -95,7 +95,7 @@ describe('Retrieve Wallet Details', () => {
 
   it('should return a 403 if credentials are missing or incorrect', async () => {
     const response = await request(server)
-      .get(`/api/wallets/${testWallet.id+1}`)
+      .get(`/api/wallets/${testWallet.id + 1}`)
       .set('Content-Type', 'application/json')
       .set('Accept', 'application/json');
 

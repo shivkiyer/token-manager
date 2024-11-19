@@ -146,8 +146,8 @@ const retrieveWalletDetails = async (id, username) => {
             {
               model: User,
               attributes: ['id', 'username'],
-            }
-          ]
+            },
+          ],
         },
       ],
     });
@@ -236,7 +236,14 @@ const searchUsers = async ({ searchString, walletAddress }) => {
         },
       ],
     });
-    const result = [...result1, ...result2];
+    const result = [...result1];
+    const accountSearchIds = result1.map((item) => item.id);
+
+    result2.forEach((item) => {
+      if (!accountSearchIds.includes(item.id)) {
+        result.push(item);
+      }
+    });
 
     if (walletAddress !== undefined && walletAddress !== null) {
       const wallet = await Wallet.findOne({

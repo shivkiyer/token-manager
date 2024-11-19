@@ -7,7 +7,7 @@ const hashPassword = require('./../../utils/auth/hashPassword');
  * @param {string} password Password
  * @returns {Object} User object instance
  */
-const createTestUser = async ({ username, password }) => {
+const createTestUser = async ({ username, password, name }) => {
   if (username === undefined || username === null) {
     username = 'abc@gmail.com';
   }
@@ -19,6 +19,7 @@ const createTestUser = async ({ username, password }) => {
   const testUser = await User.create({
     username: username,
     password: encrPassword,
+    name,
   });
   return testUser;
 };
