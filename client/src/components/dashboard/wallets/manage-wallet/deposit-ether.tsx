@@ -88,7 +88,7 @@ function DepositEther({ web3, wallet }: { web3: any; wallet: any }) {
   return (
     <>
       <Grid item xs={12} marginTop={3}>
-        <h4 style={{ display: 'inline-block' }}>
+        <h4 style={{ display: 'inline-block' }} data-testid='test-ether-balance'>
           Current balance: {balance.toString()} Ether
         </h4>
         <Button
