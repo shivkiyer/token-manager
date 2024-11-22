@@ -8,8 +8,7 @@ import {AccessControl} from "@openzeppelin/contracts/access/AccessControl.sol";
 /**
  * @dev Contract for creating a shared wallet for approved withdrawers.
  *
- * The contract owner can add withdrawers and set withdrawal limits
- * for each of them.
+ * The contract owner can add and remove withdrawers.
  * An attempt to withdraw over the set limit will revert with an error.
  * An attempt by an unauthorized person to withdraw will revert with an error.
  */
@@ -56,12 +55,19 @@ contract SharedWallet is Ownable, AccessControl {
         }
     }
 
+    function removeWithDrawers(address[] memory _withdrawers) public onlyOwner {
+        uint256 noOfWithdrawers = _withdrawers.length;
+        for (uint256 i = 0; i < noOfWithdrawers; i++) {
+            revokeRole(SPENDER, _withdrawers[i]);
+        }
+    }
+
     function isWithdrawer(address _account) public view returns (bool) {
         return hasRole(SPENDER, _account);
     }
 
-    function withdraw(address _to, uint256 amount) public {
-        _checkRole(SPENDER, _to);
+    function withdraw(uint256 amount) public onlyRole(SPENDER) {
+        address _to = _msgSender();
         if (amount > withdrawLimit) {
             revert SharedWallet__ExceededLimit({
                 requestedAmount: amount,
