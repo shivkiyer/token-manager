@@ -6,21 +6,13 @@ class MockContract {
   constructor() {
     return {
       methods: {
-        createSharedWallet: () => {
+        setWithdrawers: () => {
           return {
             estimateGas: () => {
               return BigInt(10);
             },
             send: () =>
-              Promise.resolve({
-                events: {
-                  SharedWalletCreated: {
-                    returnValues: {
-                      wallet: 'walletaddress',
-                    },
-                  },
-                },
-              }),
+              Promise.resolve(),
           };
         },
       },
@@ -646,6 +638,236 @@ describe('ManageWallet', () => {
       expect(walletAccount1).toBeInTheDocument();
       const walletAccount2 = screen.getByText('Account 4');
       expect(walletAccount2).toBeInTheDocument();
+    });
+  });
+
+  it('should display an error if Add button is clicked without selecting a user in search table', async () => {
+    const Web3ContextProvider =
+      require('./../../../../app/context/web3-context-provider').default;
+    const manageWalletLoader =
+      require('./../manage-wallet/manageWalletLoader').default;
+    const ManageWallet = require('./../manage-wallet/manage-wallet').default;
+
+    const routes = [
+      {
+        path: '/',
+        id: 'root-app',
+        loader: mockAuthToken,
+        element: <MockRootComponent />,
+        children: [
+          {
+            path: '/dashboard/wallets/manage/1',
+            element: <ManageWallet />,
+            loader: manageWalletLoader,
+          },
+        ],
+      },
+    ];
+
+    const router = createMemoryRouter(routes as any, {
+      initialEntries: ['/dashboard/wallets/manage/1', '/'],
+      initialIndex: 0,
+    });
+
+    render(
+      <Web3ContextProvider>
+        <RouterProvider router={router}></RouterProvider>
+      </Web3ContextProvider>
+    );
+
+    let addUsersBtn: any;
+    await waitFor(() => {
+      addUsersBtn = screen.getByRole('button', { name: 'Add Users' });
+      expect(addUsersBtn).toBeInTheDocument();
+    });
+
+    userEvent.click(addUsersBtn);
+
+    let searchField: any;
+    let searchIconBtn: any;
+    await waitFor(() => {
+      searchField = screen.getByPlaceholderText(
+        'Username or Account Name or Account Address'
+      );
+      expect(searchField).toBeInTheDocument();
+      searchIconBtn = screen.getByTestId('SearchIcon');
+      expect(searchIconBtn).toBeInTheDocument();
+    });
+
+    userEvent.type(searchField, 'abc');
+    userEvent.click(searchIconBtn);
+
+    let addBtn: any;
+    await waitFor(() => {
+      addBtn = screen.getByRole('button', { name: 'Add' });
+      expect(addBtn).toBeInTheDocument();
+    });
+
+    userEvent.click(addBtn);
+
+    await waitFor(() => {
+      const addErrorMsg = screen.getByText('No account selected');
+      expect(addErrorMsg).toBeInTheDocument();
+    });
+  });
+
+  it('should close the user search table after the Add button is clicked', async () => {
+    const Web3ContextProvider =
+      require('./../../../../app/context/web3-context-provider').default;
+    const manageWalletLoader =
+      require('./../manage-wallet/manageWalletLoader').default;
+    const ManageWallet = require('./../manage-wallet/manage-wallet').default;
+
+    const routes = [
+      {
+        path: '/',
+        id: 'root-app',
+        loader: mockAuthToken,
+        element: <MockRootComponent />,
+        children: [
+          {
+            path: '/dashboard/wallets/manage/1',
+            element: <ManageWallet />,
+            loader: manageWalletLoader,
+          },
+        ],
+      },
+    ];
+
+    const router = createMemoryRouter(routes as any, {
+      initialEntries: ['/dashboard/wallets/manage/1', '/'],
+      initialIndex: 0,
+    });
+
+    render(
+      <Web3ContextProvider>
+        <RouterProvider router={router}></RouterProvider>
+      </Web3ContextProvider>
+    );
+
+    let addUsersBtn: any;
+    await waitFor(() => {
+      addUsersBtn = screen.getByRole('button', { name: 'Add Users' });
+      expect(addUsersBtn).toBeInTheDocument();
+    });
+
+    userEvent.click(addUsersBtn);
+
+    let searchField: any;
+    let searchIconBtn: any;
+    await waitFor(() => {
+      searchField = screen.getByPlaceholderText(
+        'Username or Account Name or Account Address'
+      );
+      expect(searchField).toBeInTheDocument();
+      searchIconBtn = screen.getByTestId('SearchIcon');
+      expect(searchIconBtn).toBeInTheDocument();
+    });
+
+    userEvent.type(searchField, 'abc');
+    userEvent.click(searchIconBtn);
+
+    let userSelectCheckBox: any;
+    let addBtn: any;
+    await waitFor(() => {
+      addBtn = screen.getByRole('button', { name: 'Add' });
+      expect(addBtn).toBeInTheDocument();
+      userSelectCheckBox = screen.getAllByRole('checkbox');
+      expect(userSelectCheckBox[userSelectCheckBox.length-1]).toBeInTheDocument();
+    });
+
+    userEvent.click(userSelectCheckBox[userSelectCheckBox.length-1]);
+
+    userEvent.click(addBtn);
+
+    await waitFor(() => {
+      const addUserBtn = screen.queryByRole('button', {name: 'Add'});
+      expect(addUserBtn).not.toBeInTheDocument();
+    });
+  });
+
+  it('should display an error if Metamask account used for adding user to wallet is not the same as wallet owner', async () => {
+    mockGetWeb3.mockReturnValue({
+      utils: actualWeb3Utils,
+      eth: {
+        getBalance: () => Promise.resolve(BigInt(2000000000000000000)),
+        getAccounts: () => Promise.resolve(['acc2addr']),
+        estimateGas: () => Promise.resolve(BigInt(1)),
+        sendTransaction: () => Promise.resolve(),
+        Contract: MockContract,
+      },
+    });
+    const Web3ContextProvider =
+      require('./../../../../app/context/web3-context-provider').default;
+    const manageWalletLoader =
+      require('./../manage-wallet/manageWalletLoader').default;
+    const ManageWallet = require('./../manage-wallet/manage-wallet').default;
+
+    const routes = [
+      {
+        path: '/',
+        id: 'root-app',
+        loader: mockAuthToken,
+        element: <MockRootComponent />,
+        children: [
+          {
+            path: '/dashboard/wallets/manage/1',
+            element: <ManageWallet />,
+            loader: manageWalletLoader,
+          },
+        ],
+      },
+    ];
+
+    const router = createMemoryRouter(routes as any, {
+      initialEntries: ['/dashboard/wallets/manage/1', '/'],
+      initialIndex: 0,
+    });
+
+    render(
+      <Web3ContextProvider>
+        <RouterProvider router={router}></RouterProvider>
+      </Web3ContextProvider>
+    );
+
+    let addUsersBtn: any;
+    await waitFor(() => {
+      addUsersBtn = screen.getByRole('button', { name: 'Add Users' });
+      expect(addUsersBtn).toBeInTheDocument();
+    });
+
+    userEvent.click(addUsersBtn);
+
+    let searchField: any;
+    let searchIconBtn: any;
+    await waitFor(() => {
+      searchField = screen.getByPlaceholderText(
+        'Username or Account Name or Account Address'
+      );
+      expect(searchField).toBeInTheDocument();
+      searchIconBtn = screen.getByTestId('SearchIcon');
+      expect(searchIconBtn).toBeInTheDocument();
+    });
+
+    userEvent.type(searchField, 'abc');
+    userEvent.click(searchIconBtn);
+
+    let userSelectCheckBox: any;
+    let addBtn: any;
+    await waitFor(() => {
+      addBtn = screen.getByRole('button', { name: 'Add' });
+      expect(addBtn).toBeInTheDocument();
+      userSelectCheckBox = screen.getAllByRole('checkbox');
+      expect(userSelectCheckBox[userSelectCheckBox.length-1]).toBeInTheDocument();
+    });
+
+    userEvent.click(userSelectCheckBox[userSelectCheckBox.length-1]);
+
+    userEvent.click(addBtn);
+
+    await waitFor(() => {
+      const userAddError = screen.getByText('Linked Metamask account is not the wallet owner');
+      expect(userAddError).toBeInTheDocument();
     });
   });
 });
