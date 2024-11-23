@@ -3,6 +3,8 @@ const request = require('supertest');
 
 const User = require('./../../../db/models/user');
 const Account = require('./../../../db/models/account');
+const Wallet = require('./../../../db/models/wallet');
+const WalletUser = require('./../../../db/models/walletUser');
 const setupTestDb = require('./../../../test-utils/db/setupTestDb');
 const server = require('./../../../server/server');
 const createTestUser = require('./../../../test-utils/db/createTestUser');
@@ -28,6 +30,8 @@ describe('Search users for wallet endpoint', () => {
 
       await User.destroy({ truncate: { cascade: true } });
       await Account.destroy({ truncate: { cascade: true } });
+      await Wallet.destroy({ truncate: { cascade: true } });
+      await WalletUser.destroy({ truncate: { cascade: true } });
 
       testUsers = [];
       const testUser1 = await createTestUser({
@@ -97,7 +101,7 @@ describe('Search users for wallet endpoint', () => {
     expect(response.body.data[0].address).toBe('accaddr1234');
   });
 
-  it('should fetch accounts is search query matches associated users', async () => {
+  it('should fetch accounts if search query matches associated users', async () => {
     const testJwt = await createTestJwt(testUsers[0].username);
 
     let response = await request(server)
@@ -118,6 +122,41 @@ describe('Search users for wallet endpoint', () => {
     expect(response.status).toBe(200);
     expect(response.body.data.length).toBe(1);
     expect(response.body.data[0].address).toBe('accaddr5678');
+  });
+
+  it('should exclude accounts already added to a wallet from search results', async () => {
+    const testWallet = await testAccounts[0].createWallet({
+      name: 'Wallet 1',
+      description: 'Wallet descr 1',
+      address: 'wall1addr',
+      maxLimit: 2,
+    });
+
+    await WalletUser.create({
+      AccountId: testAccounts[1].id,
+      WalletId: testWallet.id,
+    });
+
+    const testJwt = await createTestJwt(testUsers[0].username);
+
+    let response = await request(server)
+      .get(`/api/wallets/search-users?search=user&wallet=${testWallet.address}`)
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json')
+      .set('Authorization', testJwt);
+
+    expect(response.status).toBe(200);
+    expect(response.body.data.length).toBe(1);
+    expect(response.body.data[0].address).toBe('accaddr1234');
+
+    response = await request(server)
+      .get(`/api/wallets/search-users?search=abc2&wallet=${testWallet.address}`)
+      .set('Content-Type', 'application/json')
+      .set('Accept', 'application/json')
+      .set('Authorization', testJwt);
+
+    expect(response.status).toBe(200);
+    expect(response.body.data.length).toBe(0);
   });
 
   it('should return a 403 if credentials are not passed', async () => {
