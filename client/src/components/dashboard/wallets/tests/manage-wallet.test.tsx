@@ -11,8 +11,7 @@ class MockContract {
             estimateGas: () => {
               return BigInt(10);
             },
-            send: () =>
-              Promise.resolve(),
+            send: () => Promise.resolve({ transactionHash: 'trans123' }),
           };
         },
       },
@@ -773,15 +772,17 @@ describe('ManageWallet', () => {
       addBtn = screen.getByRole('button', { name: 'Add' });
       expect(addBtn).toBeInTheDocument();
       userSelectCheckBox = screen.getAllByRole('checkbox');
-      expect(userSelectCheckBox[userSelectCheckBox.length-1]).toBeInTheDocument();
+      expect(
+        userSelectCheckBox[userSelectCheckBox.length - 1]
+      ).toBeInTheDocument();
     });
 
-    userEvent.click(userSelectCheckBox[userSelectCheckBox.length-1]);
+    userEvent.click(userSelectCheckBox[userSelectCheckBox.length - 1]);
 
     userEvent.click(addBtn);
 
     await waitFor(() => {
-      const addUserBtn = screen.queryByRole('button', {name: 'Add'});
+      const addUserBtn = screen.queryByRole('button', { name: 'Add' });
       expect(addUserBtn).not.toBeInTheDocument();
     });
   });
@@ -858,15 +859,19 @@ describe('ManageWallet', () => {
       addBtn = screen.getByRole('button', { name: 'Add' });
       expect(addBtn).toBeInTheDocument();
       userSelectCheckBox = screen.getAllByRole('checkbox');
-      expect(userSelectCheckBox[userSelectCheckBox.length-1]).toBeInTheDocument();
+      expect(
+        userSelectCheckBox[userSelectCheckBox.length - 1]
+      ).toBeInTheDocument();
     });
 
-    userEvent.click(userSelectCheckBox[userSelectCheckBox.length-1]);
+    userEvent.click(userSelectCheckBox[userSelectCheckBox.length - 1]);
 
     userEvent.click(addBtn);
 
     await waitFor(() => {
-      const userAddError = screen.getByText('Linked Metamask account is not the wallet owner');
+      const userAddError = screen.getByText(
+        'Linked Metamask account is not the wallet owner'
+      );
       expect(userAddError).toBeInTheDocument();
     });
   });
