@@ -123,10 +123,32 @@ function WalletUsers({ web3, wallet }: { web3: any; wallet: any }) {
             return searchData[i].address;
           }
         }
+        return null;
       });
 
       if (accAddresses.length === 0) {
         return setAddUserError('No account selected');
+      }
+
+      const authHeader = { Authorization: userToken || '' };
+      const response = await apiCall(
+        `${process.env.REACT_APP_BASE_API_URL}/api/wallets/${wallet.address}/add-user`,
+        'POST',
+        authHeader,
+        { accounts: accAddresses }
+      );
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        if (
+          responseData.message !== null &&
+          responseData.message !== undefined
+        ) {
+          setAddUserError(responseData.message);
+          return;
+        }
+
+        throw new Error();
       }
 
       if (web3 !== null && web3 !== undefined) {
@@ -149,30 +171,16 @@ function WalletUsers({ web3, wallet }: { web3: any; wallet: any }) {
         const web3Response = await walletContract.methods
           .setWithdrawers(accAddresses)
           .send({ from: web3Account, gas: actualGas.toString() });
+
+        if (
+          web3Response.transactionHash === null ||
+          web3Response.transactionHash === undefined
+        ) {
+          throw new Error();
+        }
       }
 
-      const authHeader = { Authorization: userToken || '' };
-      const response = await apiCall(
-        `${process.env.REACT_APP_BASE_API_URL}/api/wallets/${wallet.address}/add-user`,
-        'POST',
-        authHeader,
-        { accounts: accAddresses }
-      );
-      const responseData = await response.json();
-
-      if (
-        response.ok &&
-        responseData.data !== null &&
-        responseData.data !== undefined
-      ) {
-        fetchWalletUsers();
-      } else if (
-        !response.ok &&
-        responseData.message !== null &&
-        responseData.message !== undefined
-      ) {
-        setAddUserError(responseData.message);
-      }
+      fetchWalletUsers();
       hideAddUserHandler();
     } catch (e) {
       setAddUserError('Accounts could not be added to the wallet');
