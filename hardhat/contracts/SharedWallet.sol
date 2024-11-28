@@ -55,7 +55,7 @@ contract SharedWallet is Ownable, AccessControl {
         }
     }
 
-    function removeWithDrawers(address[] memory _withdrawers) public onlyOwner {
+    function removeWithdrawers(address[] memory _withdrawers) public onlyOwner {
         uint256 noOfWithdrawers = _withdrawers.length;
         for (uint256 i = 0; i < noOfWithdrawers; i++) {
             revokeRole(SPENDER, _withdrawers[i]);

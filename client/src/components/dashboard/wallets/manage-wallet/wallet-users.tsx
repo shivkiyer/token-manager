@@ -15,6 +15,7 @@ function WalletUsers({ web3, wallet }: { web3: any; wallet: any }) {
   const [userData, setUserData] = useState<any>(null);
   const [searchData, setSearchData] = useState<any>(null);
   const [initError, setInitError] = useState<string | null>(null);
+  const [removeUserError, setRemoveUserError] = useState<string | null>(null);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [addUserError, setAddUserError] = useState<string | null>(null);
   const [displayForm, setDisplayForm] = useState(false);
@@ -49,7 +50,7 @@ function WalletUsers({ web3, wallet }: { web3: any; wallet: any }) {
         setInitError(responseData.message);
       }
     } catch (e) {
-      console.log(e);
+      setInitError('Could not fetch wallet users');
     }
   }, [userToken, wallet, navigate]);
 
@@ -59,6 +60,83 @@ function WalletUsers({ web3, wallet }: { web3: any; wallet: any }) {
     }
     fetchWalletUsers();
   }, [fetchWalletUsers, web3]);
+
+  const removeUserHandler = async (values: any) => {
+    try {
+      setRemoveUserError(null);
+      const accAddresses = values.checked.map((item: string) => {
+        for (let i = 0; i < userData.length; i++) {
+          if (userData[i].id === Number(item)) {
+            return userData[i].address;
+          }
+        }
+        return null;
+      });
+
+      if (accAddresses.length === 0) {
+        return setRemoveUserError('No account selected');
+      }
+
+      const authHeader = { Authorization: userToken || '' };
+      const response = await apiCall(
+        `${process.env.REACT_APP_BASE_API_URL}/api/wallets/${wallet.address}/remove-user`,
+        'POST',
+        authHeader,
+        { accounts: accAddresses }
+      );
+      const responseData = await response.json();
+
+      if (!response.ok) {
+        if (
+          responseData.message !== null &&
+          responseData.message !== undefined
+        ) {
+          setRemoveUserError(responseData.message);
+          return;
+        }
+
+        throw new Error();
+      }
+
+      if (web3 !== null && web3 !== undefined) {
+        const web3Accounts = await web3.eth.getAccounts();
+        const web3Account = web3Accounts[0];
+
+        if (wallet.owner.address !== web3Account) {
+          setAddUserError('Linked Metamask account is not the wallet owner');
+          return;
+        }
+
+        const walletContract = new web3.eth.Contract(
+          wallet.abi,
+          wallet.address
+        );
+        const gasEstimate = await walletContract.methods
+          .removeWithdrawers(accAddresses)
+          .estimateGas({ from: web3Account });
+        const actualGas = gasEstimate * BigInt(2);
+        const web3Response = await walletContract.methods
+          .removeWithdrawers(accAddresses)
+          .send({ from: web3Account, gas: actualGas.toString() });
+
+        if (
+          web3Response.transactionHash === null ||
+          web3Response.transactionHash === undefined
+        ) {
+          throw new Error();
+        }
+      }
+
+      fetchWalletUsers();
+    } catch (e) {
+      setRemoveUserError('Could not remove wallet users');
+    }
+  };
+
+  const removeUserForm = useFormik({
+    initialValues: { checked: [] },
+    onSubmit: (values: any) => removeUserHandler(values),
+  });
 
   const addUserHandler = () => {
     setDisplayForm(true);
@@ -202,7 +280,7 @@ function WalletUsers({ web3, wallet }: { web3: any; wallet: any }) {
     if (userData.length === 0) {
       content = <p>This wallet has no users.</p>;
     } else {
-      content = <UsersTable users={userData} form={searchForm} />;
+      content = <UsersTable users={userData} form={removeUserForm} />;
     }
   }
 
@@ -213,23 +291,32 @@ function WalletUsers({ web3, wallet }: { web3: any; wallet: any }) {
           <h3>Wallet users</h3>
         </Grid>
 
-        <Grid item xs={12} marginTop={3}>
-          {content}
-        </Grid>
+        <form method='POST' onSubmit={removeUserForm.handleSubmit}>
+          <Grid item xs={12} marginTop={3}>
+            {content}
+          </Grid>
 
-        <Grid item xs={12} marginTop={1}>
-          <Button variant='contained' onClick={addUserHandler}>
-            Add Users
-          </Button>
-          <Button
-            variant='contained'
-            color='error'
-            disabled={true}
-            sx={{ marginLeft: '16px' }}
-          >
-            Remove Users
-          </Button>
-        </Grid>
+          <Grid item xs={12} marginTop={1}>
+            <Button variant='contained' onClick={addUserHandler}>
+              Add Users
+            </Button>
+            <Button
+              variant='contained'
+              color='error'
+              type='submit'
+              sx={{ marginLeft: '16px' }}
+            >
+              Remove Users
+            </Button>
+          </Grid>
+          {removeUserError && (
+            <Grid item xs={12} marginTop={1}>
+              <p className='error-message' style={{ textAlign: 'left' }}>
+                {removeUserError}
+              </p>
+            </Grid>
+          )}
+        </form>
 
         {displayForm && (
           <form
