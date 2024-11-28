@@ -36,6 +36,11 @@ router.post('/:address/add-user', async (req, res) => {
   return response;
 });
 
+router.post('/:address/remove-user', async (req, res) => {
+  const response = await walletController.removeUser(req, res);
+  return response;
+});
+
 router.get('/:id', async (req, res) => {
   const response = await walletController.retrieveWalletDetails(req, res);
   return response;

@@ -312,6 +312,40 @@ const addUser = async (username, accountAddresses, walletAddress) => {
 };
 
 /**
+ * Removes accounts as users from a wallet
+ * @param {string} username User email
+ * @param {string[]} accountAddresses Array of account ETH addresses
+ * @param {string} walletAddress Wallet ETH address
+ * @returns {Object} Wallet address
+ * @throws {Error} If accounts or wallet cannot be found
+ * @throws {Error} If logged-in user is not the owner of the wallet
+ */
+const removeUser = async ({ username, accountAddresses, walletAddress }) => {
+  const accounts = await getAccountsByAddresses(accountAddresses);
+  const wallet = await getWalletByAddress(walletAddress);
+
+  const userWalletOwnerCheck = await isUserWalletOwner(username, wallet);
+  if (!userWalletOwnerCheck) {
+    throw 'Only wallet owner can remove users';
+  }
+
+  const checkAccountsInWallet = await areAccountUsersInWallet(accounts, wallet);
+  if (!checkAccountsInWallet) {
+    throw 'None of the accounts are users of the wallet';
+  }
+
+  try {
+    await wallet.removeUser(accounts);
+  } catch (e) {
+    throw 'Account could not be removed wallet';
+  }
+
+  return {
+    walletAddress: wallet.address,
+  };
+};
+
+/**
  * Returns the ABI of the Shared Wallet
  * @returns {Object} Shared Wallet Contract ABI
  */
@@ -334,5 +368,6 @@ module.exports = {
   getUsers,
   searchUsers,
   addUser,
+  removeUser,
   getAbi,
 };

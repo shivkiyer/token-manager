@@ -171,6 +171,40 @@ const addUser = async (req, res) => {
 };
 
 /**
+ *
+ * Controller for removing accounts as a wallet user/withdrawer
+ * @param {Object} req Request
+ * @param {Object} res Response
+ * @throws {400} If account or wallet cannot be found
+ * @throws {400} If logged in user is not owner of wallet
+ * @throws {400} If accounts are not wallet users
+ */
+const removeUser = async (req, res) => {
+  const { username } = req;
+  const { accounts: accountAddresses } = req.body;
+  const { address: walletAddress } = req.params;
+
+  if (
+    accountAddresses === null ||
+    accountAddresses === undefined ||
+    accountAddresses.length === 0
+  ) {
+    return res.status(400).send({ message: 'Account addresses missing' });
+  }
+
+  try {
+    const result = await walletService.removeUser({
+      username,
+      accountAddresses,
+      walletAddress,
+    });
+    res.send({ data: result });
+  } catch (e) {
+    res.status(400).send({ message: e });
+  }
+};
+
+/**
  * Fetch the ABI of the deployed Shared Wallet smart contract
  * @param {Object} req Request
  * @param {Object} res Response
@@ -192,5 +226,6 @@ module.exports = {
   getUsers,
   searchUsers,
   addUser,
+  removeUser,
   getAbi,
 };
