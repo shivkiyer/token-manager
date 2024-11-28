@@ -175,7 +175,7 @@ describe('SharedWallet.sol', () => {
     let checkWithdrawer = await testContract.isWithdrawer(testUser1.address);
     expect(checkWithdrawer).toBe(true);
 
-    const result = await testContract.removeWithDrawers([testUser1.address]);
+    const result = await testContract.removeWithdrawers([testUser1.address]);
 
     checkWithdrawer = await testContract.isWithdrawer(testUser1.address);
     expect(checkWithdrawer).toBe(false);
@@ -195,7 +195,7 @@ describe('SharedWallet.sol', () => {
     try {
       await testContract
         .connect(testUser3)
-        .removeWithDrawers([testUser1.address]);
+        .removeWithdrawers([testUser1.address]);
       result = null;
     } catch (e) {
       result = e;
