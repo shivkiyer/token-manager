@@ -8,7 +8,7 @@ import { Web3Context } from './../../../../app/context/web3-context-provider';
 import { clearToken } from '../../../../utils/auth/auth';
 import DepositEther from './deposit-ether';
 import WalletUsers from './wallet-users';
-import formatEthAddress from '../../../../utils/web3/formatEthAddress';
+import WalletInfo from './wallet-info';
 
 function ManageWallet() {
   const [error, setError] = useState<string | null>(null);
@@ -68,25 +68,7 @@ function ManageWallet() {
       ) : (
         <Box className='standard-box-display' marginTop={4}>
           <Grid container>
-            <Grid item xs={12}>
-              <h2>{walletData.data.name}</h2>
-            </Grid>
-
-            <Grid item xs={12} marginTop={2}>
-              <p>
-                <strong>Account owner: </strong>
-                {formatEthAddress(walletData.data.owner.address)}
-              </p>
-            </Grid>
-
-            <Grid item xs={12} marginTop={3}>
-              <p>
-                {walletData.data.description !== null
-                  ? walletData.data.description
-                  : 'Not provided'}
-              </p>
-            </Grid>
-
+            <WalletInfo web3={web3} wallet={walletData.data} />
             <DepositEther web3={web3} wallet={walletData.data} />
             <WalletUsers web3={web3} wallet={walletData.data} />
           </Grid>
