@@ -218,6 +218,42 @@ const getAbi = async (req, res) => {
   }
 };
 
+/**
+ *
+ * Controller for updating a wallet
+ * @param {Object} req Request
+ * @param {Object} res Response
+ * @throws {400} If the new wallet name is a duplicate
+ * @throws {400} If the new max limit is not a positive number
+ * @throws {400} If requesting user is not the wallet owner
+ */
+const updateWallet = async (req, res) => {
+  const { username } = req;
+  const { name, description, maxLimit } = req.body;
+  const { address } = req.params;
+
+  if (
+    (name === null || name === undefined) &&
+    (description === null || description === undefined) &&
+    (maxLimit === null || maxLimit === undefined)
+  ) {
+    return res.status(400).send({ message: 'Empty request' });
+  }
+
+  try {
+    const response = await walletService.updateWallet({
+      username,
+      address,
+      name,
+      description,
+      maxLimit,
+    });
+    res.send({ data: response });
+  } catch (e) {
+    res.status(400).send({ message: e });
+  }
+};
+
 module.exports = {
   verifyWallet,
   createWallet,
@@ -228,4 +264,5 @@ module.exports = {
   addUser,
   removeUser,
   getAbi,
+  updateWallet,
 };

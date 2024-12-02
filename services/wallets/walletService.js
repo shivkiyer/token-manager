@@ -360,6 +360,58 @@ const getAbi = async () => {
   }
 };
 
+/**
+ *
+ * @param {string} username Requesting user
+ * @param {string} address Wallet address
+ * @param {string} name New wallet name
+ * @param {string} description New wallet description
+ * @param {number} maxLimit New wallet max withdrawal limit
+ * @returns {Object} Updated wallet
+ */
+const updateWallet = async ({
+  username,
+  address,
+  name,
+  description,
+  maxLimit,
+}) => {
+  const wallet = await getWalletByAddress(address);
+  const user = await getUserFromEmail(username);
+  const checkUserWalletOwner = await isUserWalletOwner(username, wallet);
+  if (!checkUserWalletOwner) {
+    throw 'Only wallet owner can change wallet details';
+  }
+
+  const walletsByUser = await getWalletsByUser({ name, user });
+  const checkWalletName = walletsByUser.find(
+    (item) => item.address !== address
+  );
+
+  if (checkWalletName !== null && checkWalletName !== undefined) {
+    throw 'Another wallet with this name exists';
+  }
+
+  if (maxLimit !== null && maxLimit !== undefined) {
+    if (isNaN(maxLimit) || maxLimit <= 0) {
+      throw 'Max withdrawal limit must be a positive number';
+    }
+    wallet.maxLimit = Number(maxLimit);
+  }
+
+  if (name !== null && name !== undefined) {
+    wallet.name = name;
+  }
+
+  if (description !== null && description !== undefined) {
+    wallet.description = description;
+  }
+
+  await wallet.save();
+
+  return wallet;
+};
+
 module.exports = {
   verifyWallet,
   createWallet,
@@ -370,4 +422,5 @@ module.exports = {
   addUser,
   removeUser,
   getAbi,
+  updateWallet,
 };

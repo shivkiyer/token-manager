@@ -46,6 +46,11 @@ router.get('/:id', async (req, res) => {
   return response;
 });
 
+router.patch('/:address', async (req, res) => {
+  const response = await walletController.updateWallet(req, res);
+  return response;
+});
+
 router.get('', async (req, res) => {
   const response = await walletController.retrieveWallets(req, res);
   return response;
