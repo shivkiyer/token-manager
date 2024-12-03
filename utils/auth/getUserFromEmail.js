@@ -8,7 +8,10 @@ const User = require('./../../db/models/user');
  */
 const getUserFromEmail = async (email) => {
   try {
-    const user = await User.findOne({ where: { username: email } });
+    const user = await User.findOne({
+      where: { username: email },
+      attributes: ['id', 'username', 'name', 'designation'],
+    });
     if (user === null) {
       throw '';
     }

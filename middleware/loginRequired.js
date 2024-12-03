@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
 
+const getUserFromEmail = require('./../utils/auth/getUserFromEmail');
+
 /**
  * Middleware for checking valid JWT in request header
  * @param {Object} req Request
@@ -22,7 +24,8 @@ const loginRequired = async (req, res, next) => {
       payload['data'] !== undefined
     ) {
       const username = payload['data'];
-      req.username = username;
+      const user = await getUserFromEmail(username);
+      req.user = user;
     } else {
       throw 'Error';
     }

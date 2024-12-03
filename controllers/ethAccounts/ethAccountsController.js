@@ -10,8 +10,8 @@ const ethAccountsService = require('./../../services/ethAccounts/ethAccountsServ
  */
 const getAccounts = async (req, res) => {
   try {
-    const username = req.username;
-    const accounts = await ethAccountsService.getAccounts(username);
+    const { user } = req;
+    const accounts = await ethAccountsService.getAccounts(user);
     res.send({ data: accounts });
   } catch (e) {
     res.status(400).send({ message: e });
@@ -40,9 +40,9 @@ const addAccount = async (req, res) => {
   }
 
   try {
-    const username = req.username;
+    const { user } = req;
     const { name, address } = await ethAccountsService.addAccount({
-      username,
+      user,
       accountName,
       accountAddress,
     });

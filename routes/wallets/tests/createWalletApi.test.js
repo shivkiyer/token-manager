@@ -309,7 +309,7 @@ describe('createWallet API', () => {
       .set('Accept', 'application/json')
       .set('Authorization', newTestJwt);
 
-    expect(response.status).toBe(400);
-    expect(response.body.message).toBe('User not found');
+    expect(response.status).toBe(403);
+    expect(response.body.message).toBe('Authorization failed. Please login again.');
   });
 });

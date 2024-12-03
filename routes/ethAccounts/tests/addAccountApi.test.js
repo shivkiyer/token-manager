@@ -74,7 +74,7 @@ describe('/api/eth-accounts/add', () => {
     expect(response.body.message).toBe('Login required for this action.');
   });
 
-  it('should return a 400 error if non-existant user makes request', async () => {
+  it('should return a 403 error if non-existant user makes request', async () => {
     const testJwt = await createTestJwt('abc1@gmail.com');
 
     const response = await request(server)
@@ -84,8 +84,7 @@ describe('/api/eth-accounts/add', () => {
       .set('Accept', 'application/json')
       .set('Authorization', testJwt);
 
-    expect(response.status).toBe(400);
-    expect(response.body.message).toBe('User not found');
+    expect(response.status).toBe(403);
   });
 
   it('should return a 403 on an expired JWT', async () => {

@@ -105,25 +105,30 @@ describe('isUserWalletOwner', () => {
   });
 
   it('should correctly identify the users through owner accounts', async () => {
-    const result1 = await isUserWalletOwner('abc1@gmail.com', testWallets[0]);
+    const result1 = await isUserWalletOwner(testUsers[0], testWallets[0]);
     expect(result1).toBe(true);
-    const result2 = await isUserWalletOwner('abc2@gmail.com', testWallets[1]);
+    const result2 = await isUserWalletOwner(testUsers[1], testWallets[1]);
     expect(result2).toBe(true);
-    const result3 = await isUserWalletOwner('abc1@gmail.com', testWallets[2]);
+    const result3 = await isUserWalletOwner(testUsers[0], testWallets[2]);
     expect(result3).toBe(true);
-    const result4 = await isUserWalletOwner('abc2@gmail.com', testWallets[3]);
+    const result4 = await isUserWalletOwner(testUsers[1], testWallets[3]);
     expect(result4).toBe(true);
   });
 
   it('should correctly identify genuine users as now owners of wallets', async () => {
-    const result1 = await isUserWalletOwner('abc2@gmail.com', testWallets[0]);
+    const result1 = await isUserWalletOwner(testUsers[1], testWallets[0]);
     expect(result1).toBe(false);
-    const result2 = await isUserWalletOwner('abc1@gmail.com', testWallets[1]);
+    const result2 = await isUserWalletOwner(testUsers[0], testWallets[1]);
     expect(result2).toBe(false);
   });
 
   it('should reject unknown user as not owner of wallet', async () => {
-    const result1 = await isUserWalletOwner('abc3@gmail.com', testWallets[0]);
+    const tUser3 = await createTestUser({
+      username: 'abc3@gmail.com',
+      password: 'xyz',
+    });
+
+    const result1 = await isUserWalletOwner(tUser3, testWallets[0]);
     expect(result1).toBe(false);
   });
 });

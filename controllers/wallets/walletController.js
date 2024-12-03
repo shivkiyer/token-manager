@@ -9,7 +9,7 @@ const requestDataValidator = require('./../../utils/http/requestDataValidator');
  * @throws {400} If wallet name is duplicate or user is not owner of wallet
  */
 const verifyWallet = async (req, res) => {
-  const { username } = req;
+  const { user } = req;
   const { name, owner } = req.body;
 
   const requestBodyCheck = requestDataValidator(req, ['name', 'owner']);
@@ -18,7 +18,7 @@ const verifyWallet = async (req, res) => {
   }
 
   try {
-    const result = await walletService.verifyWallet({ username, owner, name });
+    const result = await walletService.verifyWallet({ user, owner, name });
     return res.send();
   } catch (e) {
     return res.status(400).send({ message: e });
@@ -33,7 +33,7 @@ const verifyWallet = async (req, res) => {
  * @throws {400} If wallet could not be created if owner not found or same name exists
  */
 const createWallet = async (req, res) => {
-  const { username } = req;
+  const { user } = req;
   const { name, description, address, maxLimit, owner } = req.body;
 
   const requestBodyCheck = requestDataValidator(req, [
@@ -48,7 +48,7 @@ const createWallet = async (req, res) => {
 
   try {
     const result = await walletService.createWallet({
-      username,
+      user,
       name,
       description,
       address,
@@ -68,10 +68,10 @@ const createWallet = async (req, res) => {
  * @returns {Object} Array of wallets
  */
 const retrieveWallets = async (req, res) => {
-  const { username } = req;
+  const { user } = req;
 
   try {
-    const wallets = await walletService.retrieveWallets(username);
+    const wallets = await walletService.retrieveWallets(user);
     res.send({ data: wallets });
   } catch (e) {
     res.status(400).send({ message: e });
@@ -85,7 +85,7 @@ const retrieveWallets = async (req, res) => {
  * @returns {Object} Wallet model instance
  */
 const retrieveWalletDetails = async (req, res) => {
-  const { username } = req;
+  const { user } = req;
   const { id } = req.params;
 
   if (id === null || id === undefined) {
@@ -93,7 +93,7 @@ const retrieveWalletDetails = async (req, res) => {
   }
 
   try {
-    const wallet = await walletService.retrieveWalletDetails(id, username);
+    const wallet = await walletService.retrieveWalletDetails(id, user);
     res.send({ data: wallet });
   } catch (e) {
     res.status(400).send({ message: e });
@@ -154,13 +154,13 @@ const searchUsers = async (req, res) => {
  * @throws {400} If account has already been added as a wallet user
  */
 const addUser = async (req, res) => {
-  const { username } = req;
+  const { user } = req;
   const { accounts } = req.body;
   const { address: walletAddress } = req.params;
 
   try {
     const result = await walletService.addUser(
-      username,
+      user,
       accounts,
       walletAddress
     );
@@ -180,7 +180,7 @@ const addUser = async (req, res) => {
  * @throws {400} If accounts are not wallet users
  */
 const removeUser = async (req, res) => {
-  const { username } = req;
+  const { user } = req;
   const { accounts: accountAddresses } = req.body;
   const { address: walletAddress } = req.params;
 
@@ -194,7 +194,7 @@ const removeUser = async (req, res) => {
 
   try {
     const result = await walletService.removeUser({
-      username,
+      user,
       accountAddresses,
       walletAddress,
     });
@@ -228,7 +228,7 @@ const getAbi = async (req, res) => {
  * @throws {400} If requesting user is not the wallet owner
  */
 const updateWallet = async (req, res) => {
-  const { username } = req;
+  const { user } = req;
   const { name, description, maxLimit } = req.body;
   const { address } = req.params;
 
@@ -242,7 +242,7 @@ const updateWallet = async (req, res) => {
 
   try {
     const response = await walletService.updateWallet({
-      username,
+      user,
       address,
       name,
       description,

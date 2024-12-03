@@ -1,4 +1,3 @@
-const sequelize = require('sequelize');
 const { Op } = require('sequelize');
 const Account = require('./../../db/models/account');
 const Wallet = require('./../../db/models/wallet');
@@ -15,16 +14,15 @@ const getSmartContractAbi = require('./../../utils/contracts/getSmartContractAbi
 /**
  * Checks if user is owner of account creating the wallet
  * and that a wallet of the same name does not exist
- * @param {string} username User email
+ * @param {Object} user User model instance
  * @param {string} owner ETH address of account
  * @param {string} name Name of the wallet
  * @returns null
  * @throws {Error} If the username is not the owner of the ETH account
  * @throws {Error} If the wallet name is a duplicate for the owner
  */
-const verifyWallet = async ({ username, owner, name }) => {
+const verifyWallet = async ({ user, owner, name }) => {
   const accountOwner = await getAccountByAddress(owner);
-  const user = await getUserFromEmail(username);
 
   if (accountOwner.userId !== user.id) {
     throw 'Only the account owner can use the account to create a wallet';
@@ -44,7 +42,7 @@ const verifyWallet = async ({ username, owner, name }) => {
 
 /**
  * Creates a new wallet with an ETH account as owner
- * @param {string} username Email of user owning the account
+ * @param {Object} user User model instance
  * @param {string} name Wallet name
  * @param {string} description Wallet description/purpose
  * @param {string} address Blockchain address of wallet
@@ -53,7 +51,7 @@ const verifyWallet = async ({ username, owner, name }) => {
  * @returns {Object} New wallet
  */
 const createWallet = async ({
-  username,
+  user,
   name,
   description,
   address,
@@ -61,7 +59,6 @@ const createWallet = async ({
   owner,
 }) => {
   const accountOwner = await getAccountByAddress(owner);
-  const user = await getUserFromEmail(username);
 
   if (accountOwner.userId !== user.id) {
     throw 'Only the account owner can use the account to create a wallet';
@@ -94,12 +91,10 @@ const createWallet = async ({
 
 /**
  * Returns wallets by user association
- * @param {string} username User email
+ * @param {Object} user User model instance
  * @returns {Object} Array of wallets
  */
-const retrieveWallets = async (username) => {
-  const user = await getUserFromEmail(username);
-
+const retrieveWallets = async (user) => {
   try {
     const wallets = await getWalletsByUser({ user });
     const reducedWallets = wallets.map((item) => {
@@ -119,12 +114,12 @@ const retrieveWallets = async (username) => {
 /**
  * Retrieves the details of a wallet
  * @param {number} id Wallet Id in database
- * @param {string} username Requesting user
+ * @param {Object} user User model instance
  * @returns {Object} Wallet model instance
  * @throws {Error} If wallet could not be found
  * @throws {Error} If user is not owner of wallet
  */
-const retrieveWalletDetails = async (id, username) => {
+const retrieveWalletDetails = async (id, user) => {
   try {
     const result = await Wallet.findOne({
       where: { id },
@@ -279,18 +274,18 @@ const searchUsers = async ({ searchString, walletAddress }) => {
 
 /**
  * Adds an account as a wallet user
- * @param {string} username User email
+ * @param {Object} user User model instance
  * @param {string[]} accountAddresses Array of account ETH addresses
  * @param {string} walletAddress Wallet ETH address
  * @returns {Object} Wallet address
  * @throws {Error} If accounts or wallet cannot be found
  * @throws {Error} If logged-in user is not the owner of the wallet
  */
-const addUser = async (username, accountAddresses, walletAddress) => {
+const addUser = async (user, accountAddresses, walletAddress) => {
   const accounts = await getAccountsByAddresses(accountAddresses);
   const wallet = await getWalletByAddress(walletAddress);
 
-  const userWalletOwnerCheck = await isUserWalletOwner(username, wallet);
+  const userWalletOwnerCheck = await isUserWalletOwner(user, wallet);
   if (!userWalletOwnerCheck) {
     throw 'Only wallet owner can add users';
   }
@@ -313,18 +308,18 @@ const addUser = async (username, accountAddresses, walletAddress) => {
 
 /**
  * Removes accounts as users from a wallet
- * @param {string} username User email
+ * @param {Object} user User model instance
  * @param {string[]} accountAddresses Array of account ETH addresses
  * @param {string} walletAddress Wallet ETH address
  * @returns {Object} Wallet address
  * @throws {Error} If accounts or wallet cannot be found
  * @throws {Error} If logged-in user is not the owner of the wallet
  */
-const removeUser = async ({ username, accountAddresses, walletAddress }) => {
+const removeUser = async ({ user, accountAddresses, walletAddress }) => {
   const accounts = await getAccountsByAddresses(accountAddresses);
   const wallet = await getWalletByAddress(walletAddress);
 
-  const userWalletOwnerCheck = await isUserWalletOwner(username, wallet);
+  const userWalletOwnerCheck = await isUserWalletOwner(user, wallet);
   if (!userWalletOwnerCheck) {
     throw 'Only wallet owner can remove users';
   }
@@ -362,7 +357,7 @@ const getAbi = async () => {
 
 /**
  *
- * @param {string} username Requesting user
+ * @param {Object} user User model instance
  * @param {string} address Wallet address
  * @param {string} name New wallet name
  * @param {string} description New wallet description
@@ -370,15 +365,14 @@ const getAbi = async () => {
  * @returns {Object} Updated wallet
  */
 const updateWallet = async ({
-  username,
+  user,
   address,
   name,
   description,
   maxLimit,
 }) => {
   const wallet = await getWalletByAddress(address);
-  const user = await getUserFromEmail(username);
-  const checkUserWalletOwner = await isUserWalletOwner(username, wallet);
+  const checkUserWalletOwner = await isUserWalletOwner(user, wallet);
   if (!checkUserWalletOwner) {
     throw 'Only wallet owner can change wallet details';
   }

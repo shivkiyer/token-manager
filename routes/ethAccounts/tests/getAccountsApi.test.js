@@ -77,7 +77,7 @@ describe('/api/eth-accounts', () => {
     expect(response.body.message).toBe('Login required for this action.');
   });
 
-  it('should return a 400 is user cannot be found', async () => {
+  it('should return a 403 is user cannot be found', async () => {
     const testJwt = await createTestJwt('abc1@gmail.com');
 
     const response = await request(server)
@@ -86,7 +86,6 @@ describe('/api/eth-accounts', () => {
       .set('Accept', 'application/json')
       .set('Authorization', testJwt);
 
-    expect(response.status).toBe(400);
-    expect(response.body.message).toBe('User not found');
+    expect(response.status).toBe(403);
   });
 });

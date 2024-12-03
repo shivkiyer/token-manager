@@ -49,7 +49,10 @@ const signUp = async ({ username, password, name, designation }) => {
  */
 const login = async (username, password) => {
   try {
-    const checkUser = await getUserFromEmail(username);
+    const checkUser = await User.findOne({ where: { username } });
+    if (checkUser === null) {
+      throw 'User not found';
+    }
     const encryptedPassword = checkUser.password;
     const passwordMatch = await bcrypt.compare(password, encryptedPassword);
     if (passwordMatch) {

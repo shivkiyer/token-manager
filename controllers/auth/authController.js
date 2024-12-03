@@ -12,10 +12,7 @@ const requestDataValidator = require('./../../utils/http/requestDataValidator');
  * @throws {400} If username already exists in database
  */
 const signUp = async (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
-  const name = req.body.name;
-  const designation = req.body.designation;
+  const { username, password, name, designation } = req.body;
 
   const errMsg = requestDataValidator(req, ['username', 'password']);
   if (errMsg !== null) {
@@ -47,8 +44,7 @@ const signUp = async (req, res) => {
  * @throws {401} If login failed
  */
 const login = async (req, res) => {
-  const username = req.body.username;
-  const password = req.body.password;
+  const { username, password } = req.body;
 
   const errMsg = requestDataValidator(req, ['username', 'password']);
   if (errMsg !== null) {
