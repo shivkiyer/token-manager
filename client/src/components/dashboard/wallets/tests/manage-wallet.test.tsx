@@ -14,6 +14,14 @@ class MockContract {
             send: () => Promise.resolve({ transactionHash: 'trans123' }),
           };
         },
+        updateWithdrawalLimit: () => {
+          return {
+            estimateGas: () => {
+              return BigInt(10);
+            },
+            send: () => Promise.resolve({ transactionHash: 'trans456' }),
+          };
+        },
       },
     };
   }
@@ -98,28 +106,53 @@ describe('ManageWallet', () => {
             },
           });
         } else {
-          return Promise.resolve({
-            ok: true,
-            json: () => {
-              return {
-                data: {
-                  id: 1,
-                  name: 'Wallet 1',
-                  description: 'Wallet 1 description',
-                  maxLimit: 2,
-                  ownerId: 1,
-                  address: 'wall1addr',
-                  owner: {
+          if (method === 'GET') {
+            return Promise.resolve({
+              ok: true,
+              json: () => {
+                return {
+                  data: {
                     id: 1,
-                    name: 'Account 1',
-                    address: 'acc1addr',
-                    userId: 1,
+                    name: 'Wallet 1',
+                    description: 'Wallet 1 description',
+                    maxLimit: 2,
+                    ownerId: 1,
+                    address: 'wall1addr',
+                    owner: {
+                      id: 1,
+                      name: 'Account 1',
+                      address: 'acc1addr',
+                      userId: 1,
+                    },
+                    isOwner: true,
                   },
-                  isOwner: true,
-                },
-              };
-            },
-          });
+                };
+              },
+            });
+          } else {
+            return Promise.resolve({
+              ok: true,
+              json: () => {
+                return {
+                  data: {
+                    id: 1,
+                    name: 'New wallet 1',
+                    description: 'Wallet 1 description',
+                    maxLimit: 4,
+                    ownerId: 1,
+                    address: 'wall1addr',
+                    owner: {
+                      id: 1,
+                      name: 'Account 1',
+                      address: 'acc1addr',
+                      userId: 1,
+                    },
+                    isOwner: true,
+                  },
+                };
+              },
+            });
+          }
         }
       }
     );
@@ -873,6 +906,131 @@ describe('ManageWallet', () => {
         'Linked Metamask account is not the wallet owner'
       );
       expect(userAddError).toBeInTheDocument();
+    });
+  });
+
+  it('should display a form for editing the wallet details when the edit button is clicked', async () => {
+    const Web3ContextProvider =
+      require('./../../../../app/context/web3-context-provider').default;
+    const manageWalletLoader =
+      require('./../manage-wallet/manageWalletLoader').default;
+    const ManageWallet = require('./../manage-wallet/manage-wallet').default;
+
+    const routes = [
+      {
+        path: '/',
+        id: 'root-app',
+        loader: mockAuthToken,
+        element: <MockRootComponent />,
+        children: [
+          {
+            path: '/dashboard/wallets/manage/1',
+            element: <ManageWallet />,
+            loader: manageWalletLoader,
+          },
+        ],
+      },
+    ];
+
+    const router = createMemoryRouter(routes as any, {
+      initialEntries: ['/dashboard/wallets/manage/1', '/'],
+      initialIndex: 0,
+    });
+
+    render(
+      <Web3ContextProvider>
+        <RouterProvider router={router}></RouterProvider>
+      </Web3ContextProvider>
+    );
+
+    await waitFor(() => {
+      const walletName = screen.getByText('Wallet 1');
+      expect(walletName).toBeInTheDocument();
+    });
+
+    const editBtn = await screen.getByTestId('EditIcon');
+    userEvent.click(editBtn);
+
+    await waitFor(() => {
+      const walletNameInput = screen.getByLabelText('Wallet name');
+      expect(walletNameInput).toBeInTheDocument();
+      const walletDescriptionInput = screen.getByLabelText('Description');
+      expect(walletDescriptionInput).toBeInTheDocument();
+      const walletMaxLimitInput = screen.getByLabelText(
+        'Max withdrawal limit in Ether'
+      );
+      expect(walletMaxLimitInput).toBeInTheDocument();
+      const updateBtn = screen.getByRole('button', { name: 'Update' });
+      expect(updateBtn).toHaveProperty('disabled');
+    });
+  });
+
+  it('should display new wallet name if user updates wallet details', async () => {
+    const Web3ContextProvider =
+      require('./../../../../app/context/web3-context-provider').default;
+    const manageWalletLoader =
+      require('./../manage-wallet/manageWalletLoader').default;
+    const ManageWallet = require('./../manage-wallet/manage-wallet').default;
+
+    const routes = [
+      {
+        path: '/',
+        id: 'root-app',
+        loader: mockAuthToken,
+        element: <MockRootComponent />,
+        children: [
+          {
+            path: '/dashboard/wallets/manage/1',
+            element: <ManageWallet />,
+            loader: manageWalletLoader,
+          },
+        ],
+      },
+    ];
+
+    const router = createMemoryRouter(routes as any, {
+      initialEntries: ['/dashboard/wallets/manage/1', '/'],
+      initialIndex: 0,
+    });
+
+    render(
+      <Web3ContextProvider>
+        <RouterProvider router={router}></RouterProvider>
+      </Web3ContextProvider>
+    );
+
+    await waitFor(() => {
+      const walletName = screen.getByText('Wallet 1');
+      expect(walletName).toBeInTheDocument();
+    });
+
+    const editBtn = await screen.getByTestId('EditIcon');
+    userEvent.click(editBtn);
+
+    let walletNameInput: any;
+    await waitFor(() => {
+      walletNameInput = screen.getByLabelText('Wallet name');
+      expect(walletNameInput).toBeInTheDocument();
+    });
+
+    userEvent.clear(walletNameInput);
+    userEvent.type(walletNameInput, 'New wallet 1 name');
+
+    const walletDescriptionInput = await screen.getByLabelText('Description');
+    userEvent.click(walletDescriptionInput);
+
+    let updateBtn: any;
+    await waitFor(() => {
+      updateBtn = screen.queryByRole('button', { name: 'Update' });
+    });
+
+    userEvent.click(updateBtn);
+
+    await waitFor(() => {
+      updateBtn = screen.queryByRole('button', { name: 'Update' });
+      expect(updateBtn).not.toBeInTheDocument();
+      const newName = screen.getByText('New wallet 1');
+      expect(newName).toBeInTheDocument();
     });
   });
 });
