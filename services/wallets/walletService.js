@@ -2,6 +2,7 @@ const { Op } = require('sequelize');
 const Account = require('./../../db/models/account');
 const Wallet = require('./../../db/models/wallet');
 const User = require('./../../db/models/user');
+const WalletUser = require('./../../db/models/walletUser');
 const getAccountByAddress = require('./../../utils/accounts/getAccountByAddress');
 const getAccountsByAddresses = require('./../../utils/accounts/getAccountsByAddresses');
 const isUserWalletOwner = require('./../../utils/wallets/isUserWalletOwner');
@@ -352,7 +353,14 @@ const removeUser = async ({ user, accountAddresses, walletAddress }) => {
   }
 
   try {
-    await wallet.removeUser(accounts);
+    await WalletUser.destroy({
+      where: {
+        WalletId: wallet.id,
+        AccountId: {
+          [Op.in]: accounts.map(item => item.id)
+        }
+      }
+    })
   } catch (e) {
     throw 'Account could not be removed wallet';
   }

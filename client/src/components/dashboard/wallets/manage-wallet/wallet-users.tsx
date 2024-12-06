@@ -77,13 +77,13 @@ function WalletUsers({ web3, wallet }: { web3: any; wallet: any }) {
         }
       }
 
-      const accAddresses = values.checked.map((item: string) => {
+      let accAddresses: string[] = [];
+      values.checked.forEach((item: string) => {
         for (let i = 0; i < userData.length; i++) {
           if (userData[i].id === Number(item)) {
-            return userData[i].address;
+            accAddresses.push(userData[i].address);
           }
         }
-        return null;
       });
 
       if (accAddresses.length === 0) {
@@ -131,7 +131,7 @@ function WalletUsers({ web3, wallet }: { web3: any; wallet: any }) {
           throw new Error();
         }
       }
-
+      removeUserForm.values.checked = [];
       fetchWalletUsers();
     } catch (e) {
       setRemoveUserError('Could not remove wallet users');
@@ -149,6 +149,7 @@ function WalletUsers({ web3, wallet }: { web3: any; wallet: any }) {
 
   const hideAddUserHandler = () => {
     searchForm.values.search = '';
+    searchResultsForm.values.checked = [];
     setSearchData(null);
     setDisplayForm(false);
   };
@@ -213,13 +214,13 @@ function WalletUsers({ web3, wallet }: { web3: any; wallet: any }) {
         }
       }
 
-      const accAddresses = values.checked.map((item: string) => {
+      let accAddresses: string[] = [];
+      values.checked.forEach((item: string) => {
         for (let i = 0; i < searchData.length; i++) {
           if (searchData[i].id === Number(item)) {
-            return searchData[i].address;
+            accAddresses.push(searchData[i].address);
           }
         }
-        return null;
       });
 
       if (accAddresses.length === 0) {
@@ -240,6 +241,10 @@ function WalletUsers({ web3, wallet }: { web3: any; wallet: any }) {
           responseData.message !== null &&
           responseData.message !== undefined
         ) {
+          if (responseData.message.includes('Authorization failed')) {
+            clearToken();
+            navigate('/login');
+          }
           setAddUserError(responseData.message);
           return;
         }
@@ -268,6 +273,7 @@ function WalletUsers({ web3, wallet }: { web3: any; wallet: any }) {
         }
       }
 
+      searchResultsForm.values.checked = [];
       fetchWalletUsers();
       hideAddUserHandler();
     } catch (e) {
