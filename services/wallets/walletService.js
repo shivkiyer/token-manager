@@ -154,11 +154,23 @@ const retrieveWalletDetails = async (id, user) => {
             },
           ],
         },
+        {
+          model: Account,
+          attributes: ['id', 'name', 'address', 'userId'],
+          as: 'user',
+          through: { attributes: [] },
+          include: [
+            {
+              model: User,
+              attributes: ['id', 'username'],
+            },
+          ],
+        },
       ],
     });
 
     let wallet = result.toJSON();
-    if (wallet['owner']['userId'] === wallet['owner']['User']['id']) {
+    if (wallet['owner']['userId'] === user.id) {
       wallet['isOwner'] = true;
     } else {
       wallet['isOwner'] = false;
