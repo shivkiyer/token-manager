@@ -64,6 +64,19 @@ function WalletUsers({ web3, wallet }: { web3: any; wallet: any }) {
   const removeUserHandler = async (values: any) => {
     try {
       setRemoveUserError(null);
+
+      let web3Accounts: string[];
+      let web3Account: string = '0x0';
+      if (web3 !== null && web3 !== undefined) {
+        web3Accounts = await web3.eth.getAccounts();
+        web3Account = web3Accounts[0];
+
+        if (wallet.owner.address !== web3Account) {
+          setRemoveUserError('Linked Metamask account is not the wallet owner');
+          return;
+        }
+      }
+
       const accAddresses = values.checked.map((item: string) => {
         for (let i = 0; i < userData.length; i++) {
           if (userData[i].id === Number(item)) {
@@ -99,14 +112,6 @@ function WalletUsers({ web3, wallet }: { web3: any; wallet: any }) {
       }
 
       if (web3 !== null && web3 !== undefined) {
-        const web3Accounts = await web3.eth.getAccounts();
-        const web3Account = web3Accounts[0];
-
-        if (wallet.owner.address !== web3Account) {
-          setAddUserError('Linked Metamask account is not the wallet owner');
-          return;
-        }
-
         const walletContract = new web3.eth.Contract(
           wallet.abi,
           wallet.address
@@ -195,6 +200,19 @@ function WalletUsers({ web3, wallet }: { web3: any; wallet: any }) {
   const addUserToWalletHandler = async (values: any) => {
     try {
       setAddUserError(null);
+
+      let web3Accounts: string[];
+      let web3Account: string = '0x0';
+      if (web3 !== null && web3 !== undefined) {
+        web3Accounts = await web3.eth.getAccounts();
+        web3Account = web3Accounts[0];
+
+        if (wallet.owner.address !== web3Account) {
+          setAddUserError('Linked Metamask account is not the wallet owner');
+          return;
+        }
+      }
+
       const accAddresses = values.checked.map((item: string) => {
         for (let i = 0; i < searchData.length; i++) {
           if (searchData[i].id === Number(item)) {
@@ -230,14 +248,6 @@ function WalletUsers({ web3, wallet }: { web3: any; wallet: any }) {
       }
 
       if (web3 !== null && web3 !== undefined) {
-        const web3Accounts = await web3.eth.getAccounts();
-        const web3Account = web3Accounts[0];
-
-        if (wallet.owner.address !== web3Account) {
-          setAddUserError('Linked Metamask account is not the wallet owner');
-          return;
-        }
-
         const walletContract = new web3.eth.Contract(
           wallet.abi,
           wallet.address
