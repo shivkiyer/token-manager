@@ -99,10 +99,20 @@ const retrieveWallets = async (user) => {
     const wallets = await getWalletsByUser({ user });
     const reducedWallets = wallets.map((item) => {
       const wallet = item.toJSON();
-      if (wallet['owner']['userId'] === wallet['owner']['User']['id']) {
+      if (
+        wallet['owner'] !== null &&
+        wallet['owner'] !== undefined &&
+        wallet['owner']['userId'] === wallet['owner']['User']['id']
+      ) {
         wallet['isOwner'] = true;
+        delete wallet['owner']['User'];
       }
-      delete wallet['owner']['User'];
+
+      if (wallet['user'] !== null && wallet['user'] !== undefined) {
+        wallet['isOwner'] = false;
+        delete wallet['user']['User'];
+      }
+
       return wallet;
     });
     return reducedWallets;
@@ -364,13 +374,7 @@ const getAbi = async () => {
  * @param {number} maxLimit New wallet max withdrawal limit
  * @returns {Object} Updated wallet
  */
-const updateWallet = async ({
-  user,
-  address,
-  name,
-  description,
-  maxLimit,
-}) => {
+const updateWallet = async ({ user, address, name, description, maxLimit }) => {
   const wallet = await getWalletByAddress(address);
   const checkUserWalletOwner = await isUserWalletOwner(user, wallet);
   if (!checkUserWalletOwner) {
