@@ -8,12 +8,12 @@ import Button from '@mui/material/Button';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import CircularProgress from '@mui/material/CircularProgress';
 
-import { Web3Context } from './../../../app/context/web3-context-provider';
-import formatEthAddress from '../../../utils/web3/formatEthAddress';
-import isErrorInForm from '../../../utils/forms/isErrorInForm';
-import apiCall from '../../../utils/http/api-call';
-import useTokenAuthentication from '../../../hooks/useTokenAuthentication';
-import { clearToken } from '../../../utils/auth/auth';
+import { Web3Context } from './../../../../app/context/web3-context-provider';
+import formatEthAddress from './../../../../utils/web3/formatEthAddress';
+import isErrorInForm from './../../../../utils/forms/isErrorInForm';
+import apiCall from './../../../../utils/http/api-call';
+import useTokenAuthentication from './../../../../hooks/useTokenAuthentication';
+import { clearToken } from './../../../../utils/auth/auth';
 
 function RegisterWallet() {
   const navigate = useNavigate();

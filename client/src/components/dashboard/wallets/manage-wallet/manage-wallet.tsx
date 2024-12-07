@@ -8,7 +8,7 @@ import { Web3Context } from './../../../../app/context/web3-context-provider';
 import { clearToken } from '../../../../utils/auth/auth';
 import DepositEther from './deposit-ether';
 import WalletUsers from './wallet-users';
-import WalletInfo from './wallet-info';
+import WalletInfo from '../wallet-info';
 
 function ManageWallet() {
   const [error, setError] = useState<string | null>(null);

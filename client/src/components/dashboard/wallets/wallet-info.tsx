@@ -7,10 +7,10 @@ import TextField from '@mui/material/TextField';
 import EditIcon from '@mui/icons-material/Edit';
 import Button from '@mui/material/Button';
 
-import apiCall from '../../../../utils/http/api-call';
-import { authToken, clearToken } from '../../../../utils/auth/auth';
-import formatEthAddress from '../../../../utils/web3/formatEthAddress';
-import isErrorInForm from '../../../../utils/forms/isErrorInForm';
+import apiCall from '../../../utils/http/api-call';
+import { authToken, clearToken } from '../../../utils/auth/auth';
+import formatEthAddress from '../../../utils/web3/formatEthAddress';
+import isErrorInForm from '../../../utils/forms/isErrorInForm';
 
 interface WalletData {
   name: string;

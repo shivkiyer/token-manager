@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { useLoaderData, useNavigate } from 'react-router-dom';
 
-import { clearToken } from '../../../utils/auth/auth';
-import WalletCard from './wallet-card';
+import { clearToken } from '../../../../utils/auth/auth';
+import WalletCard from './../wallet-card';
 
 function ListWallets() {
   const walletData: any = useLoaderData();
