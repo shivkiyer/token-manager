@@ -33,8 +33,8 @@ describe('ListWallets', () => {
       { status: 200 }
     );
     mockApiCall.mockReturnValue(Promise.resolve(response));
-    const walletsListLoader = require('./../walletsListLoader').default;
-    const ListWallets = require('./../list-wallets').default;
+    const walletsListLoader = require('./../list-wallets/walletsListLoader').default;
+    const ListWallets = require('./../list-wallets/list-wallets').default;
 
     const routes = [
       {
@@ -79,8 +79,8 @@ describe('ListWallets', () => {
       { status: 200 }
     );
     mockApiCall.mockReturnValue(Promise.resolve(response));
-    const walletsListLoader = require('./../walletsListLoader').default;
-    const ListWallets = require('./../list-wallets').default;
+    const walletsListLoader = require('./../list-wallets/walletsListLoader').default;
+    const ListWallets = require('./../list-wallets/list-wallets').default;
 
     const routes = [
       {
@@ -111,8 +111,8 @@ describe('ListWallets', () => {
       { status: 400 }
     );
     mockApiCall.mockReturnValue(Promise.resolve(response));
-    const walletsListLoader = require('./../walletsListLoader').default;
-    const ListWallets = require('./../list-wallets').default;
+    const walletsListLoader = require('./../list-wallets/walletsListLoader').default;
+    const ListWallets = require('./../list-wallets/list-wallets').default;
 
     const routes = [
       {
@@ -142,8 +142,8 @@ describe('ListWallets', () => {
       { status: 403 }
     );
     mockApiCall.mockReturnValue(Promise.resolve(response));
-    const walletsListLoader = require('./../walletsListLoader').default;
-    const ListWallets = require('./../list-wallets').default;
+    const walletsListLoader = require('./../list-wallets/walletsListLoader').default;
+    const ListWallets = require('./../list-wallets/list-wallets').default;
 
     const MockLogin = () => {
       return <p>Mock Login</p>;

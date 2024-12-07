@@ -98,7 +98,7 @@ describe('RegisterWallet', () => {
   it('should display the wallet creation form', async () => {
     const Web3ContextProvider =
       require('./../../../../app/context/web3-context-provider').default;
-    const RegisterWallet = require('./../register-wallet').default;
+    const RegisterWallet = require('./../register-wallet/register-wallet').default;
 
     const routes = [
       {
@@ -141,7 +141,7 @@ describe('RegisterWallet', () => {
   it('should enable the submit button if form fields are correctly entered', async () => {
     const Web3ContextProvider =
       require('./../../../../app/context/web3-context-provider').default;
-    const RegisterWallet = require('./../register-wallet').default;
+    const RegisterWallet = require('./../register-wallet/register-wallet').default;
 
     const routes = [
       {
@@ -190,7 +190,7 @@ describe('RegisterWallet', () => {
   it('should display errors above form fields if incorrect data is entered', async () => {
     const Web3ContextProvider =
       require('./../../../../app/context/web3-context-provider').default;
-    const RegisterWallet = require('./../register-wallet').default;
+    const RegisterWallet = require('./../register-wallet/register-wallet').default;
 
     const routes = [
       {
@@ -272,7 +272,7 @@ describe('RegisterWallet', () => {
   it('should display a success message if wallet was created on blockchain and backend successfully', async () => {
     const Web3ContextProvider =
       require('./../../../../app/context/web3-context-provider').default;
-    const RegisterWallet = require('./../register-wallet').default;
+    const RegisterWallet = require('./../register-wallet/register-wallet').default;
 
     const routes = [
       {
@@ -342,7 +342,7 @@ describe('RegisterWallet', () => {
 
     const Web3ContextProvider =
       require('./../../../../app/context/web3-context-provider').default;
-    const RegisterWallet = require('./../register-wallet').default;
+    const RegisterWallet = require('./../register-wallet/register-wallet').default;
 
     const routes = [
       {
@@ -433,7 +433,7 @@ describe('RegisterWallet', () => {
 
     const Web3ContextProvider =
       require('./../../../../app/context/web3-context-provider').default;
-    const RegisterWallet = require('./../register-wallet').default;
+    const RegisterWallet = require('./../register-wallet/register-wallet').default;
 
     const routes = [
       {
