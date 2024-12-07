@@ -43,7 +43,9 @@ function WalletCard({
           <CardActions>
             {isOwner ? (
               <Link to={`/dashboard/wallet/manage/${id}`}>
-                <Button variant='contained'>Manage</Button>
+                <Button className='button-alert' variant='contained'>
+                  Manage
+                </Button>
               </Link>
             ) : (
               <Link to={`/dashboard/wallet/access/${id}`}>
