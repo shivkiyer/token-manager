@@ -39,6 +39,10 @@ contract SharedWallet is Ownable, AccessControl {
         balance += msg.value;
     }
 
+    fallback() external payable {
+        balance += msg.value;
+    }
+
     function getWithdrawalLimit() public view returns (uint256) {
         return withdrawLimit;
     }

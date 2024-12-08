@@ -14,4 +14,8 @@ contract TokenManagerFactory is Context {
         SharedWallet sharedWallet = new SharedWallet(_withdrawalLimit, _msgSender());
         emit SharedWalletCreated(address(sharedWallet));
     }
+
+    fallback() external payable {}
+
+    receive() external payable {}
 }
