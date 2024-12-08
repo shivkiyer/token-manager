@@ -1,14 +1,14 @@
 import { useState, useEffect, useContext } from 'react';
-import { useLoaderData, useNavigate, Link } from 'react-router-dom';
+import { useLoaderData, useNavigate } from 'react-router-dom';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 import { Web3Context } from './../../../../app/context/web3-context-provider';
 import { clearToken } from '../../../../utils/auth/auth';
 import DepositEther from './deposit-ether';
 import WalletUsers from './wallet-users';
 import WalletInfo from '../wallet-info';
+import WalletsHome from '../wallets-home';
 
 function ManageWallet() {
   const [error, setError] = useState<string | null>(null);
@@ -55,14 +55,7 @@ function ManageWallet() {
 
   return (
     <>
-      <Link
-        to='/dashboard/wallet/list'
-        className='button-link button-link-black'
-        style={{ fontSize: '18px' }}
-      >
-        <ArrowBackIcon sx={{ paddingTop: '8px' }} />
-        Back to wallets
-      </Link>
+      <WalletsHome />
       {error !== null ? (
         <h3 style={{ marginTop: '20px' }}>{error}</h3>
       ) : (
