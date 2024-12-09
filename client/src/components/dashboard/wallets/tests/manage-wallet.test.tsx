@@ -183,8 +183,7 @@ describe('ManageWallet', () => {
   it('should display wallet info and have buttons for functions', async () => {
     const Web3ContextProvider =
       require('./../../../../app/context/web3-context-provider').default;
-    const manageWalletLoader =
-      require('./../manage-wallet/manageWalletLoader').default;
+    const manageWalletLoader = require('./../walletDetailLoader').default;
     const ManageWallet = require('./../manage-wallet/manage-wallet').default;
 
     const routes = [
@@ -239,8 +238,7 @@ describe('ManageWallet', () => {
   it('should list the users of the wallet', async () => {
     const Web3ContextProvider =
       require('./../../../../app/context/web3-context-provider').default;
-    const manageWalletLoader =
-      require('./../manage-wallet/manageWalletLoader').default;
+    const manageWalletLoader = require('./../walletDetailLoader').default;
     const ManageWallet = require('./../manage-wallet/manage-wallet').default;
 
     const routes = [
@@ -285,8 +283,7 @@ describe('ManageWallet', () => {
   it('should display a form for depositing ether when Deposit Ether button is clicked', async () => {
     const Web3ContextProvider =
       require('./../../../../app/context/web3-context-provider').default;
-    const manageWalletLoader =
-      require('./../manage-wallet/manageWalletLoader').default;
+    const manageWalletLoader = require('./../walletDetailLoader').default;
     const ManageWallet = require('./../manage-wallet/manage-wallet').default;
 
     const routes = [
@@ -337,8 +334,7 @@ describe('ManageWallet', () => {
   it('should display errors if incorrect values of Ether are entered to be deposited in wallet', async () => {
     const Web3ContextProvider =
       require('./../../../../app/context/web3-context-provider').default;
-    const manageWalletLoader =
-      require('./../manage-wallet/manageWalletLoader').default;
+    const manageWalletLoader = require('./../walletDetailLoader').default;
     const ManageWallet = require('./../manage-wallet/manage-wallet').default;
 
     const routes = [
@@ -426,8 +422,7 @@ describe('ManageWallet', () => {
     });
     const Web3ContextProvider =
       require('./../../../../app/context/web3-context-provider').default;
-    const manageWalletLoader =
-      require('./../manage-wallet/manageWalletLoader').default;
+    const manageWalletLoader = require('./../walletDetailLoader').default;
     const ManageWallet = require('./../manage-wallet/manage-wallet').default;
 
     const routes = [
@@ -492,8 +487,7 @@ describe('ManageWallet', () => {
   it('should close Ether deposit form after clicking Deposit button', async () => {
     const Web3ContextProvider =
       require('./../../../../app/context/web3-context-provider').default;
-    const manageWalletLoader =
-      require('./../manage-wallet/manageWalletLoader').default;
+    const manageWalletLoader = require('./../walletDetailLoader').default;
     const ManageWallet = require('./../manage-wallet/manage-wallet').default;
 
     const routes = [
@@ -554,8 +548,7 @@ describe('ManageWallet', () => {
   it('should display a user/account seach text field when Add Users button is clicked', async () => {
     const Web3ContextProvider =
       require('./../../../../app/context/web3-context-provider').default;
-    const manageWalletLoader =
-      require('./../manage-wallet/manageWalletLoader').default;
+    const manageWalletLoader = require('./../walletDetailLoader').default;
     const ManageWallet = require('./../manage-wallet/manage-wallet').default;
 
     const routes = [
@@ -608,8 +601,7 @@ describe('ManageWallet', () => {
   it('should display a table of accounts when search icon button is clicked', async () => {
     const Web3ContextProvider =
       require('./../../../../app/context/web3-context-provider').default;
-    const manageWalletLoader =
-      require('./../manage-wallet/manageWalletLoader').default;
+    const manageWalletLoader = require('./../walletDetailLoader').default;
     const ManageWallet = require('./../manage-wallet/manage-wallet').default;
 
     const routes = [
@@ -676,8 +668,7 @@ describe('ManageWallet', () => {
   it('should display an error if Add button is clicked without selecting a user in search table', async () => {
     const Web3ContextProvider =
       require('./../../../../app/context/web3-context-provider').default;
-    const manageWalletLoader =
-      require('./../manage-wallet/manageWalletLoader').default;
+    const manageWalletLoader = require('./../walletDetailLoader').default;
     const ManageWallet = require('./../manage-wallet/manage-wallet').default;
 
     const routes = [
@@ -746,8 +737,7 @@ describe('ManageWallet', () => {
   it('should close the user search table after the Add button is clicked', async () => {
     const Web3ContextProvider =
       require('./../../../../app/context/web3-context-provider').default;
-    const manageWalletLoader =
-      require('./../manage-wallet/manageWalletLoader').default;
+    const manageWalletLoader = require('./../walletDetailLoader').default;
     const ManageWallet = require('./../manage-wallet/manage-wallet').default;
 
     const routes = [
@@ -833,8 +823,7 @@ describe('ManageWallet', () => {
     });
     const Web3ContextProvider =
       require('./../../../../app/context/web3-context-provider').default;
-    const manageWalletLoader =
-      require('./../manage-wallet/manageWalletLoader').default;
+    const manageWalletLoader = require('./../walletDetailLoader').default;
     const ManageWallet = require('./../manage-wallet/manage-wallet').default;
 
     const routes = [
@@ -912,8 +901,7 @@ describe('ManageWallet', () => {
   it('should display a form for editing the wallet details when the edit button is clicked', async () => {
     const Web3ContextProvider =
       require('./../../../../app/context/web3-context-provider').default;
-    const manageWalletLoader =
-      require('./../manage-wallet/manageWalletLoader').default;
+    const manageWalletLoader = require('./../walletDetailLoader').default;
     const ManageWallet = require('./../manage-wallet/manage-wallet').default;
 
     const routes = [
@@ -968,8 +956,7 @@ describe('ManageWallet', () => {
   it('should display new wallet name if user updates wallet details', async () => {
     const Web3ContextProvider =
       require('./../../../../app/context/web3-context-provider').default;
-    const manageWalletLoader =
-      require('./../manage-wallet/manageWalletLoader').default;
+    const manageWalletLoader = require('./../walletDetailLoader').default;
     const ManageWallet = require('./../manage-wallet/manage-wallet').default;
 
     const routes = [
