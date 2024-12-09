@@ -7,7 +7,7 @@ import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 
-import UsersTable from './users-table';
+import UsersTable from '../users-table';
 import { authToken, clearToken } from '../../../../utils/auth/auth';
 import apiCall from '../../../../utils/http/api-call';
 

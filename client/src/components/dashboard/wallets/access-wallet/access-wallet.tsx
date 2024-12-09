@@ -9,7 +9,7 @@ import { Web3Context } from './../../../../app/context/web3-context-provider';
 import { clearToken } from '../../../../utils/auth/auth';
 import WalletsHome from '../wallets-home';
 import WalletInfo from '../wallet-info';
-import UsersTable from '../manage-wallet/users-table';
+import UsersTable from '../users-table';
 
 function AccessWallet() {
   const [error, setError] = useState<string | null>(null);

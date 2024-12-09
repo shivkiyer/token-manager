@@ -6,7 +6,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
-import formatEthAddress from '../../../../utils/web3/formatEthAddress';
+import formatEthAddress from '../../../utils/web3/formatEthAddress';
 
 function UsersTable({ users, form }: { users: any; form: any }) {
   return (
