@@ -1,7 +1,7 @@
 import { redirect } from 'react-router-dom';
 
-import apiCall from '../../../../utils/http/api-call';
-import { authToken, clearToken } from '../../../../utils/auth/auth';
+import apiCall from '../../../utils/http/api-call';
+import { authToken, clearToken } from '../../../utils/auth/auth';
 
 const manageWalletLoader = async ({ params }: any) => {
   const userToken = authToken();

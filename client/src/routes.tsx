@@ -13,8 +13,8 @@ import ListWallets from './components/dashboard/wallets/list-wallets/list-wallet
 import RegisterWallet from './components/dashboard/wallets/register-wallet/register-wallet';
 import walletListLoader from './components/dashboard/wallets/list-wallets/walletsListLoader';
 import ManageWallet from './components/dashboard/wallets/manage-wallet/manage-wallet';
-import manageWalletLoader from './components/dashboard/wallets/manage-wallet/manageWalletLoader';
-import AccessWallet from './components/dashboard/wallets/access-wallet';
+import walletDetailLoader from './components/dashboard/wallets/walletDetailLoader';
+import AccessWallet from './components/dashboard/wallets/access-wallet/access-wallet';
 import Settings from './components/dashboard/settings/settings';
 import ErrorPage from './components/ErrorPage/error-page';
 
@@ -51,9 +51,13 @@ export const router = createBrowserRouter([
               {
                 path: 'manage/:id',
                 element: <ManageWallet />,
-                loader: manageWalletLoader,
+                loader: walletDetailLoader,
               },
-              { path: 'access/:id', element: <AccessWallet /> },
+              {
+                path: 'access/:id',
+                element: <AccessWallet />,
+                loader: walletDetailLoader,
+              },
             ],
           },
           { path: 'tokens', element: <Tokens /> },
