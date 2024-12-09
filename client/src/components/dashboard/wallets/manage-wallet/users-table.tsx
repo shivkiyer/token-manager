@@ -14,7 +14,7 @@ function UsersTable({ users, form }: { users: any; form: any }) {
       <Table>
         <TableHead>
           <TableRow>
-            <TableCell></TableCell>
+            {form && <TableCell></TableCell>}
             <TableCell>Username</TableCell>
             <TableCell>A/c Name</TableCell>
             <TableCell>A/c address</TableCell>
@@ -26,14 +26,16 @@ function UsersTable({ users, form }: { users: any; form: any }) {
               key={row.name}
               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
             >
-              <TableCell>
-                <input
-                  type='checkbox'
-                  name='checked'
-                  value={row.id}
-                  onChange={form.handleChange}
-                />
-              </TableCell>
+              {form && (
+                <TableCell>
+                  <input
+                    type='checkbox'
+                    name='checked'
+                    value={row.id}
+                    onChange={form.handleChange}
+                  />
+                </TableCell>
+              )}
               <TableCell>{row.User.username}</TableCell>
               <TableCell>{row.name}</TableCell>
               <TableCell>{formatEthAddress(row.address, true)}</TableCell>
