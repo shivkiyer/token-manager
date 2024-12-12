@@ -4,7 +4,7 @@
  * @returns {boolean}
  */
 const isErrorInForm = (form: any) => {
-  if (Object.keys(form.touched).length > 0) {
+  if (form.dirty) {
     if (Object.keys(form.errors).length === 0) {
       return false;
     }
