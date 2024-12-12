@@ -18,7 +18,15 @@ interface WalletData {
   maxLimit: number;
 }
 
-function WalletInfo({ web3, wallet }: { web3: any; wallet: any }) {
+function WalletInfo({
+  web3,
+  wallet,
+  editable,
+}: {
+  web3: any;
+  wallet: any;
+  editable: boolean;
+}) {
   const [displayForm, setDisplayForm] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [walletData, setWalletData] = useState<WalletData | null>(null);
@@ -237,12 +245,14 @@ function WalletInfo({ web3, wallet }: { web3: any; wallet: any }) {
         <>
           <Grid item xs={12}>
             <h2 style={{ display: 'inline-block' }}>{walletData?.name}</h2>
-            <Button
-              sx={{ padding: '0px', verticalAlign: 'top', marginTop: '4px' }}
-              onClick={displayFormHandler}
-            >
-              <EditIcon />
-            </Button>
+            {editable && (
+              <Button
+                sx={{ padding: '0px', verticalAlign: 'top', marginTop: '4px' }}
+                onClick={displayFormHandler}
+              >
+                <EditIcon />
+              </Button>
+            )}
           </Grid>
 
           <Grid item xs={12} marginTop={2}>

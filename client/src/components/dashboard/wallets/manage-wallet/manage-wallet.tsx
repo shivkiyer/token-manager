@@ -61,7 +61,7 @@ function ManageWallet() {
       ) : (
         <Box className='standard-box-display' marginTop={4}>
           <Grid container>
-            <WalletInfo web3={web3} wallet={walletData.data} />
+            <WalletInfo web3={web3} wallet={walletData.data} editable={true} />
             <DepositEther web3={web3} wallet={walletData.data} />
             <WalletUsers web3={web3} wallet={walletData.data} />
           </Grid>

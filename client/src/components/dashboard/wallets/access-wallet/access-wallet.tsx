@@ -10,6 +10,7 @@ import { clearToken } from '../../../../utils/auth/auth';
 import WalletsHome from '../wallets-home';
 import WalletInfo from '../wallet-info';
 import UsersTable from '../users-table';
+import WithdrawEther from './withdraw-ether';
 
 function AccessWallet() {
   const [error, setError] = useState<string | null>(null);
@@ -91,7 +92,7 @@ function AccessWallet() {
       ) : (
         <Box className='standard-box-display' marginTop={4}>
           <Grid container>
-            <WalletInfo web3={web3} wallet={walletData.data} />
+            <WalletInfo web3={web3} wallet={walletData.data} editable={false} />
             <Grid item xs={12} md={10} marginTop={2} marginBottom={2}>
               <h4>Wallet Users:</h4>
             </Grid>
@@ -115,6 +116,8 @@ function AccessWallet() {
               </>
             )}
           </Grid>
+
+          <WithdrawEther web3={web3} wallet={walletData.data} />
         </Box>
       )}
     </>
