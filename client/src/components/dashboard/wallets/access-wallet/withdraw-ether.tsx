@@ -82,14 +82,14 @@ function WithdrawEther({ web3, wallet }: { web3: any; wallet: any }) {
         .send({ from: account, gas: actualGas });
 
       if (
-        result.transactionHash === null &&
+        result.transactionHash === null ||
         result.transactionHash === undefined
       ) {
-        Object.assign(new Error());
+        throw Object.assign(new Error());
       }
       resetForm();
     } catch (e) {
-      setError('Could not withdraw funds.');
+      setError('Could not withdraw funds');
     }
   };
 
