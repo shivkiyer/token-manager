@@ -21,6 +21,10 @@ function ListWallets() {
       ) {
         clearToken();
         navigate('/login');
+      } else if (walletData.data.length === 0) {
+        setError(
+          'No wallets found. Use the CREATE tab to create a new wallet.'
+        );
       }
     } catch (e) {
       setError('Unable to fetch wallets');
@@ -29,7 +33,9 @@ function ListWallets() {
 
   return (
     <>
-      {walletData !== null && walletData.data !== undefined ? (
+      {walletData !== null &&
+      walletData.data !== undefined &&
+      walletData.data.length > 0 ? (
         walletData.data.map((wallet: any) => (
           <WalletCard
             key={wallet.id}
@@ -42,7 +48,7 @@ function ListWallets() {
           ></WalletCard>
         ))
       ) : (
-        <h3>{error}</h3>
+        <h4>{error}</h4>
       )}
     </>
   );
