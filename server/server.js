@@ -5,7 +5,10 @@ const cors = require('cors');
 
 // Connect to the database and sync models/tables
 const sequelize = require('./../db/config/config');
-require('./../db/config/initializeModels')();
+if (process.env.NODE_ENV !== 'test') {
+  // For tests, models initialized within tests
+  require('./../db/config/initializeModels')();
+}
 
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
