@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useContext } from 'react';
 import { useRouter } from 'next/navigation';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -11,6 +11,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 
+import { AuthContext } from '@/providers/auth/auth-provider';
 import isErrorInForm from '@/utils/forms/isErrorInForm';
 import loginActionHandler from '@/actions/auth/login';
 
@@ -20,6 +21,7 @@ function LoginPage() {
   const [formPending, setFormPending] = useState<boolean>(false);
   const [formError, setFormError] = useState<string | null>(null);
   const router = useRouter();
+  const authContext = useContext(AuthContext);
 
   const validateHandler = () => {
     setFormError(null);
@@ -42,11 +44,12 @@ function LoginPage() {
     onSubmit: async (values) => {
       setFormPending(true);
       const result = await loginActionHandler(values);
-      if (!result) {
+      if (result.data) {
+        await authContext.setToken(result.data);
         return router.push('/');
       }
       setFormPending(false);
-      setFormError(result);
+      setFormError(result.message);
     },
   });
 

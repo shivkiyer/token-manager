@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 
+import AuthProvider from '@/providers/auth/auth-provider';
 import NavigationBar from '@/components/page-sections/navigation-bar/navigation-bar';
 
 import './globals.css';
@@ -19,8 +20,10 @@ export default function RootLayout({
     <html lang='en'>
       <body>
         <AppRouterCacheProvider>
-          <NavigationBar />
-          {children}
+          <AuthProvider>
+            <NavigationBar />
+            {children}
+          </AuthProvider>
         </AppRouterCacheProvider>
       </body>
     </html>

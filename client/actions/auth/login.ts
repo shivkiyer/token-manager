@@ -1,6 +1,6 @@
 'use server';
 
-import createSession from './session';
+import { createSession } from './session';
 
 /**
  * Login a user at the backend and if successful stores JWT in cookie
@@ -27,5 +27,5 @@ export default async function loginActionHandler(formData: {
     await createSession(responseData.data);
   }
 
-  return response.ok ? null : responseData.message;
+  return responseData;
 }

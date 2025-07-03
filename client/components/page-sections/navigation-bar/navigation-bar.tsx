@@ -1,24 +1,38 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
-import Link from 'next/link';
+import CircularProgress from '@mui/material/CircularProgress';
+
+import { AuthContext } from '@/providers/auth/auth-provider';
+import { getSession } from '@/actions/auth/session';
 
 import classes from './navigation-bar.module.css';
 
 function NavigationBar() {
+  const authContext = useContext(AuthContext);
   const router = useRouter();
   const [jwtToken, setJwtToken] = useState<string | null>(null);
+  const [statusPending, setStatusPending] = useState<boolean>(true);
 
   const loginHandler = () => {
     router.push('login');
     return;
   };
+
+  useEffect(() => {
+    const getAuthToken = async () => {
+      setJwtToken(await getSession());
+      setStatusPending(false);
+    };
+    getAuthToken();
+  }, []);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
@@ -29,11 +43,15 @@ function NavigationBar() {
               Token Manager
             </Link>
           </Typography>
+
           <Button sx={{ color: 'white' }} onClick={loginHandler}>
-            <Typography variant='button' sx={{ display: 'block' }}>
-              {/* {userToken ? 'Logout' : 'Login'} */}
-              Login
-            </Typography>
+            {statusPending ? (
+              <CircularProgress size={22} sx={{ color: 'white' }} />
+            ) : (
+              <Typography variant='button' sx={{ display: 'block' }}>
+                {jwtToken || authContext.getToken() ? 'Logout' : 'Login'}
+              </Typography>
+            )}
           </Button>
         </Toolbar>
       </AppBar>
