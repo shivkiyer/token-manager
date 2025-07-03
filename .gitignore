@@ -1,5 +1,5 @@
 **/node_modules
-.env
+.env*
 **/logs
 
 # Blockchain
@@ -11,3 +11,6 @@
 **/broadcast
 **/artifacts
 **/ignition/deployments
+
+#Next.js
+.next/
