@@ -38,7 +38,7 @@ function DashboardDrawer() {
     <>
       {!displayDashboardDrawer && (
         <KeyboardArrowRightIcon
-          sx={{ fontSize: '3.5rem', cursor: 'pointer' }}
+          sx={{ marginTop: '10px', fontSize: '3.5rem', cursor: 'pointer' }}
           onClick={handleOpen}
         />
       )}
@@ -68,6 +68,13 @@ function DashboardDrawer() {
               />
             </ListItem>
 
+            <Link href='/dashboard' className={isActiveLinkClass('/dashboard')}>
+              <ListItem>
+                <ListItemButton>
+                  <Typography variant='button'>Overview</Typography>
+                </ListItemButton>
+              </ListItem>
+            </Link>
             <Link
               href='/dashboard/wallet/list'
               className={isActiveLinkClass('/dashboard/wallet')}
