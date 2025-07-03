@@ -7,6 +7,7 @@ import * as Yup from 'yup';
 import Container from '@mui/material/Container';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
@@ -46,7 +47,7 @@ function LoginPage() {
       const result = await loginActionHandler(values);
       if (result.data) {
         await authContext.setToken(result.data);
-        return router.push('/');
+        return router.push('/dashboard');
       }
       setFormPending(false);
       setFormError(result.message);
@@ -70,7 +71,9 @@ function LoginPage() {
                 onBlur={formik.handleBlur}
               ></TextField>
               {formik.touched.username && formik.errors.username && (
-                <p className='error-message'>{formik.errors.username}</p>
+                <Typography color='error' variant='body1'>
+                  {formik.errors.username}
+                </Typography>
               )}
             </Grid>
 
@@ -87,12 +90,18 @@ function LoginPage() {
                 onBlur={formik.handleBlur}
               ></TextField>
               {formik.touched.password && formik.errors.password && (
-                <p className='error-message'>{formik.errors.password}</p>
+                <Typography color='error' variant='body1'>
+                  {formik.errors.password}
+                </Typography>
               )}
             </Grid>
 
             <Grid size={{ xs: 12 }} marginTop={3}>
-              {formError && <p className='error-message'>{formError}</p>}
+              {formError && (
+                <Typography color='error' variant='body1'>
+                  {formError}
+                </Typography>
+              )}
             </Grid>
 
             <Grid size={{ xs: 12 }} marginTop={2}>
@@ -105,7 +114,7 @@ function LoginPage() {
                   variant='contained'
                   className={classes.LoginFields}
                 >
-                  <span>Login</span>
+                  <Typography variant='button'>Login</Typography>
                 </Button>
               )}
             </Grid>

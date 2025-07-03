@@ -41,7 +41,7 @@ function NavigationBar() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position='fixed' sx={{ zIndex: 2 }}>
+      <AppBar position='relative' sx={{ zIndex: 2 }}>
         <Toolbar className={classes.AppBar}>
           <Typography variant='h6' noWrap component='div' sx={{ flexGrow: 1 }}>
             <Link className='button-link button-link-white' href='/'>
