@@ -2,7 +2,7 @@
 
 import { useState, createContext } from 'react';
 
-import { createSession, getSession, deleteSession } from '@/actions/auth/session';
+import { createSession, deleteSession } from '@/actions/auth/session';
 
 interface AuthContextType {
   token: null | string;
@@ -23,7 +23,7 @@ function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const getAuthToken = () => {
     return jwtToken;
-  }
+  };
 
   const setAuthToken = async (token: string) => {
     await createSession(token);
