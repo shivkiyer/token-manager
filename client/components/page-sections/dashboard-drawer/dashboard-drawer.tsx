@@ -99,7 +99,7 @@ function DashboardDrawer() {
           <Divider />
           <List>
             <Link
-              href='/dashboard/account'
+              href='/dashboard/account/list'
               className={isActiveLinkClass('/dashboard/account')}
             >
               <ListItem>
