@@ -8,7 +8,7 @@ import { cookies } from 'next/headers';
  */
 export async function createSession(token: string) {
   const expiresAt = new Date(
-    Date.now() + parseInt(process.env.SESSION_EXPIRY ?? '120') * 60 * 1000
+    Date.now() + parseInt(process.env.REACT_APP_SESSION_EXPIRY ?? '120') * 60 * 1000
   );
   const cookieStore = await cookies();
 

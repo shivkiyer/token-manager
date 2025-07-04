@@ -27,7 +27,7 @@ function NavigationBar() {
       await authContext.deleteToken();
       setJwtToken(null);
     }
-    router.push('login');
+    router.push('/login');
     return;
   };
 

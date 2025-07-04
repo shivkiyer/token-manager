@@ -1,6 +1,7 @@
 'use server';
 
 import { createSession } from './session';
+import apiCall from '@/utils/http/api-call';
 
 /**
  * Login a user at the backend and if successful stores JWT in cookie
@@ -11,16 +12,14 @@ export default async function loginActionHandler(formData: {
   username: string;
   password: string;
 }) {
-  const response = await fetch(`${process.env.BASE_API_URL}/auth/login`, {
-    method: 'POST',
-    body: JSON.stringify({
-      username: formData['username'],
-      password: formData['password'],
-    }),
-    headers: {
-      'Content-Type': 'application/json',
-    },
-  });
+  const { username, password } = formData;
+
+  const response = await apiCall(
+    `${process.env.REACT_APP_BASE_API_URL}/auth/login`,
+    'POST',
+    null,
+    { username, password }
+  );
 
   const responseData = await response.json();
   if (responseData.data) {
