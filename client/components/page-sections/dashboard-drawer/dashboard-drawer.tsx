@@ -19,9 +19,13 @@ function DashboardDrawer() {
   const [displayDashboardDrawer, setDisplayDashboardDrawer] =
     useState<boolean>(true);
 
-  const isActiveLinkClass = (path: string) => {
+  const isActiveLinkClass = (path: string, full: boolean = false) => {
     if (currentUrl.includes(path)) {
-      return 'button-link button-link-black button-link-active';
+      return !full
+        ? 'button-link button-link-black button-link-active'
+        : currentUrl === path
+        ? 'button-link button-link-black button-link-active'
+        : 'button-link button-link-black';
     }
     return 'button-link button-link-black';
   };
@@ -44,6 +48,7 @@ function DashboardDrawer() {
       )}
       <Drawer
         open={displayDashboardDrawer}
+        onClose={handleClose}
         sx={{
           marginTop: 30,
           width: 180,
@@ -67,7 +72,10 @@ function DashboardDrawer() {
               />
             </ListItem>
 
-            <Link href='/dashboard' className={isActiveLinkClass('/dashboard')}>
+            <Link
+              href='/dashboard'
+              className={isActiveLinkClass('/dashboard', true)}
+            >
               <ListItem>
                 <ListItemButton>
                   <Typography variant='button'>Overview</Typography>
