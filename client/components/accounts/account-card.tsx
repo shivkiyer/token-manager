@@ -1,3 +1,4 @@
+import Typography from '@mui/material/Typography';
 import Grid from '@mui/material/Grid';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -20,12 +21,12 @@ function AccountCard({
       <Grid size={{ xs: 11, md: 6 }}>
         <Card>
           <CardContent>
-            <h4 style={{ marginBottom: '12px' }}>{name}</h4>
-            <p>{formatEthAddress(address)}</p>
+            <Typography variant='h5'>{name}</Typography>
+            <Typography variant='body1'>{formatEthAddress(address)}</Typography>
           </CardContent>
           <CardActions>
             <Button variant='contained' disabled={true}>
-              Details
+              <Typography variant='button'>Details</Typography>
             </Button>
           </CardActions>
         </Card>
