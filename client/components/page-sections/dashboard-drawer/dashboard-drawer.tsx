@@ -43,9 +43,8 @@ function DashboardDrawer() {
         />
       )}
       <Drawer
-        variant='permanent'
+        open={displayDashboardDrawer}
         sx={{
-          display: displayDashboardDrawer ? 'block' : 'none',
           marginTop: 30,
           width: 180,
           flexShrink: 0,

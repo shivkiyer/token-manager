@@ -17,7 +17,7 @@ function AccountCard({
 }) {
   return (
     <Grid container marginTop={3} marginLeft={2}>
-      <Grid size={{xs: 10, md: 6}}>
+      <Grid size={{ xs: 11, md: 6 }}>
         <Card>
           <CardContent>
             <h4 style={{ marginBottom: '12px' }}>{name}</h4>
