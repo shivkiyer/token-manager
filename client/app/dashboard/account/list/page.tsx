@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react';
 
-import accountsListLoader from '@/actions/eth/accountListLoader';
+import accountsListLoader from '@/actions/account/accountListLoader';
 import AccountCard from '@/components/accounts/account-card';
 
 interface AccountData {

@@ -16,4 +16,9 @@ router.get('/get-abi', async (req, res) => {
   return response;
 });
 
+router.get('/', async (req, res) => {
+  const response = await contractFactoryController.getData(req, res);
+  return response;
+});
+
 module.exports = router;

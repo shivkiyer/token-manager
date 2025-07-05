@@ -4,13 +4,14 @@ import { useState } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import isErrorInForm from '@/utils/forms/isErrorInForm';
 import getWeb3 from '@/utils/web3/web3';
-import registerAccount from '@/actions/eth/registerAccount';
+import registerAccount from '@/actions/account/registerAccount';
 
 function RegisterAccount() {
   const [loading, setLoading] = useState(false);
@@ -92,7 +93,9 @@ function RegisterAccount() {
               onBlur={formik.handleBlur}
             ></TextField>
             {formik.touched.name && formik.errors.name && (
-              <p className='error-message'>{formik.errors.name}</p>
+              <Typography color='error' variant='body1'>
+                {formik.errors.name}
+              </Typography>
             )}
           </Grid>
         </Grid>
@@ -114,7 +117,9 @@ function RegisterAccount() {
               onBlur={formik.handleBlur}
             ></TextField>
             {formik.touched.address && formik.errors.address && (
-              <p className='error-message'>{formik.errors.address}</p>
+              <Typography color='error' variant='body1'>
+                {formik.errors.address}
+              </Typography>
             )}
           </Grid>
         </Grid>
@@ -127,7 +132,9 @@ function RegisterAccount() {
             marginTop={5}
           >
             <Grid size={{ xs: 10, md: 6 }} sx={{ textAlign: 'center' }}>
-              <p className='error-message'>{error}</p>
+              <Typography color='error' variant='body1'>
+                {error}
+              </Typography>
             </Grid>
           </Grid>
         )}
@@ -147,7 +154,7 @@ function RegisterAccount() {
                 type='submit'
                 disabled={getDisabledStatus()}
               >
-                Add
+                <Typography variant='button'>Add</Typography>
               </Button>
             )}
           </Grid>
@@ -160,7 +167,7 @@ function RegisterAccount() {
           marginTop={5}
         >
           <Grid size={{ xs: 10, md: 6 }} sx={{ textAlign: 'center' }}>
-            {success && <h4>{success}</h4>}
+            {success && <Typography variant='body1'>{success}</Typography>}
           </Grid>
         </Grid>
       </form>
