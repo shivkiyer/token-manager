@@ -1,3 +1,1 @@
-export default function WalletHome() {
-
-}
+export default function WalletHome() {}

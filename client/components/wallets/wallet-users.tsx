@@ -3,6 +3,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useFormik } from 'formik';
 import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
@@ -200,7 +201,6 @@ export default function WalletUsers({
           .setWithdrawers(accAddresses)
           .send({ from: web3Account, gas: actualGas.toString() });
 
-
         if (
           web3Response.transactionHash === null ||
           web3Response.transactionHash === undefined
@@ -240,7 +240,7 @@ export default function WalletUsers({
     <>
       <Grid container marginTop={4} marginBottom={4}>
         <Grid size={{ xs: 12 }}>
-          <h3>Wallet users</h3>
+          <Typography variant='h5'>Wallet users</Typography>
         </Grid>
 
         <form method='POST' onSubmit={removeUserForm.handleSubmit}>
@@ -250,7 +250,7 @@ export default function WalletUsers({
 
           <Grid size={{ xs: 12 }} marginTop={1}>
             <Button variant='contained' onClick={addUserHandler}>
-              Add Users
+              <Typography variant='button'>Add Users</Typography>
             </Button>
             <Button
               variant='contained'
@@ -258,14 +258,18 @@ export default function WalletUsers({
               type='submit'
               sx={{ marginLeft: '16px' }}
             >
-              Remove Users
+              <Typography variant='button'>Remove Users</Typography>
             </Button>
           </Grid>
           {removeUserError && (
             <Grid size={{ xs: 12 }} marginTop={1}>
-              <p className='error-message' style={{ textAlign: 'left' }}>
+              <Typography
+                color='error'
+                variant='body1'
+                sx={{ textAlign: 'left' }}
+              >
                 {removeUserError}
-              </p>
+              </Typography>
             </Grid>
           )}
         </form>
@@ -308,9 +312,11 @@ export default function WalletUsers({
 
         {searchData && (
           <Grid container marginTop={4}>
-            <h3>Search results:</h3>
+            <Typography variant='h6'>Search results:</Typography>
             {searchError !== null ? (
-              <h4>{searchError}</h4>
+              <Typography color='error' variant='body1'>
+                {searchError}
+              </Typography>
             ) : (
               <form
                 method='POST'
@@ -321,7 +327,8 @@ export default function WalletUsers({
 
                 <Grid size={{ xs: 12 }} marginTop={2}>
                   <Button variant='contained' type='submit'>
-                    Add
+                    <Typography variant='button'>Add</Typography>
+                    {/* Add */}
                   </Button>
                 </Grid>
               </form>
@@ -329,9 +336,13 @@ export default function WalletUsers({
 
             {addUserError && (
               <Grid size={{ xs: 12 }} marginTop={1}>
-                <p className='error-message' style={{ textAlign: 'left' }}>
+                <Typography
+                  color='error'
+                  variant='body1'
+                  sx={{ textAlign: 'left' }}
+                >
                   {addUserError}
-                </p>
+                </Typography>
               </Grid>
             )}
           </Grid>

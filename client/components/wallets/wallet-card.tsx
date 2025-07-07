@@ -4,6 +4,7 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 
 import formatEthAddress from '@/utils/web3/formatEthAddress';
 
@@ -26,30 +27,34 @@ function WalletCard({
 }: WalletData) {
   return (
     <Grid container marginTop={3} key={id}>
-      <Grid size={{xs: 12, md: 6}}>
+      <Grid size={{ xs: 12, md: 6 }}>
         <Card>
           <CardContent style={{ lineHeight: '1.5' }}>
-            <h4 style={{ marginBottom: '12px' }}>{name}</h4>
-            <p>{description}</p>
-            <p>
+            <Typography variant='h6' sx={{ marginBottom: '12px' }}>
+              {name}
+            </Typography>
+            <Typography variant='body1'>{description}</Typography>
+            <Typography variant='body1'>
               <strong>Address: </strong>
               {formatEthAddress(address)}
-            </p>
-            <p>
+            </Typography>
+            <Typography variant='body1'>
               <strong>Maximum withdrawal limit (Ether): </strong>
               {maxLimit}
-            </p>
+            </Typography>
           </CardContent>
           <CardActions>
             {isOwner ? (
               <Link href={`/dashboard/wallet/manage/${id}`}>
                 <Button className='button-alert' variant='contained'>
-                  Manage
+                  <Typography variant='button'>Manage</Typography>
                 </Button>
               </Link>
             ) : (
               <Link href={`/dashboard/wallet/access/${id}`}>
-                <Button variant='contained'>Access</Button>
+                <Button variant='contained'>
+                  <Typography variant='button'>Access</Typography>
+                </Button>
               </Link>
             )}
           </CardActions>

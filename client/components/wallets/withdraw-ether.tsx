@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import RefreshIcon from '@mui/icons-material/Refresh';
@@ -112,12 +113,18 @@ function WithdrawEther({ web3, wallet }: { web3: any; wallet: any }) {
         {accountError && (
           <>
             <Grid size={{ xs: 12, md: 10 }} marginTop={1}>
-              <p className='error-message' style={{ textAlign: 'left' }}>
+              <Typography
+                color='error'
+                variant='body1'
+                sx={{ textAlign: 'left' }}
+              >
                 {accountError}
-              </p>
+              </Typography>
             </Grid>
             <Grid size={{ xs: 9, md: 7 }} paddingTop={0.5}>
-              <p>Change the Metamask account and click on refresh</p>
+              <Typography variant='body1'>
+                Change the Metamask account and click on refresh
+              </Typography>
             </Grid>
             <Grid size={{ xs: 3, md: 3 }}>
               <Button sx={{ padding: '0px' }} onClick={verifyAccountAccess}>
@@ -146,21 +153,29 @@ function WithdrawEther({ web3, wallet }: { web3: any; wallet: any }) {
                 disabled={submitDisabled()}
                 sx={{ marginRight: '12px' }}
               >
-                Submit
+                <Typography variant='button'>Submit</Typography>
               </Button>
               {withdrawalForm.touched.amount &&
                 withdrawalForm.errors.amount && (
-                  <span className='error-message' style={{ textAlign: 'left' }}>
+                  <Typography
+                    color='error'
+                    variant='body1'
+                    sx={{ textAlign: 'left', display: 'inline' }}
+                  >
                     {withdrawalForm.errors.amount.toString()}
-                  </span>
+                  </Typography>
                 )}
             </Grid>
 
             {error && (
               <Grid size={12} marginTop={1}>
-                <p className='error-message' style={{ textAlign: 'left' }}>
+                <Typography
+                  color='error'
+                  variant='body1'
+                  sx={{ textAlign: 'left' }}
+                >
                   {error}
-                </p>
+                </Typography>
               </Grid>
             )}
           </>

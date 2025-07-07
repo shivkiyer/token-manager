@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 import TextField from '@mui/material/TextField';
 import EditIcon from '@mui/icons-material/Edit';
 import Button from '@mui/material/Button';
@@ -148,9 +149,9 @@ function WalletInfo({
               fullWidth
             ></TextField>
             {walletForm.touched.name && walletForm.errors.name && (
-              <p className='error-message'>
+              <Typography color='error' variant='body1'>
                 {walletForm.errors.name.toString()}
-              </p>
+              </Typography>
             )}
           </Grid>
 
@@ -168,9 +169,9 @@ function WalletInfo({
             ></TextField>
             {walletForm.touched.description &&
               walletForm.errors.description && (
-                <p className='error-message'>
+                <Typography color='error' variant='body1'>
                   {walletForm.errors.description.toString()}
-                </p>
+                </Typography>
               )}
           </Grid>
 
@@ -185,9 +186,9 @@ function WalletInfo({
               fullWidth
             ></TextField>
             {walletForm.touched.maxLimit && walletForm.errors.maxLimit && (
-              <p className='error-message'>
+              <Typography color='error' variant='body1'>
                 {walletForm.errors.maxLimit.toString()}
-              </p>
+              </Typography>
             )}
           </Grid>
 
@@ -197,7 +198,7 @@ function WalletInfo({
               type='submit'
               disabled={getDisabledStatus()}
             >
-              Update
+              <Typography variant='button'>Update</Typography>
             </Button>
 
             <Button
@@ -206,14 +207,18 @@ function WalletInfo({
               onClick={hideFormHandler}
               sx={{ marginLeft: '12px' }}
             >
-              Cancel
+              <Typography variant='button'>Cancel</Typography>
             </Button>
           </Grid>
           {error && (
             <Grid size={{ xs: 12, md: 10 }} marginTop={1}>
-              <p className='error-message' style={{ textAlign: 'left' }}>
+              <Typography
+                color='error'
+                variant='body1'
+                sx={{ textAlign: 'left' }}
+              >
                 {error}
-              </p>
+              </Typography>
             </Grid>
           )}
         </form>
@@ -232,26 +237,26 @@ function WalletInfo({
           </Grid>
 
           <Grid size={{ xs: 12 }} marginTop={2}>
-            <p>
+            <Typography variant='body1'>
               <strong>Account owner: </strong>
               {formatEthAddress(wallet.owner.address)}
-            </p>
+            </Typography>
           </Grid>
 
           <Grid size={{ xs: 12, md: 10 }} marginTop={2}>
-            <p>
+            <Typography variant='body1'>
               <strong>Max withdrawal limit: </strong>
               {walletData?.maxLimit} Ether
-            </p>
+            </Typography>
           </Grid>
 
           <Grid size={{ xs: 12, md: 10 }} marginTop={2}>
-            <p>
+            <Typography variant='body1'>
               <strong>Description: </strong>
               {walletData?.description !== null
                 ? walletData?.description
                 : 'Not provided'}
-            </p>
+            </Typography>
           </Grid>
         </>
       )}

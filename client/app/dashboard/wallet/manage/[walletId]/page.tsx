@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import getWalletDetails from '@/actions/wallet/getWalletDetails';
@@ -65,7 +66,9 @@ function ManageWallet() {
           sx={{ marginTop: '100px', display: 'block' }}
         />
       ) : error !== null ? (
-        <h3 style={{ marginTop: '20px' }}>{error}</h3>
+        <Typography color='error' variant='body1' sx={{ marginTop: '20px' }}>
+          {error}
+        </Typography>
       ) : (
         <Box className='standard-box-display' marginTop={4}>
           <Grid container>

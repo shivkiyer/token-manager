@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 
@@ -94,18 +95,19 @@ export default function DepositEther({
   return (
     <>
       <Grid size={{ xs: 12 }} marginTop={3}>
-        <h4
-          style={{ display: 'inline-block' }}
+        <Typography
+          variant='h6'
           data-testid='test-ether-balance'
+          sx={{ display: 'inline-block' }}
         >
           Current balance: {balance.toString()} Ether
-        </h4>
+        </Typography>
         <Button
           variant='contained'
           sx={{ marginLeft: '16px' }}
           onClick={showForm}
         >
-          Deposit Ether
+          <Typography variant='button'>Deposit Ether</Typography>
         </Button>
       </Grid>
 
@@ -125,7 +127,7 @@ export default function DepositEther({
               sx={{ marginLeft: '16px' }}
               type='submit'
             >
-              Deposit
+              <Typography variant='button'>Deposit</Typography>
             </Button>
             <Button
               variant='contained'
@@ -133,22 +135,27 @@ export default function DepositEther({
               sx={{ marginLeft: '16px' }}
               onClick={hideForm}
             >
-              Cancel
+              <Typography variant='button'>Cancel</Typography>
             </Button>
             {etherDepositForm.touched.etherValue &&
               etherDepositForm.errors.etherValue && (
-                <p className='error-message' style={{ textAlign: 'left' }}>
+                <Typography
+                  color='error'
+                  variant='body1'
+                  sx={{ textAlign: 'left' }}
+                >
                   {etherDepositForm.errors.etherValue}
-                </p>
+                </Typography>
               )}
           </form>
           {error && (
-            <p
-              className='error-message'
-              style={{ textAlign: 'left', marginTop: '10px' }}
+            <Typography
+              color='error'
+              variant='body1'
+              sx={{ textAlign: 'left', marginTop: '10px' }}
             >
               {error}
-            </p>
+            </Typography>
           )}
         </Grid>
       )}

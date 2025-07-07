@@ -43,9 +43,17 @@ function UsersTable({ users, form }: { users: any; form: any }) {
                   />
                 </TableCell>
               )}
-              <TableCell><Typography variant='body1'>{row.User.username}</Typography></TableCell>
-              <TableCell><Typography variant='body1'>{row.name}</Typography></TableCell>
-              <TableCell><Typography variant='body1'>{formatEthAddress(row.address, true)}</Typography></TableCell>
+              <TableCell>
+                <Typography variant='body1'>{row.User.username}</Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant='body1'>{row.name}</Typography>
+              </TableCell>
+              <TableCell>
+                <Typography variant='body1'>
+                  {formatEthAddress(row.address, true)}
+                </Typography>
+              </TableCell>
             </TableRow>
           ))}
         </TableBody>

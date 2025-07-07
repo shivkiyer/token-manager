@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Typography from '@mui/material/Typography';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 
 export default function WalletsHome() {
@@ -9,7 +10,9 @@ export default function WalletsHome() {
       style={{ fontSize: '18px' }}
     >
       <ArrowBackIcon sx={{ paddingTop: '8px' }} />
-      Back to wallets
+      <Typography variant='button' sx={{ fontSize: '110%' }}>
+        Back to wallets
+      </Typography>
     </Link>
   );
 }
