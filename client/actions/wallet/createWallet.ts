@@ -41,7 +41,6 @@ export default async function createWallet(
     if (!writeWalletResponse.ok) {
       const errorMessage = await writeWalletResponse.json();
       if (errorMessage.message !== null && errorMessage.message !== undefined) {
-        console.log(errorMessage);
         return {
           message: errorMessage.message,
           success: false,
