@@ -23,12 +23,9 @@ function NavigationBar() {
 
   const loginHandler = async () => {
     setStatusPending(true);
-    const token = await getSession();
-    if (jwtToken || token) {
-      await authContext.deleteToken();
-      setJwtToken(null);
-      setStatusPending(false);
-    }
+    await authContext.deleteToken();
+    setJwtToken(null);
+    setStatusPending(false);
     router.push('/login');
     return;
   };
