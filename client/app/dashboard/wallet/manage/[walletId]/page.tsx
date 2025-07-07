@@ -5,12 +5,12 @@ import { useParams } from 'next/navigation';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
-import CircularProgress from '@mui/material/CircularProgress';
 
 import getWalletDetails from '@/actions/wallet/getWalletDetails';
 import getWeb3 from '@/utils/web3/web3';
 import getSharedWalletData from '@/actions/contract-factory/getSharedWalletAbi';
 
+import LoadingSpinner from '@/components/page-sections/loading-spinner/loading-spinner';
 import WalletsHome from '@/components/wallets/wallets-home';
 import WalletInfo from '@/components/wallets/wallet-info';
 import DepositEther from '@/components/wallets/deposit-ether';
@@ -61,10 +61,7 @@ function ManageWallet() {
     <>
       <WalletsHome />
       {loading ? (
-        <CircularProgress
-          size={60}
-          sx={{ marginTop: '100px', display: 'block' }}
-        />
+        <LoadingSpinner size={3} radius={60} top={40} />
       ) : error !== null ? (
         <Typography color='error' variant='body1' sx={{ marginTop: '20px' }}>
           {error}

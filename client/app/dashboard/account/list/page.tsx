@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 import accountsListLoader from '@/actions/account/accountListLoader';
 import AccountCard from '@/components/accounts/account-card';
+import LoadingSpinner from '@/components/page-sections/loading-spinner/loading-spinner';
 
 interface AccountData {
   data: any;
@@ -12,6 +13,7 @@ interface AccountData {
 }
 
 function ListAccounts() {
+  const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [accounts, setAccounts] = useState<AccountData | null>(null);
 
@@ -25,13 +27,16 @@ function ListAccounts() {
       } else if (accountData.data) {
         setAccounts(accountData);
       }
+      setLoading(false);
     };
     getAccounts();
   }, []);
 
   return (
     <>
-      {accounts && accounts.data ? (
+      {loading ? (
+        <LoadingSpinner size={3} radius={60} />
+      ) : accounts && accounts.data ? (
         accounts.data.map((item: any) => (
           <AccountCard
             key={item.accountId}

@@ -5,23 +5,28 @@ import Typography from '@mui/material/Typography';
 
 import fetchWallets from '@/actions/wallet/fetchWallets';
 import WalletCard from '@/components/wallets/wallet-card';
+import LoadingSpinner from '@/components/page-sections/loading-spinner/loading-spinner';
 
 function ListWallets() {
+  const [loading, setLoading] = useState<boolean>(true);
   const [walletData, setWalletData] = useState<any>(null);
 
   useEffect(() => {
     const getWallets = async () => {
       const wallets = await fetchWallets();
       setWalletData(wallets);
+      setLoading(false);
     };
     getWallets();
   }, []);
 
   return (
     <>
-      {walletData !== null &&
-      walletData.data !== undefined &&
-      walletData.data.length > 0 ? (
+      {loading ? (
+        <LoadingSpinner size={3} radius={60} />
+      ) : walletData !== null &&
+        walletData.data !== undefined &&
+        walletData.data.length > 0 ? (
         walletData.data.map((wallet: any) => (
           <WalletCard
             key={wallet.id}
