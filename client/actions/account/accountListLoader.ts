@@ -11,14 +11,12 @@ import { getSession, deleteSession } from '../auth/session';
  */
 async function accountsListLoader() {
   const userToken = await getSession();
-  if (userToken === null) {
-    return redirect('/login');
-  }
+
   try {
     const response = await apiCall(
       `${process.env.REACT_APP_BASE_API_URL}/eth-accounts/`,
       'GET',
-      { Authorization: userToken },
+      { Authorization: userToken || '' },
       null
     );
     const responseData = await response.json();

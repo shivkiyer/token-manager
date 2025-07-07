@@ -1,6 +1,7 @@
 'use server';
 
 import { redirect } from 'next/navigation';
+import { isRedirectError } from 'next/dist/client/components/redirect-error';
 
 import { getSession, deleteSession } from '../auth/session';
 import apiCall from '@/utils/http/api-call';
@@ -11,9 +12,6 @@ import apiCall from '@/utils/http/api-call';
  */
 export default async function fetchWallets() {
   const userToken = await getSession();
-  if (userToken === null) {
-    return redirect('/login');
-  }
 
   try {
     const response = await apiCall(

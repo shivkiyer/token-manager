@@ -14,10 +14,6 @@ export default async function getWalletDetails(address: string) {
   try {
     const userToken = await getSession();
 
-    if (userToken === null) {
-      redirect('/login');
-    }
-
     const response = await apiCall(
       `${process.env.REACT_APP_BASE_API_URL}/wallets/${address}`,
       'GET',

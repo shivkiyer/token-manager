@@ -18,9 +18,6 @@ export default async function searchWalletUsers(
   try {
     const userToken = await getSession();
 
-    if (userToken === null) {
-      redirect('/login');
-    }
     const response = await apiCall(
       `${process.env.REACT_APP_BASE_API_URL}/wallets/search-users?` +
         new URLSearchParams({
