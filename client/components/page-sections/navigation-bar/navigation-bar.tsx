@@ -22,10 +22,12 @@ function NavigationBar() {
   const [statusPending, setStatusPending] = useState<boolean>(true);
 
   const loginHandler = async () => {
-    const token = await authContext.getToken();
+    setStatusPending(true);
+    const token = await getSession();
     if (jwtToken || token) {
       await authContext.deleteToken();
       setJwtToken(null);
+      setStatusPending(false);
     }
     router.push('/login');
     return;
@@ -33,6 +35,7 @@ function NavigationBar() {
 
   useEffect(() => {
     const getAuthToken = async () => {
+      setStatusPending(true);
       setJwtToken(await getSession());
       setStatusPending(false);
     };
