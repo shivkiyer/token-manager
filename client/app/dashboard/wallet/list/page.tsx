@@ -1,37 +1,32 @@
-'use client';
+'use server';
 
-import { useEffect, useState } from 'react';
+import { Suspense } from 'react';
 import Typography from '@mui/material/Typography';
 
 import fetchWallets from '@/actions/wallet/fetchWallets';
 import WalletCard from '@/components/wallets/wallet-card';
 import LoadingSpinner from '@/components/page-sections/loading-spinner/loading-spinner';
 
-function ListWallets() {
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [walletData, setWalletData] = useState<any>(null);
+export default async function ListWallets() {
+  let error: string | null = null;
+  let walletData: any = null;
 
-  useEffect(() => {
-    const getWallets = async () => {
-      const wallets = await fetchWallets();
-      if (wallets.message) {
-        setError(wallets.message);
-        setWalletData(null);
-      } else {
-        setWalletData(wallets.data);
-        setError(null);
-      }
-      setLoading(false);
-    };
-    getWallets();
-  }, []);
+  const getWallets = async () => {
+    const wallets = await fetchWallets();
+    if (wallets.message) {
+      error = wallets.message;
+      walletData = null;
+    } else {
+      walletData = wallets.data;
+      error = null;
+    }
+  };
+  await getWallets();
 
   return (
     <>
-      {loading ? (
-        <LoadingSpinner size={3} radius={60} />
-      ) : error ? (
+      <Suspense fallback={<LoadingSpinner size={3} radius={60} />}></Suspense>
+      {error ? (
         <Typography color='error' variant='h6'>
           {error}
         </Typography>
@@ -55,5 +50,3 @@ function ListWallets() {
     </>
   );
 }
-
-export default ListWallets;

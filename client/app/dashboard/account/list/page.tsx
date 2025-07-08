@@ -1,42 +1,35 @@
-'use client';
+'use server';
 
-import { useEffect, useState } from 'react';
+import { Suspense } from 'react';
 import Typography from '@mui/material/Typography';
 
 import accountsListLoader from '@/actions/account/accountListLoader';
 import AccountCard from '@/components/accounts/account-card';
 import LoadingSpinner from '@/components/page-sections/loading-spinner/loading-spinner';
 
-interface AccountData {
-  data: any;
-  message?: string;
-  ok?: boolean;
-}
+export default async function ListAccounts() {
+  let error: string | null = null;
+  let accounts: any;
 
-function ListAccounts() {
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [accounts, setAccounts] = useState<AccountData | null>(null);
-
-  useEffect(() => {
-    const getAccounts = async () => {
-      const accountData = await accountsListLoader();
-      if (accountData.message) {
-        setError(accountData.message);
-      } else if (accountData.data) {
-        setAccounts(accountData);
-      }
-      setLoading(false);
-    };
-    getAccounts();
-  }, []);
+  const getAccounts = async () => {
+    const accountData = await accountsListLoader();
+    if (accountData.message) {
+      error = accountData.message;
+    } else if (accountData.data) {
+      accounts = accountData.data;
+    }
+  };
+  await getAccounts();
 
   return (
     <>
-      {loading ? (
-        <LoadingSpinner size={3} radius={60} />
-      ) : accounts?.data ? (
-        accounts.data.map((item: any) => (
+      <Suspense fallback={<LoadingSpinner size={3} radius={60} />}></Suspense>
+      {error ? (
+        <Typography color='error' variant='h6'>
+          {error}
+        </Typography>
+      ) : (
+        accounts?.map((item: any) => (
           <AccountCard
             key={item.accountId}
             id={item.accountId}
@@ -44,13 +37,7 @@ function ListAccounts() {
             address={item.accountAddress}
           ></AccountCard>
         ))
-      ) : (
-        <Typography color='error' variant='h6'>
-          {error}
-        </Typography>
       )}
     </>
   );
 }
-
-export default ListAccounts;
