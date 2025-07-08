@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useContext } from 'react';
 import { useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
@@ -17,6 +18,7 @@ import classes from './navigation-bar.module.css';
 
 function NavigationBar() {
   const authContext = useContext(AuthContext);
+  const pathname = usePathname();
   const router = useRouter();
   const [jwtToken, setJwtToken] = useState<string | null>(null);
   const [statusPending, setStatusPending] = useState<boolean>(true);
@@ -33,11 +35,16 @@ function NavigationBar() {
   useEffect(() => {
     const getAuthToken = async () => {
       setStatusPending(true);
-      setJwtToken(await getSession());
+      if (pathname.includes('login')) {
+        await authContext.deleteToken();
+        setJwtToken(null);
+      } else {
+        setJwtToken(await getSession());
+      }
       setStatusPending(false);
     };
     getAuthToken();
-  }, []);
+  }, [pathname.toString()]);
 
   return (
     <Box sx={{ flexGrow: 1 }}>
