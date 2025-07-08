@@ -18,7 +18,6 @@ export default async function verifyWallet(
     if (!ownerAccount)
       return {
         message: 'Account not selected in Metamask',
-        success: false,
       };
     const userToken = await getSession();
 

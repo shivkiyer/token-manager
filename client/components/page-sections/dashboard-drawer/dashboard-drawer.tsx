@@ -6,6 +6,7 @@ import Link from 'next/link';
 import Drawer from '@mui/material/Drawer';
 import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';
+import Grid from '@mui/material/Grid';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -40,12 +41,18 @@ function DashboardDrawer() {
 
   return (
     <>
-      {!displayDashboardDrawer && (
-        <KeyboardArrowRightIcon
-          sx={{ marginTop: '10px', fontSize: '3.5rem', cursor: 'pointer' }}
-          onClick={handleOpen}
-        />
-      )}
+      <Grid container>
+        <Grid size={12}>
+          <KeyboardArrowRightIcon
+            sx={{
+              visibility: displayDashboardDrawer ? 'hidden' : 'visible',
+              fontSize: '3.5rem',
+              cursor: 'pointer',
+            }}
+            onClick={handleOpen}
+          />
+        </Grid>
+      </Grid>
       <Drawer
         open={displayDashboardDrawer}
         onClose={handleClose}

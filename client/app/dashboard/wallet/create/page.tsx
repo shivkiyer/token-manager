@@ -154,7 +154,7 @@ export default function CreateWallet() {
           justifyContent='center'
           paddingLeft={0}
         >
-          <Grid size={{ xs: 10, md: 6 }} paddingLeft={0}>
+          <Grid size={{ xs: 12, md: 6 }} paddingLeft={0}>
             <TextField
               name='name'
               variant='standard'
@@ -178,7 +178,7 @@ export default function CreateWallet() {
           justifyContent='center'
           marginTop={5}
         >
-          <Grid size={{ xs: 10, md: 6 }}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <TextField
               name='description'
               variant='standard'
@@ -204,7 +204,7 @@ export default function CreateWallet() {
           justifyContent='center'
           marginTop={5}
         >
-          <Grid size={{ xs: 10, md: 6 }}>
+          <Grid size={{ xs: 12, md: 6 }}>
             <TextField
               name='maxLimit'
               variant='standard'
@@ -236,8 +236,13 @@ export default function CreateWallet() {
                 : 'Use FETCH button'}
             </Typography>
           </Grid>
-          <Grid size={{ xs: 2, md: 1 }}>
-            <Button variant='contained' type='button' onClick={getEthAccounts}>
+          <Grid size={{ xs: 4, md: 1 }}>
+            <Button
+              sx={{ marginLeft: '10px' }}
+              variant='contained'
+              type='button'
+              onClick={getEthAccounts}
+            >
               <Typography variant='button'>
                 {ownerAccount ? 'Change' : 'Fetch'}
               </Typography>
@@ -253,14 +258,14 @@ export default function CreateWallet() {
             marginTop={2}
           >
             <Grid
-              size={{ xs: 10, md: 6 }}
+              size={{ xs: 12, md: 6 }}
               alignContent='left'
               justifyContent='left'
             >
               <Typography variant='body1'>
                 This is the connected user on Metamask. If this is not the
                 intended owner of the wallet, select another account on Metamask
-                and click on the refresh icon.
+                and click on the CHANGE button.
               </Typography>
               {web3Error && (
                 <Typography color='error' variant='body1'>

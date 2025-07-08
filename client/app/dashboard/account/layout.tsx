@@ -10,9 +10,13 @@ export default function AccountLayout({
   children: React.ReactNode;
 }) {
   return (
-    <Box sx={{ flexGrow: 1, width: '100%' }}>
-      <Grid container size={12} sx={{ marginBottom: '20px', padding: '8px' }}>
-        <Grid size={{ xs: 4, md: 2 }}>
+    <Box className='content-display' sx={{ flexGrow: 1 }}>
+      <Grid
+        className='nav-bar-options'
+        container
+        sx={{ marginBottom: '20px', padding: '8px' }}
+      >
+        <Grid size={6}>
           <Button>
             <Link
               href='/dashboard/account/list'
@@ -22,7 +26,7 @@ export default function AccountLayout({
             </Link>
           </Button>
         </Grid>
-        <Grid size={{ xs: 4, md: 2 }}>
+        <Grid size={6}>
           <Button>
             <Link
               href='/dashboard/account/create'

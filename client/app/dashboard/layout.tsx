@@ -14,9 +14,9 @@ export default async function DashboardLayout({
     redirect('/login');
   }
   return (
-    <Box sx={{ display: 'flex' }}>
+    <>
       <DashboardDrawer />
       {children}
-    </Box>
+    </>
   );
 }

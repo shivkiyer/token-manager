@@ -48,7 +48,7 @@ function ListWallets() {
           ></WalletCard>
         ))
       ) : (
-        <Typography variant='h6'>
+        <Typography variant='h6' textAlign='center'>
           No wallets found. Use the CREATE button to create a wallet.
         </Typography>
       )}

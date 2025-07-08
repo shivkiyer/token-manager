@@ -1,8 +1,6 @@
 'use server';
 
-import { redirect } from 'next/navigation';
-
-import { getSession, deleteSession } from '../auth/session';
+import { getSession } from '../auth/session';
 import apiCall from '@/utils/http/api-call';
 import getResponseOrRedirect from '@/utils/http/getResponseOrRedirect';
 
