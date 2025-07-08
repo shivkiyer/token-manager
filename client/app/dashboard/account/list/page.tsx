@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Typography from '@mui/material/Typography';
 
 import accountsListLoader from '@/actions/account/accountListLoader';
 import AccountCard from '@/components/accounts/account-card';
@@ -20,9 +21,7 @@ function ListAccounts() {
   useEffect(() => {
     const getAccounts = async () => {
       const accountData = await accountsListLoader();
-      if (accountData === null) {
-        setError('Unable to fetch accounts.');
-      } else if (accountData.message !== undefined) {
+      if (accountData.message) {
         setError(accountData.message);
       } else if (accountData.data) {
         setAccounts(accountData);
@@ -36,7 +35,7 @@ function ListAccounts() {
     <>
       {loading ? (
         <LoadingSpinner size={3} radius={60} />
-      ) : accounts && accounts.data ? (
+      ) : accounts?.data ? (
         accounts.data.map((item: any) => (
           <AccountCard
             key={item.accountId}
@@ -46,7 +45,9 @@ function ListAccounts() {
           ></AccountCard>
         ))
       ) : (
-        <h4>{error}</h4>
+        <Typography color='error' variant='h6'>
+          {error}
+        </Typography>
       )}
     </>
   );

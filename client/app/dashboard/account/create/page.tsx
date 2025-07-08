@@ -52,14 +52,16 @@ function RegisterAccount() {
 
     const result = await registerAccount(accounts, { name, address });
 
-    if (result?.success) {
-      setSuccess(result?.message);
+    if (result?.message) {
+      setSuccess(null);
+      setError(result?.message);
+    } else {
+      setSuccess(
+        'Account successfully added! Go to the LIST tab to view accounts'
+      );
       setError(null);
       formik.values.name = '';
       formik.values.address = '';
-    } else {
-      setSuccess(null);
-      setError(result?.message);
     }
     setLoading(false);
   };

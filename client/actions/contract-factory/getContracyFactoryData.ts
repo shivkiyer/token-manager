@@ -2,6 +2,7 @@
 
 import apiCall from '@/utils/http/api-call';
 import { getSession } from '../auth/session';
+import getResponseOrRedirect from '@/utils/http/getResponseOrRedirect';
 
 /**
  * Fetch contract factory data such as deployed address and ABI
@@ -17,11 +18,11 @@ export default async function getContractFactoryData() {
       authHeader,
       null
     );
-    const responseData = await response.json();
-    if (responseData.data !== null || response.data !== undefined) {
-      return responseData.data;
-    }
-  } catch (e) {}
-  return null;
-};
 
+    return await getResponseOrRedirect(response);
+  } catch (e) {
+    return {
+      message: 'Contract data could not be fetched'
+    };
+  }
+}

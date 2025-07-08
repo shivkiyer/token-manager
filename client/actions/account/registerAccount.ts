@@ -1,9 +1,8 @@
 'use server';
 
-import { redirect } from 'next/navigation';
-
 import apiCall from '@/utils/http/api-call';
-import { getSession, deleteSession } from '../auth/session';
+import { getSession } from '../auth/session';
+import getResponseOrRedirect from '@/utils/http/getResponseOrRedirect';
 
 export default async function registerAccount(
   accounts: string[],
@@ -32,31 +31,10 @@ export default async function registerAccount(
         accountAddress: formData.address.trim(),
       }
     );
-    const responseData = await response.json();
-    if (!response.ok) {
-      if (responseData.message !== null || responseData.message !== undefined) {
-        if (responseData.message.includes('Authorization failed')) {
-          await deleteSession();
-          redirect('/login');
-        }
-        return {
-          message: responseData.message,
-          success: false,
-        };
-      } else {
-        throw new Error();
-      }
-    } else {
-      return {
-        message:
-          'Account successfully added! Go to the LIST tab to view accounts.',
-        success: true,
-      };
-    }
+    return await getResponseOrRedirect(response);
   } catch (e) {
     return {
-      message:
-        'Account could not be added. Please try again later or contact the admin.',
+      message: 'Account could not be added.',
       success: false,
     };
   }

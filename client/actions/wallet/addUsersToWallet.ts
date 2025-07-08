@@ -1,9 +1,8 @@
 'use server';
 
-import { redirect } from 'next/navigation';
-
-import { getSession, deleteSession } from '../auth/session';
+import { getSession } from '../auth/session';
 import apiCall from '@/utils/http/api-call';
+import getResponseOrRedirect from '@/utils/http/getResponseOrRedirect';
 
 /**
  * Adds users to the shared waller
@@ -24,17 +23,7 @@ export default async function addUsersToWallet(
       { Authorization: userToken || '' },
       { accounts: accountAddresses }
     );
-
-    const responseData = await response.json();
-    if (
-      responseData.message !== null &&
-      responseData.message !== undefined &&
-      responseData.message.includes('Authorization failed')
-    ) {
-      await deleteSession();
-      return redirect('/login');
-    }
-    return responseData;
+    return await getResponseOrRedirect(response);
   } catch (e) {
     return {
       message: 'One or more users could not be added to the wallet',

@@ -9,7 +9,7 @@ import TextField from '@mui/material/TextField';
 import EditIcon from '@mui/icons-material/Edit';
 import Button from '@mui/material/Button';
 
-import getWalletDetails from '@/actions/wallet/getWalletDetails';
+import updateWalletDetails from '@/actions/wallet/updateWalletDetails';
 import isErrorInForm from '@/utils/forms/isErrorInForm';
 import formatEthAddress from '@/utils/web3/formatEthAddress';
 
@@ -67,7 +67,7 @@ function WalletInfo({
     try {
       setError(null);
 
-      const response = await getWalletDetails(wallet.address);
+      const response = await updateWalletDetails(wallet.address, values);
       if (response.data) {
         const oldMaxLimit = wallet?.maxLimit;
         setWalletData({

@@ -9,12 +9,19 @@ import LoadingSpinner from '@/components/page-sections/loading-spinner/loading-s
 
 function ListWallets() {
   const [loading, setLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
   const [walletData, setWalletData] = useState<any>(null);
 
   useEffect(() => {
     const getWallets = async () => {
       const wallets = await fetchWallets();
-      setWalletData(wallets);
+      if (wallets.message) {
+        setError(wallets.message);
+        setWalletData(null);
+      } else {
+        setWalletData(wallets.data);
+        setError(null);
+      }
       setLoading(false);
     };
     getWallets();
@@ -24,10 +31,12 @@ function ListWallets() {
     <>
       {loading ? (
         <LoadingSpinner size={3} radius={60} />
-      ) : walletData !== null &&
-        walletData.data !== undefined &&
-        walletData.data.length > 0 ? (
-        walletData.data.map((wallet: any) => (
+      ) : error ? (
+        <Typography color='error' variant='h6'>
+          {error}
+        </Typography>
+      ) : walletData?.length > 0 ? (
+        walletData.map((wallet: any) => (
           <WalletCard
             key={wallet.id}
             id={wallet.id}

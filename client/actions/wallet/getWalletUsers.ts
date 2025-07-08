@@ -1,9 +1,8 @@
 'use server';
 
-import { redirect } from 'next/navigation';
-
-import { getSession, deleteSession } from '../auth/session';
+import { getSession } from '../auth/session';
 import apiCall from '@/utils/http/api-call';
+import getResponseOrRedirect from '@/utils/http/getResponseOrRedirect';
 
 /**
  * Get the users of a shared wallet
@@ -20,17 +19,7 @@ export default async function getWalletUsers(address: string) {
       { Authorization: userToken || '' },
       null
     );
-
-    const responseData = await response.json();
-    if (
-      responseData.message !== null &&
-      responseData.message !== undefined &&
-      responseData.message.includes('Authorization failed')
-    ) {
-      await deleteSession();
-      return redirect('/login');
-    }
-    return responseData;
+    return await getResponseOrRedirect(response);
   } catch (e) {
     return {
       message: 'Wallet users could not be fetched',

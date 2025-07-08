@@ -2,12 +2,13 @@
 
 import { getSession } from '../auth/session';
 import apiCall from '@/utils/http/api-call';
+import getResponseOrRedirect from '@/utils/http/getResponseOrRedirect';
 
 /**
  * Creates a wallet in the database linking it to an account
- * @param ownerAccount
- * @param newWalletAddress
- * @param formData
+ * @param {string} ownerAccount
+ * @param {string} newWalletAddress
+ * @param {Object} formData Wallet details
  * @returns
  */
 export default async function createWallet(
@@ -25,7 +26,7 @@ export default async function createWallet(
 
     const authHeader = { Authorization: userToken || '' };
 
-    const writeWalletResponse = await apiCall(
+    const response = await apiCall(
       `${process.env.REACT_APP_BASE_API_URL}/wallets/create`,
       'POST',
       authHeader,
@@ -37,31 +38,10 @@ export default async function createWallet(
         owner: ownerAccount,
       }
     );
-
-    if (!writeWalletResponse.ok) {
-      const errorMessage = await writeWalletResponse.json();
-      if (errorMessage.message !== null && errorMessage.message !== undefined) {
-        return {
-          message: errorMessage.message,
-          success: false,
-        };
-      } else {
-        return {
-          message: 'Wallet not written to database.',
-          success: false,
-        };
-      }
-    } else {
-      return {
-        message:
-          'Wallet created successfully. Go to the LIST tab to view wallets.',
-        success: true,
-      };
-    }
+    return await getResponseOrRedirect(response);
   } catch (e) {
     return {
       message: 'Wallet could not be created.',
-      success: false,
     };
   }
 }

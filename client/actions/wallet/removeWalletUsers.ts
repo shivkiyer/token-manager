@@ -1,9 +1,8 @@
 'use server';
 
-import { redirect } from 'next/navigation';
-
-import { getSession, deleteSession } from '../auth/session';
+import { getSession } from '../auth/session';
 import apiCall from '@/utils/http/api-call';
+import getResponseOrRedirect from '@/utils/http/getResponseOrRedirect';
 
 /**
  * Remove users from a shared wallet
@@ -24,17 +23,7 @@ export default async function removeWalletUsers(
       { Authorization: userToken || '' },
       { accounts: accountAddresses }
     );
-
-    const responseData = await response.json();
-    if (
-      responseData.message !== null &&
-      responseData.message !== undefined &&
-      responseData.message.includes('Authorization failed')
-    ) {
-      await deleteSession();
-      return redirect('/login');
-    }
-    return responseData;
+    return await getResponseOrRedirect(response);
   } catch (e) {
     return {
       message: 'One or more users could not be removed from the wallet',

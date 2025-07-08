@@ -71,14 +71,19 @@ export default function CreateWallet() {
     setLoading(true);
     try {
       const verifyResult = await verifyWallet(ownerAccount, values);
-      if (verifyResult && !verifyResult?.success) {
-        setError(verifyResult?.message);
+      if (verifyResult?.message) {
+        setError(verifyResult.message);
         setLoading(false);
         return;
       }
 
+      const contractFactoryDataResponse = await getContractFactoryData();
+      if (contractFactoryDataResponse.message) {
+        setError(contractFactoryDataResponse.message);
+        return;
+      }
       const { abi: contractFactoryAbi, address: contractFactoryAddress } =
-        await getContractFactoryData();
+        contractFactoryDataResponse.data;
 
       const contractFactory = new web3.eth.Contract(
         contractFactoryAbi,
@@ -107,12 +112,14 @@ export default function CreateWallet() {
         values
       );
 
-      if (!walletResult.success) {
+      if (walletResult.message) {
         setError(walletResult.message);
         setSuccess(null);
       } else {
         setError(null);
-        setSuccess(walletResult.message);
+        setSuccess(
+          'Wallet created successfully. Go to LIST tab to view wallets.'
+        );
         resetForm();
       }
 

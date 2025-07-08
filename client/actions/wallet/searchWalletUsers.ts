@@ -1,9 +1,8 @@
 'use server';
 
-import { redirect } from 'next/navigation';
-
-import { getSession, deleteSession } from '../auth/session';
+import { getSession } from '../auth/session';
 import apiCall from '@/utils/http/api-call';
+import getResponseOrRedirect from '@/utils/http/getResponseOrRedirect';
 
 /**
  * Search for users for a wallet
@@ -28,17 +27,7 @@ export default async function searchWalletUsers(
       { Authorization: userToken || '' },
       null
     );
-
-    const responseData = await response.json();
-    if (
-      responseData.message !== null &&
-      responseData.message !== undefined &&
-      responseData.message.includes('Authorization failed')
-    ) {
-      await deleteSession();
-      return redirect('/login');
-    }
-    return responseData;
+    return await getResponseOrRedirect(response);
   } catch (e) {
     return {
       message: 'Users could not be found',

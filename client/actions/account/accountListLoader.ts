@@ -1,9 +1,8 @@
 'use server';
 
-import { redirect } from 'next/navigation';
-
 import apiCall from '@/utils/http/api-call';
-import { getSession, deleteSession } from '../auth/session';
+import { getSession } from '../auth/session';
+import getResponseOrRedirect from '@/utils/http/getResponseOrRedirect';
 
 /**
  * Fetch ETH accounts from the backend
@@ -19,18 +18,11 @@ async function accountsListLoader() {
       { Authorization: userToken || '' },
       null
     );
-    const responseData = await response.json();
-    if (
-      responseData.message !== null &&
-      responseData.message !== undefined &&
-      responseData.message.includes('Authorization failed')
-    ) {
-      await deleteSession();
-      return redirect('/login');
-    }
-    return responseData;
+    return await getResponseOrRedirect(response);
   } catch (e) {
-    return null;
+    return {
+      message: 'Unable to fetch accounts',
+    };
   }
 }
 
