@@ -67,7 +67,7 @@ function ManageWallet() {
           {error}
         </Typography>
       ) : (
-        <Box className='standard-box-display' marginTop={4}>
+        <Box marginTop={4}>
           <Grid container>
             <WalletInfo web3={web3} wallet={walletData.data} editable={true} />
             <DepositEther web3={web3} wallet={walletData.data} />

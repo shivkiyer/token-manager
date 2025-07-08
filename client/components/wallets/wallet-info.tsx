@@ -224,19 +224,29 @@ function WalletInfo({
         </form>
       ) : (
         <>
-          <Grid size={{ xs: 12 }}>
-            <h2 style={{ display: 'inline-block' }}>{walletData?.name}</h2>
-            {editable && (
-              <Button
-                sx={{ padding: '0px', verticalAlign: 'top', marginTop: '4px' }}
-                onClick={displayFormHandler}
-              >
-                <EditIcon />
-              </Button>
-            )}
+          <Grid size={12}>
+            <Grid container>
+              <Grid size={10}>
+                <h2>{walletData?.name}</h2>
+              </Grid>
+              <Grid size={2}>
+                {editable && (
+                  <Button
+                    sx={{
+                      padding: '0px',
+                      verticalAlign: 'top',
+                      marginTop: '4px',
+                    }}
+                    onClick={displayFormHandler}
+                  >
+                    <EditIcon />
+                  </Button>
+                )}
+              </Grid>
+            </Grid>
           </Grid>
 
-          <Grid size={{ xs: 12 }} marginTop={2}>
+          <Grid size={12} marginTop={2}>
             <Typography variant='body1'>
               <strong>Account owner: </strong>
               {formatEthAddress(wallet.owner.address)}

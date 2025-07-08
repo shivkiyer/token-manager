@@ -281,7 +281,7 @@ export default function WalletUsers({
             style={{ width: '100%' }}
           >
             <Grid container marginTop={3}>
-              <Grid size={{ xs: 10 }}>
+              <Grid size={{ xs: 9 }}>
                 <TextField
                   name='search'
                   variant='standard'
@@ -292,16 +292,16 @@ export default function WalletUsers({
                   fullWidth
                 ></TextField>
               </Grid>
-              <Grid size={{ xs: 2 }}>
+              <Grid size={{ xs: 3 }}>
                 <Button
                   type='submit'
-                  sx={{ marginLeft: '20px', padding: '0', minWidth: 'auto' }}
+                  sx={{ marginLeft: '10px', padding: '0', minWidth: 'auto' }}
                 >
                   <SearchIcon />
                 </Button>
                 <Button
                   onClick={hideAddUserHandler}
-                  sx={{ marginLeft: '20px', padding: '0', minWidth: 'auto' }}
+                  sx={{ marginLeft: '10px', padding: '0', minWidth: 'auto' }}
                 >
                   <CloseIcon />
                 </Button>

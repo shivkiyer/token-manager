@@ -13,6 +13,7 @@ import isErrorInForm from '@/utils/forms/isErrorInForm';
 
 function WithdrawEther({ web3, wallet }: { web3: any; wallet: any }) {
   const [error, setError] = useState<string | null>(null);
+  const [message, setMessage] = useState<string | null>(null);
   const [activeAccount, setActiveAccount] = useState<string | null>(null);
   const [accountError, setAccountError] = useState<string | null>(null);
 
@@ -83,15 +84,15 @@ function WithdrawEther({ web3, wallet }: { web3: any; wallet: any }) {
       const result = await contract.methods
         .withdraw(amountInWei)
         .send({ from: account, gas: actualGas });
-      if (
-        result.transactionHash === null ||
-        result.transactionHash === undefined
-      ) {
+      if (!result.transactionHash) {
         throw Object.assign(new Error());
       }
+      setMessage('Funds withdrawn successfully. Check your Metamask account.');
+      setError(null);
       resetForm();
     } catch (e) {
       setError('Could not withdraw funds');
+      setMessage(null);
     }
   };
 
@@ -175,6 +176,14 @@ function WithdrawEther({ web3, wallet }: { web3: any; wallet: any }) {
                   sx={{ textAlign: 'left' }}
                 >
                   {error}
+                </Typography>
+              </Grid>
+            )}
+
+            {message && (
+              <Grid size={12} marginTop={1}>
+                <Typography variant='body1' sx={{ textAlign: 'left' }}>
+                  {message}
                 </Typography>
               </Grid>
             )}
