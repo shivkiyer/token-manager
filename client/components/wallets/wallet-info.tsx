@@ -58,24 +58,24 @@ function WalletInfo({
     try {
       setError(null);
 
-      if (!wallet) throw new Error();
-      const response = await updateWalletDetails(wallet.address, values);
+      if (!walletData) throw new Error();
+      const response = await updateWalletDetails(walletData.address, values);
       if (response.data) {
-        const oldMaxLimit = wallet?.maxLimit;
-        setWalletData(wallet);
+        const oldMaxLimit = walletData?.maxLimit;
+        setWalletData(response.data);
 
         if (oldMaxLimit !== response.data.maxLimit && web3) {
           const web3Accounts = await web3.eth.getAccounts();
           const web3Account = web3Accounts[0];
 
-          if (wallet.owner.address !== web3Account) {
+          if (walletData.owner.address !== web3Account) {
             setError('Linked Metamask account is not the wallet owner');
             return;
           }
 
           const walletContract = new web3.eth.Contract(
-            wallet.abi,
-            wallet.address
+            walletData.abi,
+            walletData.address
           );
 
           const maxLimitInWei = await web3.utils.toWei(
@@ -214,22 +214,20 @@ function WalletInfo({
         <>
           <Grid size={12}>
             <Grid container>
-              <Grid size={10}>
-                <h2>{walletData?.name}</h2>
-              </Grid>
-              <Grid size={2}>
-                {editable && (
-                  <Button
-                    sx={{
-                      padding: '0px',
-                      verticalAlign: 'top',
-                      marginTop: '4px',
-                    }}
-                    onClick={displayFormHandler}
-                  >
-                    <EditIcon />
-                  </Button>
-                )}
+              <Grid>
+                <h2 style={{ display: 'inline-block', width: '80%' }}>
+                  {walletData?.name}
+                </h2>
+                <Button
+                  sx={{
+                    padding: '0px',
+                    verticalAlign: 'top',
+                    marginTop: '4px',
+                  }}
+                  onClick={displayFormHandler}
+                >
+                  <EditIcon />
+                </Button>
               </Grid>
             </Grid>
           </Grid>
