@@ -9,9 +9,10 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import RefreshIcon from '@mui/icons-material/Refresh';
 
+import { Wallet } from '@/interfaces/wallet';
 import isErrorInForm from '@/utils/forms/isErrorInForm';
 
-function WithdrawEther({ web3, wallet }: { web3: any; wallet: any }) {
+function WithdrawEther({ web3, wallet }: { web3: any; wallet: Wallet }) {
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [activeAccount, setActiveAccount] = useState<string | null>(null);
@@ -33,10 +34,10 @@ function WithdrawEther({ web3, wallet }: { web3: any; wallet: any }) {
     if (web3 !== null && web3 !== undefined) {
       await fetchActiveAccount();
 
-      const userAccounts = wallet.user.map(
+      const userAccounts = wallet?.user?.map(
         (item: { id: number; address: string; name: string }) => item.address
       );
-      if (activeAccount !== null && !userAccounts.includes(activeAccount)) {
+      if (activeAccount !== null && !userAccounts?.includes(activeAccount)) {
         setAccountError('Linked Metamask account is not a wallet user');
       }
     }

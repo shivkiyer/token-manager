@@ -1,5 +1,6 @@
 'use server';
 
+import { WalletForm } from '@/interfaces/wallet';
 import { getSession } from '../auth/session';
 import apiCall from '@/utils/http/api-call';
 import getResponseOrRedirect from '@/utils/http/getResponseOrRedirect';
@@ -12,7 +13,7 @@ import getResponseOrRedirect from '@/utils/http/getResponseOrRedirect';
  */
 export default async function updateWalletDetails(
   address: string,
-  values: any
+  values: WalletForm
 ) {
   try {
     const userToken = await getSession();

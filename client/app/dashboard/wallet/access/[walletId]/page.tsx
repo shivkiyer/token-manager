@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
+import { Wallet } from '@/interfaces/wallet';
 import getWeb3 from '@/utils/web3/web3';
 import getWalletDetails from '@/actions/wallet/getWalletDetails';
 import getSharedWalletData from '@/actions/contract-factory/getSharedWalletAbi';
@@ -20,7 +21,7 @@ export default function AccessWallet() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [web3, setWeb3] = useState<any>();
-  const [walletData, setWalletData] = useState<any>(null);
+  const [walletData, setWalletData] = useState<Wallet | null>(null);
   const [sharedWalletAbi, setSharedWalletAbi] = useState<any>(null);
   const { walletId } = useParams<{ walletId: string }>();
 
@@ -29,7 +30,7 @@ export default function AccessWallet() {
       const web3Obj = await getWeb3();
       setWeb3(web3Obj);
       const data = await getWalletDetails(walletId);
-      setWalletData(data);
+      setWalletData(data.data);
       const abi = await getSharedWalletData('get-abi');
       setSharedWalletAbi(abi);
       setLoading(false);
@@ -46,15 +47,14 @@ export default function AccessWallet() {
 
     if (
       !walletData ||
-      !walletData.data ||
-      !walletData.data.address ||
+      !walletData.address ||
       !sharedWalletAbi ||
       !sharedWalletAbi.data
     ) {
       setError('Wallet could not be fetched');
       return;
     }
-    walletData.data.abi = sharedWalletAbi.data;
+    walletData.abi = sharedWalletAbi.data;
   }, [web3, walletData, sharedWalletAbi]);
 
   return (
@@ -68,15 +68,17 @@ export default function AccessWallet() {
         </Typography>
       ) : (
         <Box className='standard-box-display' marginTop={4}>
-          <Grid container>
-            <WalletInfo web3={web3} wallet={walletData.data} editable={false} />
-            <Grid size={{ xs: 12, md: 10 }} marginTop={2} marginBottom={2}>
-              <Typography variant='h6'>Wallet Users:</Typography>
+          {walletData?.user && (
+            <Grid container>
+              <WalletInfo web3={web3} wallet={walletData} editable={false} />
+              <Grid size={{ xs: 12, md: 10 }} marginTop={2} marginBottom={2}>
+                <Typography variant='h6'>Wallet Users:</Typography>
+              </Grid>
+              <UsersTable users={walletData.user} form={null} />
             </Grid>
-            <UsersTable users={walletData.data.user} form={null} />
-          </Grid>
+          )}
 
-          <WithdrawEther web3={web3} wallet={walletData.data} />
+          {walletData && <WithdrawEther web3={web3} wallet={walletData} />}
         </Box>
       )}
     </>

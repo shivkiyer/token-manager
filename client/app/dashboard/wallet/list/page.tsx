@@ -3,16 +3,18 @@
 import { Suspense } from 'react';
 import Typography from '@mui/material/Typography';
 
+import APIResponse from '@/interfaces/api-response';
+import { Wallet } from '@/interfaces/wallet';
 import fetchWallets from '@/actions/wallet/fetchWallets';
 import WalletCard from '@/components/wallets/wallet-card';
 import LoadingSpinner from '@/components/page-sections/loading-spinner/loading-spinner';
 
 export default async function ListWallets() {
   let error: string | null = null;
-  let walletData: any = null;
+  let walletData: Wallet[] | null = [];
 
   const getWallets = async () => {
-    const wallets = await fetchWallets();
+    const wallets: APIResponse<Wallet[]> = await fetchWallets();
     if (wallets.message) {
       error = wallets.message;
       walletData = null;
@@ -31,7 +33,7 @@ export default async function ListWallets() {
           {error}
         </Typography>
       ) : walletData?.length > 0 ? (
-        walletData.map((wallet: any) => (
+        walletData.map((wallet: Wallet) => (
           <WalletCard
             key={wallet.id}
             id={wallet.id}

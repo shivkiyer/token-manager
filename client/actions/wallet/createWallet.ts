@@ -1,5 +1,6 @@
 'use server';
 
+import { WalletForm } from '@/interfaces/wallet';
 import { getSession } from '../auth/session';
 import apiCall from '@/utils/http/api-call';
 import getResponseOrRedirect from '@/utils/http/getResponseOrRedirect';
@@ -14,7 +15,7 @@ import getResponseOrRedirect from '@/utils/http/getResponseOrRedirect';
 export default async function createWallet(
   ownerAccount: string | null,
   newWalletAddress: string,
-  formData: any
+  formData: WalletForm
 ) {
   try {
     if (!ownerAccount)

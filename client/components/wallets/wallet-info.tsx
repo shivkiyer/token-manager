@@ -9,15 +9,10 @@ import TextField from '@mui/material/TextField';
 import EditIcon from '@mui/icons-material/Edit';
 import Button from '@mui/material/Button';
 
+import { Wallet, WalletForm } from '@/interfaces/wallet';
 import updateWalletDetails from '@/actions/wallet/updateWalletDetails';
 import isErrorInForm from '@/utils/forms/isErrorInForm';
 import formatEthAddress from '@/utils/web3/formatEthAddress';
-
-interface WalletData {
-  name: string;
-  description: string;
-  maxLimit: number;
-}
 
 function WalletInfo({
   web3,
@@ -25,20 +20,16 @@ function WalletInfo({
   editable,
 }: {
   web3: any;
-  wallet: any;
+  wallet: Wallet | null;
   editable: boolean;
 }) {
   const [displayForm, setDisplayForm] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [walletData, setWalletData] = useState<WalletData | null>(null);
+  const [walletData, setWalletData] = useState<Wallet | null>(null);
 
   useEffect(() => {
-    if (wallet !== null && wallet !== undefined) {
-      setWalletData({
-        name: wallet.name,
-        description: wallet.description,
-        maxLimit: wallet.maxLimit,
-      });
+    if (wallet) {
+      setWalletData(wallet);
     }
   }, [wallet]);
 
@@ -63,18 +54,15 @@ function WalletInfo({
     });
   };
 
-  const updateHandler = async (values: any) => {
+  const updateHandler = async (values: WalletForm) => {
     try {
       setError(null);
 
+      if (!wallet) throw new Error();
       const response = await updateWalletDetails(wallet.address, values);
       if (response.data) {
         const oldMaxLimit = wallet?.maxLimit;
-        setWalletData({
-          name: response.data.name,
-          description: response.data.description,
-          maxLimit: response.data.maxLimit,
-        });
+        setWalletData(wallet);
 
         if (oldMaxLimit !== response.data.maxLimit && web3) {
           const web3Accounts = await web3.eth.getAccounts();
@@ -121,9 +109,9 @@ function WalletInfo({
 
   const walletForm = useFormik({
     initialValues: {
-      name: walletData?.name,
-      description: walletData?.description,
-      maxLimit: walletData?.maxLimit,
+      name: walletData?.name || '',
+      description: walletData?.description || '',
+      maxLimit: walletData?.maxLimit ? walletData.maxLimit.toString() : '',
     },
     validationSchema: validateHandler,
     onSubmit: (values) => updateHandler(values),
@@ -249,7 +237,7 @@ function WalletInfo({
           <Grid size={12} marginTop={2}>
             <Typography variant='body1'>
               <strong>Account owner: </strong>
-              {formatEthAddress(wallet.owner.address)}
+              {formatEthAddress(wallet?.owner?.address)}
             </Typography>
           </Grid>
 

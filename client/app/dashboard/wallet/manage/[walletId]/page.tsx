@@ -6,6 +6,7 @@ import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
+import { Wallet } from '@/interfaces/wallet';
 import getWalletDetails from '@/actions/wallet/getWalletDetails';
 import getWeb3 from '@/utils/web3/web3';
 import getSharedWalletData from '@/actions/contract-factory/getSharedWalletAbi';
@@ -19,7 +20,7 @@ import WalletUsers from '@/components/wallets/wallet-users';
 function ManageWallet() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [walletData, setWalletData] = useState<any>(null);
+  const [walletData, setWalletData] = useState<Wallet | null>(null);
   const [web3, setWeb3] = useState<any>(null);
   const [sharedWalletAbi, setSharedWalletAbi] = useState<any>(null);
   const { walletId } = useParams<{ walletId: string }>();
@@ -29,7 +30,7 @@ function ManageWallet() {
       const web3Obj = await getWeb3();
       setWeb3(web3Obj);
       const data = await getWalletDetails(walletId);
-      setWalletData(data);
+      setWalletData(data.data);
       const abi = await getSharedWalletData('get-abi');
       setSharedWalletAbi(abi);
       setLoading(false);
@@ -46,15 +47,14 @@ function ManageWallet() {
 
     if (
       !walletData ||
-      !walletData.data ||
-      !walletData.data.address ||
+      !walletData.address ||
       !sharedWalletAbi ||
       !sharedWalletAbi.data
     ) {
       setError('Wallet could not be fetched');
       return;
     }
-    walletData.data.abi = sharedWalletAbi.data;
+    walletData.abi = sharedWalletAbi.data;
   }, [web3, walletData, sharedWalletAbi]);
 
   return (
@@ -66,15 +66,15 @@ function ManageWallet() {
         <Typography color='error' variant='body1' sx={{ marginTop: '20px' }}>
           {error}
         </Typography>
-      ) : (
+      ) : walletData ? (
         <Box marginTop={4}>
           <Grid container>
-            <WalletInfo web3={web3} wallet={walletData.data} editable={true} />
-            <DepositEther web3={web3} wallet={walletData.data} />
-            <WalletUsers web3={web3} wallet={walletData.data} />
+            <WalletInfo web3={web3} wallet={walletData} editable={true} />
+            <DepositEther web3={web3} wallet={walletData} />
+            <WalletUsers web3={web3} wallet={walletData} />
           </Grid>
         </Box>
-      )}
+      ) : null}
     </>
   );
 }

@@ -7,9 +7,10 @@ import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
+import { AccountUser } from '@/interfaces/account';
 import formatEthAddress from '@/utils/web3/formatEthAddress';
 
-function UsersTable({ users, form }: { users: any; form: any }) {
+function UsersTable({ users, form }: { users: AccountUser[]; form: any }) {
   return (
     <TableContainer component={Paper}>
       <Table>

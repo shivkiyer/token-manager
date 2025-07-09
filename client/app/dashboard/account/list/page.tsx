@@ -3,13 +3,14 @@
 import { Suspense } from 'react';
 import Typography from '@mui/material/Typography';
 
+import Account from '@/interfaces/account';
 import accountsListLoader from '@/actions/account/accountListLoader';
 import AccountCard from '@/components/accounts/account-card';
 import LoadingSpinner from '@/components/page-sections/loading-spinner/loading-spinner';
 
 export default async function ListAccounts() {
   let error: string | null = null;
-  let accounts: any;
+  let accounts: Account[] = [];
 
   const getAccounts = async () => {
     const accountData = await accountsListLoader();
@@ -29,7 +30,7 @@ export default async function ListAccounts() {
           {error}
         </Typography>
       ) : (
-        accounts?.map((item: any) => (
+        accounts?.map((item: Account) => (
           <AccountCard
             key={item.accountId}
             id={item.accountId}

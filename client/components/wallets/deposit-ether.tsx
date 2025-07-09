@@ -8,12 +8,14 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 
+import { Wallet } from '@/interfaces/wallet';
+
 export default function DepositEther({
   web3,
   wallet,
 }: {
   web3: any;
-  wallet: any;
+  wallet: Wallet;
 }) {
   const [displayForm, setDisplayForm] = useState(false);
   const [balance, setBalance] = useState<BigInt>(BigInt(0));
@@ -29,7 +31,7 @@ export default function DepositEther({
 
   const submitHandler = async (
     values: { etherValue: string },
-    resetForm: any
+    resetForm: () => void
   ) => {
     setError(null);
     try {

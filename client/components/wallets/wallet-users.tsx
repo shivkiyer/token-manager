@@ -9,6 +9,8 @@ import TextField from '@mui/material/TextField';
 import SearchIcon from '@mui/icons-material/Search';
 import CloseIcon from '@mui/icons-material/Close';
 
+import { Wallet } from '@/interfaces/wallet';
+import { AccountUser } from '@/interfaces/account';
 import getWalletUsers from '@/actions/wallet/getWalletUsers';
 import removeWalletUsers from '@/actions/wallet/removeWalletUsers';
 import searchWalletUsers from '@/actions/wallet/searchWalletUsers';
@@ -21,10 +23,10 @@ export default function WalletUsers({
   wallet,
 }: {
   web3: any;
-  wallet: any;
+  wallet: Wallet;
 }) {
-  const [userData, setUserData] = useState<any>(null);
-  const [searchData, setSearchData] = useState<any>(null);
+  const [userData, setUserData] = useState<AccountUser[] | null>(null);
+  const [searchData, setSearchData] = useState<AccountUser[] | null>(null);
   const [initError, setInitError] = useState<string | null>(null);
   const [removeUserError, setRemoveUserError] = useState<string | null>(null);
   const [searchError, setSearchError] = useState<string | null>(null);
@@ -54,6 +56,8 @@ export default function WalletUsers({
   const removeUserHandler = async (values: any) => {
     try {
       setRemoveUserError(null);
+
+      if (!userData) return;
 
       let web3Accounts: string[];
       let web3Account: string = '0x0';
@@ -130,7 +134,7 @@ export default function WalletUsers({
     setDisplayForm(false);
   };
 
-  const handleUsersSearch = async (values: any) => {
+  const handleUsersSearch = async (values: { search: string }) => {
     try {
       const response = await searchWalletUsers(wallet.address, values.search);
       if (response.data) {
@@ -165,6 +169,8 @@ export default function WalletUsers({
           return;
         }
       }
+
+      if (!searchData) return;
 
       let accAddresses: string[] = [];
       values.checked.forEach((item: string) => {
@@ -224,7 +230,7 @@ export default function WalletUsers({
     onSubmit: (values) => addUserToWalletHandler(values),
   });
 
-  let content: any;
+  let content: React.ReactNode;
 
   if (initError !== null) {
     content = <p>{initError}</p>;

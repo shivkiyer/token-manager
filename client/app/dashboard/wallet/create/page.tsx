@@ -9,6 +9,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 
+import { WalletForm } from '@/interfaces/wallet';
 import getWeb3 from '@/utils/web3/web3';
 import formatEthAddress from '@/utils/web3/formatEthAddress';
 import isErrorInForm from '@/utils/forms/isErrorInForm';
@@ -60,14 +61,7 @@ export default function CreateWallet() {
     });
   };
 
-  const submitHandler = async (
-    values: {
-      name: string;
-      description: string;
-      maxLimit: string;
-    },
-    resetForm: any
-  ) => {
+  const submitHandler = async (values: WalletForm, resetForm: () => void) => {
     setLoading(true);
     try {
       const verifyResult = await verifyWallet(ownerAccount, values);
