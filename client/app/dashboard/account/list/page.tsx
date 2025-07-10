@@ -29,7 +29,7 @@ export default async function ListAccounts() {
         <Typography color='error' variant='h6'>
           {error}
         </Typography>
-      ) : (
+      ) : accounts?.length > 0 ? (
         accounts?.map((item: Account) => (
           <AccountCard
             key={item.accountId}
@@ -38,6 +38,10 @@ export default async function ListAccounts() {
             address={item.accountAddress}
           ></AccountCard>
         ))
+      ) : (
+        <Typography variant='h6' textAlign='center'>
+          No accounts found. Use the CREATE button to link an account.
+        </Typography>
       )}
     </>
   );
