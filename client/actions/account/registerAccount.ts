@@ -10,11 +10,10 @@ export default async function registerAccount(
     name: string;
     address: string;
   }
-): Promise<{ message: string; success: boolean } | undefined> {
+): Promise<{ message: string } | undefined> {
   if (!accounts.includes(formData.address)) {
     return {
       message: 'Account is not linked in Metamask.',
-      success: false,
     };
   }
 
@@ -35,7 +34,6 @@ export default async function registerAccount(
   } catch (e) {
     return {
       message: 'Account could not be added.',
-      success: false,
     };
   }
 }
