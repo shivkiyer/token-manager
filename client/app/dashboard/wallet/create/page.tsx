@@ -261,11 +261,21 @@ export default function CreateWallet() {
                 intended owner of the wallet, select another account on Metamask
                 and click on the CHANGE button.
               </Typography>
-              {web3Error && (
-                <Typography color='error' variant='body1'>
-                  {web3Error}
-                </Typography>
-              )}
+            </Grid>
+          </Grid>
+        )}
+
+        {web3Error && (
+          <Grid
+            container
+            alignContent='center'
+            justifyContent='center'
+            marginTop={5}
+          >
+            <Grid size={{ xs: 10, md: 6 }} sx={{ textAlign: 'center' }}>
+              <Typography color='error' variant='body1'>
+                {web3Error}
+              </Typography>
             </Grid>
           </Grid>
         )}
@@ -298,7 +308,7 @@ export default function CreateWallet() {
               <Button
                 variant='contained'
                 type='submit'
-                disabled={getDisabledStatus()}
+                disabled={getDisabledStatus() || !ownerAccount}
               >
                 <Typography variant='button'>Create Wallet</Typography>
               </Button>
