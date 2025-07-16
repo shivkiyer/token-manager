@@ -224,6 +224,7 @@ function WalletInfo({
                     verticalAlign: 'top',
                     marginTop: '4px',
                   }}
+                  data-testid='edit-wallet-details-btn'
                   onClick={displayFormHandler}
                 >
                   <EditIcon />

@@ -334,7 +334,6 @@ export default function WalletUsers({
                 <Grid size={{ xs: 12 }} marginTop={2}>
                   <Button variant='contained' type='submit'>
                     <Typography variant='button'>Add</Typography>
-                    {/* Add */}
                   </Button>
                 </Grid>
               </form>
