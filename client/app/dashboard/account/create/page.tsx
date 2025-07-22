@@ -10,7 +10,7 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import isErrorInForm from '@/utils/forms/isErrorInForm';
-import getWeb3 from '@/utils/web3/web3';
+import getEthers from '@/utils/ethers/ethers';
 import registerAccount from '@/actions/account/registerAccount';
 
 function RegisterAccount() {
@@ -32,25 +32,26 @@ function RegisterAccount() {
   const submitHandler = async (name: string, address: string) => {
     setLoading(true);
 
-    let web3: any;
+    let provider: any;
     try {
-      web3 = await getWeb3();
+      provider = await getEthers();
     } catch (_) {
       setError('Metamask locked or inaccessible');
       setLoading(false);
       return;
     }
 
-    let accounts: string[];
+    let account: string;
     try {
-      accounts = await web3.eth.getAccounts();
+      const accountInfo = await provider.getSigner();
+      account = accountInfo?.address;
     } catch (_) {
       setError('Account is not linked in Metamask.');
       setLoading(false);
       return;
     }
 
-    const result = await registerAccount(accounts, { name, address });
+    const result = await registerAccount([account], { name, address });
 
     if (result?.message) {
       setSuccess(null);

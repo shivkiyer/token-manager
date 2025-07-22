@@ -6,7 +6,7 @@ import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 
-import formatEthAddress from '@/utils/web3/formatEthAddress';
+import formatEthAddress from '@/utils/ethers/formatEthAddress';
 
 interface WalletData {
   id: number;

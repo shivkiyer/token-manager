@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 
 import { Wallet } from '@/interfaces/wallet';
 import getWalletDetails from '@/actions/wallet/getWalletDetails';
-import getWeb3 from '@/utils/web3/web3';
+import getEthers from '@/utils/ethers/ethers';
 import getSharedWalletData from '@/actions/contract-factory/getSharedWalletAbi';
 
 import LoadingSpinner from '@/components/page-sections/loading-spinner/loading-spinner';
@@ -21,14 +21,14 @@ function ManageWallet() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [walletData, setWalletData] = useState<Wallet | null>(null);
-  const [web3, setWeb3] = useState<any>(null);
+  const [ethers, setEthers] = useState<any>(null);
   const [sharedWalletAbi, setSharedWalletAbi] = useState<any>(null);
   const { walletId } = useParams<{ walletId: string }>();
 
   useEffect(() => {
     const getData = async () => {
-      const web3Obj = await getWeb3();
-      setWeb3(web3Obj);
+      const ethersObj = await getEthers();
+      setEthers(ethersObj);
       const data = await getWalletDetails(walletId);
       setWalletData(data.data);
       const abi = await getSharedWalletData('get-abi');
@@ -40,7 +40,7 @@ function ManageWallet() {
 
   useEffect(() => {
     setError(null);
-    if (!web3) {
+    if (!ethers) {
       setError('Metamask needs to be unlocked to manage the wallet');
       return;
     }
@@ -55,7 +55,7 @@ function ManageWallet() {
       return;
     }
     walletData.abi = sharedWalletAbi.data;
-  }, [web3, walletData, sharedWalletAbi]);
+  }, [ethers, walletData, sharedWalletAbi]);
 
   return (
     <>
@@ -69,9 +69,9 @@ function ManageWallet() {
       ) : walletData ? (
         <Box marginTop={4}>
           <Grid container>
-            <WalletInfo web3={web3} wallet={walletData} editable={true} />
-            <DepositEther web3={web3} wallet={walletData} />
-            <WalletUsers web3={web3} wallet={walletData} />
+            <WalletInfo ethers={ethers} wallet={walletData} editable={true} />
+            <DepositEther ethers={ethers} wallet={walletData} />
+            <WalletUsers ethers={ethers} wallet={walletData} />
           </Grid>
         </Box>
       ) : null}

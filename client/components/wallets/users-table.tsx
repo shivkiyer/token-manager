@@ -8,7 +8,7 @@ import Paper from '@mui/material/Paper';
 import Typography from '@mui/material/Typography';
 
 import { AccountUser } from '@/interfaces/account';
-import formatEthAddress from '@/utils/web3/formatEthAddress';
+import formatEthAddress from '@/utils/ethers/formatEthAddress';
 
 function UsersTable({ users, form }: { users: AccountUser[]; form: any }) {
   return (

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useFormik } from 'formik';
+import { Contract, parseEther } from 'ethers';
 import * as Yup from 'yup';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -10,8 +11,8 @@ import Button from '@mui/material/Button';
 import CircularProgress from '@mui/material/CircularProgress';
 
 import { WalletForm } from '@/interfaces/wallet';
-import getWeb3 from '@/utils/web3/web3';
-import formatEthAddress from '@/utils/web3/formatEthAddress';
+import getEthers from '@/utils/ethers/ethers';
+import formatEthAddress from '@/utils/ethers/formatEthAddress';
 import isErrorInForm from '@/utils/forms/isErrorInForm';
 import createWallet from '@/actions/wallet/createWallet';
 import verifyWallet from '@/actions/wallet/verifyWallet';
@@ -19,7 +20,7 @@ import getContractFactoryData from '@/actions/contract-factory/getContracyFactor
 
 export default function CreateWallet() {
   const [web3Error, setWeb3Error] = useState<string | null>(null);
-  const [web3, setWeb3] = useState<any>(null);
+  const [ethers, setEthers] = useState<any>(null);
   const [ownerAccount, setOwnerAccount] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
@@ -27,16 +28,16 @@ export default function CreateWallet() {
 
   const getEthAccounts = async () => {
     let metamask: any;
-    if (!web3) {
-      metamask = await getWeb3();
-      setWeb3(metamask);
+    if (!ethers) {
+      metamask = await getEthers();
+      setEthers(metamask);
     } else {
-      metamask = web3;
+      metamask = ethers;
     }
     if (metamask) {
-      const accounts = await metamask.eth.getAccounts();
-      if (accounts.length > 0) {
-        setOwnerAccount(accounts[0]);
+      const signerAccount = await metamask.getSigner();
+      if (signerAccount) {
+        setOwnerAccount(signerAccount.address);
         setWeb3Error(null);
       } else {
         setWeb3Error(
@@ -63,6 +64,7 @@ export default function CreateWallet() {
 
   const submitHandler = async (values: WalletForm, resetForm: () => void) => {
     setLoading(true);
+    setError(null);
     try {
       const verifyResult = await verifyWallet(ownerAccount, values);
       if (verifyResult?.message) {
@@ -74,50 +76,60 @@ export default function CreateWallet() {
       const contractFactoryDataResponse = await getContractFactoryData();
       if (contractFactoryDataResponse.message) {
         setError(contractFactoryDataResponse.message);
+        setLoading(false);
         return;
       }
       const { abi: contractFactoryAbi, address: contractFactoryAddress } =
         contractFactoryDataResponse.data;
 
-      const contractFactory = new web3.eth.Contract(
-        contractFactoryAbi,
-        contractFactoryAddress
-      );
-
-      const maxLimitWei = web3.utils.toWei(values.maxLimit.trim(), 'ether');
-
-      const estimateGas = await contractFactory.methods
-        .createSharedWallet(maxLimitWei)
-        .estimateGas({ from: ownerAccount });
-      const actualGas = (estimateGas * BigInt(2)).toString();
-
-      const contractFactoryResponse = await contractFactory.methods
-        .createSharedWallet(maxLimitWei)
-        .send({
-          from: ownerAccount,
-          gas: actualGas,
-        });
-      const newWalletAddress =
-        contractFactoryResponse.events.SharedWalletCreated.returnValues.wallet;
-
-      const walletResult = await createWallet(
-        ownerAccount,
-        newWalletAddress,
-        values
-      );
-
-      if (walletResult.message) {
-        setError(walletResult.message);
-        setSuccess(null);
-      } else {
-        setError(null);
-        setSuccess(
-          'Wallet created successfully. Go to LIST tab to view wallets.'
-        );
-        resetForm();
+      const accSigner = await ethers.getSigner();
+      if (!accSigner || accSigner.address !== ownerAccount) {
+        setError('Metamask account locked or not the same as the owner');
+        setLoading(false);
+        return;
       }
 
-      setLoading(false);
+      const contractFactory: any = new Contract(
+        contractFactoryAddress,
+        contractFactoryAbi,
+        accSigner
+      );
+
+      const maxLimitWei = parseEther(values.maxLimit.trim());
+
+      contractFactory.on(
+        contractFactory.filters.SharedWalletCreated,
+        async (address: string, event: any) => {
+          const walletResult = await createWallet(
+            ownerAccount,
+            address,
+            values
+          );
+
+          if (walletResult.message) {
+            setError(walletResult.message);
+            setSuccess(null);
+          } else {
+            setError(null);
+            setSuccess(
+              'Wallet created successfully. Go to LIST tab to view wallets.'
+            );
+            resetForm();
+          }
+          setLoading(false);
+        }
+      );
+
+      const estimateGas = await contractFactory.createSharedWallet.estimateGas(
+        maxLimitWei
+      );
+      const actualGas = (estimateGas * BigInt(2)).toString();
+
+      const contractFactoryResponse = await contractFactory.createSharedWallet(
+        maxLimitWei,
+        { gasLimit: actualGas }
+      );
+      await contractFactoryResponse.wait();
     } catch (e) {
       setSuccess(null);
       setError('Wallet could not be created.');

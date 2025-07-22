@@ -2,6 +2,7 @@
 
 import { useState, useCallback, useEffect } from 'react';
 import { useFormik } from 'formik';
+import { parseEther, Contract } from 'ethers';
 import * as Yup from 'yup';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
@@ -12,26 +13,26 @@ import RefreshIcon from '@mui/icons-material/Refresh';
 import { Wallet } from '@/interfaces/wallet';
 import isErrorInForm from '@/utils/forms/isErrorInForm';
 
-function WithdrawEther({ web3, wallet }: { web3: any; wallet: Wallet }) {
+function WithdrawEther({ ethers, wallet }: { ethers: any; wallet: Wallet }) {
   const [error, setError] = useState<string | null>(null);
   const [message, setMessage] = useState<string | null>(null);
   const [activeAccount, setActiveAccount] = useState<string | null>(null);
   const [accountError, setAccountError] = useState<string | null>(null);
 
   const fetchActiveAccount = useCallback(async () => {
-    if (web3 !== null && web3 !== undefined) {
-      const accounts = await web3.eth.getAccounts();
-      if (accounts.length > 0) {
-        setActiveAccount(accounts[0]);
+    if (ethers !== null && ethers !== undefined) {
+      const account = await ethers.getSigner();
+      if (account?.address) {
+        setActiveAccount(account?.address);
         setAccountError(null);
       } else {
         setAccountError('No linked Metamask account found');
       }
     }
-  }, [web3]);
+  }, [ethers]);
 
   const verifyAccountAccess = useCallback(async () => {
-    if (web3 !== null && web3 !== undefined) {
+    if (ethers !== null && ethers !== undefined) {
       await fetchActiveAccount();
 
       const userAccounts = wallet?.user?.map(
@@ -41,17 +42,17 @@ function WithdrawEther({ web3, wallet }: { web3: any; wallet: Wallet }) {
         setAccountError('Linked Metamask account is not a wallet user');
       }
     }
-  }, [web3, wallet, activeAccount, fetchActiveAccount]);
+  }, [ethers, wallet, activeAccount, fetchActiveAccount]);
 
   useEffect(() => {
     setError(null);
-    if (web3 === null || web3 === undefined) {
+    if (ethers === null || ethers === undefined) {
       setError('Metamask needs to be unlocked to manage the wallet');
       return;
     }
 
     verifyAccountAccess();
-  }, [web3, wallet, activeAccount, verifyAccountAccess]);
+  }, [ethers, wallet, activeAccount, verifyAccountAccess]);
 
   const validateForm = () => {
     return Yup.object({
@@ -66,26 +67,24 @@ function WithdrawEther({ web3, wallet }: { web3: any; wallet: Wallet }) {
   const submitHandler = async (values: any, resetForm: () => void) => {
     setError(null);
     try {
-      if (web3 === null || web3 === undefined) {
+      if (ethers === null || ethers === undefined) {
         setError('Metamask is locked or account is unavilable');
         return;
       }
       await verifyAccountAccess();
-      const amountInWei = await web3.utils.toWei(values.amount, 'ether');
+      const amountInWei = await parseEther(values.amount);
+      const account = await ethers.getSigner();
 
-      const accounts = await web3.eth.getAccounts();
-      const account = accounts[0];
-
-      const contract = new web3.eth.Contract(wallet.abi, wallet.address);
-      const estimateGas = await contract.methods
-        .withdraw(amountInWei)
-        .estimateGas({ from: account });
+      const contract = new Contract(wallet.address, wallet.abi, account);
+      const estimateGas = await contract.withdraw.estimateGas(amountInWei);
       const actualGas = (estimateGas * BigInt(2)).toString();
 
-      const result = await contract.methods
-        .withdraw(amountInWei)
-        .send({ from: account, gas: actualGas });
-      if (!result.transactionHash) {
+      const result = await contract.withdraw(amountInWei, {
+        gasLimit: actualGas,
+      });
+      await result.wait();
+
+      if (!result.hash) {
         throw Object.assign(new Error());
       }
       setMessage('Funds withdrawn successfully. Check your Metamask account.');

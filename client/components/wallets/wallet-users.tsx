@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import { useFormik } from 'formik';
+import { Contract } from 'ethers';
 import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
@@ -19,10 +20,10 @@ import addUserToWallet from '@/actions/wallet/addUsersToWallet';
 import UsersTable from './users-table';
 
 export default function WalletUsers({
-  web3,
+  ethers,
   wallet,
 }: {
-  web3: any;
+  ethers: any;
   wallet: Wallet;
 }) {
   const [userData, setUserData] = useState<AccountUser[] | null>(null);
@@ -47,11 +48,11 @@ export default function WalletUsers({
   }, [wallet]);
 
   useEffect(() => {
-    if (web3 === null || web3 === undefined) {
+    if (ethers === null || ethers === undefined) {
       setInitError('Metamask needs to be unlocked');
     }
     fetchWalletUsers();
-  }, [fetchWalletUsers, web3]);
+  }, [fetchWalletUsers, ethers]);
 
   const removeUserHandler = async (values: any) => {
     try {
@@ -59,11 +60,11 @@ export default function WalletUsers({
 
       if (!userData) return;
 
-      let web3Accounts: string[];
+      let accSigner: any;
       let web3Account: string = '0x0';
-      if (web3 !== null && web3 !== undefined) {
-        web3Accounts = await web3.eth.getAccounts();
-        web3Account = web3Accounts[0];
+      if (ethers !== null && ethers !== undefined) {
+        accSigner = await ethers.getSigner();
+        web3Account = accSigner.address;
 
         if (wallet.owner.address !== web3Account) {
           setRemoveUserError('Linked Metamask account is not the wallet owner');
@@ -91,23 +92,24 @@ export default function WalletUsers({
         return;
       }
 
-      if (web3 !== null && web3 !== undefined) {
-        const walletContract = new web3.eth.Contract(
+      if (ethers !== null && ethers !== undefined) {
+        const walletContract = new Contract(
+          wallet.address,
           wallet.abi,
-          wallet.address
+          accSigner
         );
-        const gasEstimate = await walletContract.methods
-          .removeWithdrawers(accAddresses)
-          .estimateGas({ from: web3Account });
+        const gasEstimate = await walletContract.removeWithdrawers.estimateGas(
+          accAddresses
+        );
         const actualGas = gasEstimate * BigInt(2);
-        const web3Response = await walletContract.methods
-          .removeWithdrawers(accAddresses)
-          .send({ from: web3Account, gas: actualGas.toString() });
+        const web3Response = await walletContract.removeWithdrawers(
+          accAddresses,
+          { gasLimit: actualGas.toString() }
+        );
 
-        if (
-          web3Response.transactionHash === null ||
-          web3Response.transactionHash === undefined
-        ) {
+        await web3Response.wait();
+
+        if (!web3Response.hash) {
           throw new Error();
         }
       }
@@ -158,11 +160,11 @@ export default function WalletUsers({
     try {
       setAddUserError(null);
 
-      let web3Accounts: string[];
+      let accSigner: any;
       let web3Account: string = '0x0';
-      if (web3 !== null && web3 !== undefined) {
-        web3Accounts = await web3.eth.getAccounts();
-        web3Account = web3Accounts[0];
+      if (ethers !== null && ethers !== undefined) {
+        accSigner = await ethers.getSigner();
+        web3Account = accSigner.address;
 
         if (wallet.owner.address !== web3Account) {
           setAddUserError('Linked Metamask account is not the wallet owner');
@@ -192,25 +194,24 @@ export default function WalletUsers({
         return;
       }
 
-      if (web3 !== null && web3 !== undefined) {
-        const walletContract = new web3.eth.Contract(
+      if (ethers !== null && ethers !== undefined) {
+        const walletContract: any = new Contract(
+          wallet.address,
           wallet.abi,
-          wallet.address
+          accSigner
         );
 
-        const gasEstimate = await walletContract.methods
-          .setWithdrawers(accAddresses)
-          .estimateGas({ from: web3Account });
+        const gasEstimate = await walletContract.setWithdrawers.estimateGas(
+          accAddresses
+        );
 
         const actualGas = gasEstimate * BigInt(2);
-        const web3Response = await walletContract.methods
-          .setWithdrawers(accAddresses)
-          .send({ from: web3Account, gas: actualGas.toString() });
+        const web3Response = await walletContract.setWithdrawers(accAddresses, {
+          gas: actualGas.toString(),
+        });
+        await web3Response.wait();
 
-        if (
-          web3Response.transactionHash === null ||
-          web3Response.transactionHash === undefined
-        ) {
+        if (!web3Response.hash) {
           throw new Error();
         }
       }

@@ -12,14 +12,14 @@ import Button from '@mui/material/Button';
 import { Wallet, WalletForm } from '@/interfaces/wallet';
 import updateWalletDetails from '@/actions/wallet/updateWalletDetails';
 import isErrorInForm from '@/utils/forms/isErrorInForm';
-import formatEthAddress from '@/utils/web3/formatEthAddress';
+import formatEthAddress from '@/utils/ethers/formatEthAddress';
 
 function WalletInfo({
-  web3,
+  ethers,
   wallet,
   editable,
 }: {
-  web3: any;
+  ethers: any;
   wallet: Wallet | null;
   editable: boolean;
 }) {
@@ -64,23 +64,21 @@ function WalletInfo({
         const oldMaxLimit = walletData?.maxLimit;
         setWalletData(response.data);
 
-        if (oldMaxLimit !== response.data.maxLimit && web3) {
-          const web3Accounts = await web3.eth.getAccounts();
-          const web3Account = web3Accounts[0];
+        if (oldMaxLimit !== response.data.maxLimit && ethers) {
+          const web3Account = await ethers.provider.getSigner();
 
           if (walletData.owner.address !== web3Account) {
             setError('Linked Metamask account is not the wallet owner');
             return;
           }
 
-          const walletContract = new web3.eth.Contract(
+          const walletContract = new ethers.Contract(
             walletData.abi,
             walletData.address
           );
 
-          const maxLimitInWei = await web3.utils.toWei(
-            response.data.maxLimit,
-            'ether'
+          const maxLimitInWei = await ethers.utils.parseEther(
+            response.data.maxLimit
           );
           const gasEstimate = await walletContract.methods
             .updateWithdrawalLimit(maxLimitInWei)

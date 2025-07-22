@@ -7,7 +7,7 @@ import Grid from '@mui/material/Grid';
 import Typography from '@mui/material/Typography';
 
 import { Wallet } from '@/interfaces/wallet';
-import getWeb3 from '@/utils/web3/web3';
+import getEthers from '@/utils/ethers/ethers';
 import getWalletDetails from '@/actions/wallet/getWalletDetails';
 import getSharedWalletData from '@/actions/contract-factory/getSharedWalletAbi';
 
@@ -20,15 +20,15 @@ import WithdrawEther from '@/components/wallets/withdraw-ether';
 export default function AccessWallet() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [web3, setWeb3] = useState<any>();
+  const [ethers, setEthers] = useState<any>();
   const [walletData, setWalletData] = useState<Wallet | null>(null);
   const [sharedWalletAbi, setSharedWalletAbi] = useState<any>(null);
   const { walletId } = useParams<{ walletId: string }>();
 
   useEffect(() => {
     const getData = async () => {
-      const web3Obj = await getWeb3();
-      setWeb3(web3Obj);
+      const ethersObj = await getEthers();
+      setEthers(ethersObj);
       const data = await getWalletDetails(walletId);
       setWalletData(data.data);
       const abi = await getSharedWalletData('get-abi');
@@ -40,7 +40,7 @@ export default function AccessWallet() {
 
   useEffect(() => {
     setError(null);
-    if (!web3) {
+    if (!ethers) {
       setError('Metamask needs to be unlocked to manage the wallet');
       return;
     }
@@ -55,7 +55,7 @@ export default function AccessWallet() {
       return;
     }
     walletData.abi = sharedWalletAbi.data;
-  }, [web3, walletData, sharedWalletAbi]);
+  }, [ethers, walletData, sharedWalletAbi]);
 
   return (
     <>
@@ -70,7 +70,11 @@ export default function AccessWallet() {
         <Box className='standard-box-display' marginTop={4}>
           {walletData?.user && (
             <Grid container>
-              <WalletInfo web3={web3} wallet={walletData} editable={false} />
+              <WalletInfo
+                ethers={ethers}
+                wallet={walletData}
+                editable={false}
+              />
               <Grid size={{ xs: 12, md: 10 }} marginTop={2} marginBottom={2}>
                 <Typography variant='h6'>Wallet Users:</Typography>
               </Grid>
@@ -78,7 +82,7 @@ export default function AccessWallet() {
             </Grid>
           )}
 
-          {walletData && <WithdrawEther web3={web3} wallet={walletData} />}
+          {walletData && <WithdrawEther ethers={ethers} wallet={walletData} />}
         </Box>
       )}
     </>

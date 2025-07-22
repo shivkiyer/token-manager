@@ -5,7 +5,7 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import Button from '@mui/material/Button';
 
-import formatEthAddress from '@/utils/web3/formatEthAddress';
+import formatEthAddress from '@/utils/ethers/formatEthAddress';
 
 function AccountCard({
   id,

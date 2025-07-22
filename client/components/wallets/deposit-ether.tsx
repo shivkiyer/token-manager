@@ -1,5 +1,6 @@
 'use client';
 
+import { formatEther, parseEther } from 'ethers';
 import { useState, useEffect, useCallback } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
@@ -11,23 +12,23 @@ import TextField from '@mui/material/TextField';
 import { Wallet } from '@/interfaces/wallet';
 
 export default function DepositEther({
-  web3,
+  ethers,
   wallet,
 }: {
-  web3: any;
+  ethers: any;
   wallet: Wallet;
 }) {
   const [displayForm, setDisplayForm] = useState(false);
-  const [balance, setBalance] = useState<BigInt>(BigInt(0));
+  const [balance, setBalance] = useState<string>('0');
   const [error, setError] = useState<string | null>(null);
 
   const getWalletBalance = useCallback(async () => {
     try {
-      const walletBalance = await web3.eth.getBalance(wallet.address);
-      const etherBalance = await web3.utils.fromWei(walletBalance, 'ether');
+      const walletBalance = await ethers.getBalance(wallet.address);
+      const etherBalance = formatEther(walletBalance);
       setBalance(etherBalance);
     } catch (e) {}
-  }, [web3, wallet]);
+  }, [ethers, wallet]);
 
   const submitHandler = async (
     values: { etherValue: string },
@@ -35,26 +36,27 @@ export default function DepositEther({
   ) => {
     setError(null);
     try {
-      const depositValue = web3.utils.toWei(values.etherValue, 'ether');
-      const linkedAccounts = await web3.eth.getAccounts();
-      const ownerAccount = linkedAccounts[0];
+      const depositValue = parseEther(values.etherValue);
+      const signerAccount = await ethers.getSigner();
+      const ownerAccount = signerAccount.address;
 
       if (wallet.owner.address !== ownerAccount) {
         setError('Linked Metamask account is not the wallet owner');
         return;
       }
 
-      const gasEstimate = await web3.eth.estimateGas({
+      const gasEstimate = await ethers.estimateGas({
         from: ownerAccount,
         to: wallet.address,
       });
       const gas = (gasEstimate * BigInt(2)).toString();
-      await web3.eth.sendTransaction({
+      const resultDeposit = await signerAccount.sendTransaction({
         from: ownerAccount,
         to: wallet.address,
         value: depositValue,
         gas,
       });
+      await resultDeposit.wait();
       resetForm();
       await getWalletBalance();
       setDisplayForm(false);
@@ -65,10 +67,10 @@ export default function DepositEther({
   };
 
   useEffect(() => {
-    if (web3 !== null && web3 !== undefined) {
+    if (ethers !== null && ethers !== undefined) {
       getWalletBalance();
     }
-  }, [web3, getWalletBalance]);
+  }, [ethers, getWalletBalance]);
 
   const validateHandler = () => {
     return Yup.object({
@@ -104,7 +106,7 @@ export default function DepositEther({
           data-testid='test-ether-balance'
           sx={{ display: 'inline-block' }}
         >
-          Current balance: {balance.toString()} Ether
+          Current balance: {balance} Ether
         </Typography>
         <Button
           variant='contained'
